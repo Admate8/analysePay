@@ -87,8 +87,8 @@ uk_deduction_types <- tibble::tribble(
 #' @param standard_tax Not in use for the UK deductions.
 #' @param incluse_slp2 Include Student Loan Plan 2 in the breakdown?
 #' @param incluse_slp3 Include Student Loan Plan 3 in the breakdown?
-#' @param settings_user Use either default setting for the UK or the ones supplied
-#' by the user.
+#' @param user_data Use either default setting for the UK (\code{NULL}) or the
+#' data supplied by the user.
 #'
 #' @return Tibbles with deduction and net income values by either the category
 #' or the category wide (see \code{uk_deduction_types}).
@@ -100,7 +100,7 @@ uk_deduction_types <- tibble::tribble(
 #'    standard_tax    = TRUE,
 #'    incluse_slp2    = TRUE,
 #'    incluse_slp3    = TRUE,
-#'    settings_user   = FALSE
+#'    user_data       = NULL
 #' )$df_deductions_category_wide
 #' }
 calc_uk_deductions <- function(
@@ -109,19 +109,19 @@ calc_uk_deductions <- function(
     standard_tax  = TRUE,
     incluse_slp2  = TRUE,
     incluse_slp3  = TRUE,
-    settings_user = FALSE
+    user_data     = NULL
 ) {
   # Do some basic checks of the input - uk_settings_user will be checked
   # on the server side with shinyvalidate
   stopifnot(
     "All values must be numerics" = all(is.numeric(annual_earnings)),
     "All values must be positive" = all(annual_earnings > 0),
-    is.logical(alpha_scheme), is.logical(settings_user)
+    is.logical(alpha_scheme)
   )
 
-  # Use default country settings if settings_user == FALSE
-  if (settings_user == FALSE) uk_settings <- analysePay::uk_settings
-  else uk_settings <- base::get("uk_settings_user")()
+  # Use default country settings or user's settings
+  if (is.null(user_data)) uk_settings <- analysePay::uk_settings
+  else uk_settings <- user_data
 
   # Define a set of variables from the uk_settings object
   pension_rate  = uk_settings$pension$rate

@@ -10,6 +10,7 @@ BugReports: https://github.com/Admate8/analysePay/issues
 Depends: 
     R (>= 2.10)
 Imports: 
+    bslib (>= 0.7.0),
     config (>= 0.3.2),
     dplyr (>= 1.1.2),
     golem (>= 0.4.1),

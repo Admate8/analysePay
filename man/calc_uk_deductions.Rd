@@ -10,7 +10,7 @@ calc_uk_deductions(
   standard_tax = TRUE,
   incluse_slp2 = TRUE,
   incluse_slp3 = TRUE,
-  settings_user = FALSE
+  user_data = NULL
 )
 }
 \arguments{
@@ -24,8 +24,8 @@ calc_uk_deductions(
 
 \item{incluse_slp3}{Include Student Loan Plan 3 in the breakdown?}
 
-\item{settings_user}{Use either default setting for the UK or the ones supplied
-by the user.}
+\item{user_data}{Use either default setting for the UK (\code{NULL}) or the
+data supplied by the user.}
 }
 \value{
 Tibbles with deduction and net income values by either the category
@@ -43,7 +43,7 @@ calc_uk_deductions(
    standard_tax    = TRUE,
    incluse_slp2    = TRUE,
    incluse_slp3    = TRUE,
-   settings_user   = FALSE
+   user_data       = NULL
 )$df_deductions_category_wide
 }
 }

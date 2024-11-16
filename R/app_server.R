@@ -7,7 +7,10 @@
 app_server <- function(input, output, session) {
   uk_settings_user <- ukSettingsUserServer("1")
 
-  output$test_text <- renderText({
-    paste(unlist(uk_settings_user(), recursive = TRUE), collapse = ", ")
+  output$test_table <- renderTable({
+    calc_uk_deductions(
+      annual_earnings = c(45000, 50000, 55000, 60000),
+      user_data = uk_settings_user()
+    )$df_deductions_category_wide
   })
 }

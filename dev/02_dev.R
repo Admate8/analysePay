@@ -2,6 +2,7 @@
 usethis::use_package("dplyr", min_version = TRUE)
 usethis::use_package("tibble", min_version = TRUE)
 usethis::use_package("htmltools", min_version = TRUE)
+usethis::use_package("bslib", min_version = TRUE)
 usethis::use_tidy_description()
 
 # golem::add_js_file("script")

@@ -7,11 +7,12 @@
 app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
-    fluidPage(
+    bslib::page_fluid(
       h1("analysePay"),
 
       ukSettingsUserUI("1"),
-      textOutput("test_text")
+
+      tableOutput("test_table")
     )
   )
 }
