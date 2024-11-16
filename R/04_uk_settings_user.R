@@ -3,6 +3,7 @@ ukSettingsUserUI <- function(id) {
   bslib::accordion(
     multiple = FALSE,
     width = "100%",
+    open = FALSE,
 
     # Pension ----
     bslib::accordion_panel(
@@ -167,7 +168,7 @@ ukSettingsUserServer <- function(id) {
         "alpha_value_3" = input$select_alpha_value_3
       ),
 
-      "national_insurance" = list(
+      "insurance" = list(
         "rate_1"  = input$select_ni_rate_1,
         "rate_2"  = input$select_ni_rate_2,
         "rate_3"  = input$select_ni_rate_3,

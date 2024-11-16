@@ -10,9 +10,28 @@ app_ui <- function(request) {
     bslib::page_fluid(
       h1("analysePay"),
 
-      ukSettingsUserUI("1"),
+      shiny::selectInput(
+        inputId = "select_country_from",
+        label = "Base",
+        choices = c("United Kingdom" = "uk", "Poland" = "pl"),
+        selected = NULL
+      ),
+      shiny::selectInput(
+        inputId = "select_country_to",
+        label = "Target",
+        choices = c("United Kingdom" = "uk", "Poland" = "pl"),
+        selected = NULL
+      ),
+      bslib::layout_columns(
+        col_widths = c(6, 6),
+        ukSettingsUserUI("1"),
+        plSettingsUserUI("2")
+      ),
 
-      tableOutput("test_table")
+      tableOutput("test_table"),
+      br(),
+      tableOutput("test_table2"),
+      textOutput("test_selection_from")
     )
   )
 }

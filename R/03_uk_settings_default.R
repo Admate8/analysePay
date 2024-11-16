@@ -11,7 +11,7 @@ uk_settings <- list(
     "alpha_value_3" = 150000
   ),
 
-  "national_insurance" = list(
+  "insurance" = list(
     "source"  = "https://www.gov.uk/national-insurance-rates-letters",
     "rate_1"  = 0,
     "rate_2"  = 8 / 100,
@@ -111,8 +111,7 @@ calc_uk_deductions <- function(
     incluse_slp3  = TRUE,
     user_data     = NULL
 ) {
-  # Do some basic checks of the input - uk_settings_user will be checked
-  # on the server side with shinyvalidate
+  # Do some basic checks of the input
   stopifnot(
     "All values must be numerics" = all(is.numeric(annual_earnings)),
     "All values must be positive" = all(annual_earnings > 0),
@@ -133,11 +132,11 @@ calc_uk_deductions <- function(
   alpha_value_2 = uk_settings$pension$alpha_value_2
   alpha_value_3 = uk_settings$pension$alpha_value_3
 
-  ni_rate_1  = uk_settings$national_insurance$rate_1
-  ni_rate_2  = uk_settings$national_insurance$rate_2
-  ni_rate_3  = uk_settings$national_insurance$rate_3
-  ni_value_1 = uk_settings$national_insurance$value_1
-  ni_value_2 = uk_settings$national_insurance$value_2
+  ni_rate_1  = uk_settings$insurance$rate_1
+  ni_rate_2  = uk_settings$insurance$rate_2
+  ni_rate_3  = uk_settings$insurance$rate_3
+  ni_value_1 = uk_settings$insurance$value_1
+  ni_value_2 = uk_settings$insurance$value_2
 
   tax_rate_1  = uk_settings$tax$rate_1
   tax_rate_2  = uk_settings$tax$rate_2
