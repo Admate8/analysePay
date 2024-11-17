@@ -1,5 +1,6 @@
 pl_settings <- list(
   "pension" = list(
+    "alpha_scheme"  = TRUE, # NOT IN USE, but must exist to repeat big chunks of the code in the server
     "sk_emerytalna" = list(
       "source" = "https://www.biznes.gov.pl/pl/portal/00274",
       "rate"   = 9.76 / 100
@@ -28,7 +29,8 @@ pl_settings <- list(
   ),
 
   "tax" = list(
-    "stopniowy" = list(
+    "standard_tax" = TRUE,
+    "stopniowy"    = list(
       "source"  = "https://biznes.gov.pl/pl/portal/00264",
       "rate_1"  = 0,
       "rate_2"  = 12 / 100,
@@ -36,7 +38,7 @@ pl_settings <- list(
       "value_1" = 30000,
       "value_2" = 120000
     ),
-    "liniowy" = list(
+    "liniowy"      = list(
       "source"   = "https://www.biznes.gov.pl/pl/portal/00253",
       "rate"     = 19 / 100
     )
@@ -120,8 +122,7 @@ calc_pl_deductions <- function(
   # Do some basic checks of the input
   stopifnot(
     "All values must be numerics" = all(is.numeric(annual_earnings)),
-    "All values must be positive" = all(annual_earnings > 0),
-    is.logical(standard_tax)
+    "All values must be positive" = all(annual_earnings > 0)
   )
 
   # Use default country settings if settings_user == FALSE

@@ -10,17 +10,20 @@ app_ui <- function(request) {
     bslib::page_fluid(
       h1("analysePay"),
 
-      shiny::selectInput(
-        inputId = "select_country_from",
-        label = "Base",
-        choices = c("United Kingdom" = "uk", "Poland" = "pl"),
-        selected = NULL
-      ),
-      shiny::selectInput(
-        inputId = "select_country_to",
-        label = "Target",
-        choices = c("United Kingdom" = "uk", "Poland" = "pl"),
-        selected = NULL
+      bslib::layout_columns(
+        col_widths = c(6, 6),
+        shiny::selectInput(
+          inputId = "select_country_from",
+          label = "Base",
+          choices = c("United Kingdom" = "uk", "Poland" = "pl"),
+          selected = NULL
+        ),
+        shiny::selectInput(
+          inputId = "select_country_to",
+          label = "Target",
+          choices = c("United Kingdom" = "uk", "Poland" = "pl"),
+          selected = NULL
+        )
       ),
       uiOutput("ui_settings"),
 
@@ -29,9 +32,6 @@ app_ui <- function(request) {
         label   = "Analyse!"
       ),
 
-      # tableOutput("test_table"),
-      # br(),
-      # tableOutput("test_table2"),
       bslib::layout_columns(
         col_widths = c(6, 6),
         textOutput("test_output1"),
@@ -39,9 +39,10 @@ app_ui <- function(request) {
       ),
       bslib::layout_columns(
         col_widths = c(6, 6),
-        tableOutput("test_table1"),
-        tableOutput("test_table2")
+        reactable::reactableOutput("test_table1"),
+        reactable::reactableOutput("test_table2")
       )
+
     )
   )
 }

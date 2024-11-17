@@ -55,11 +55,16 @@ app_server <- function(input, output, session) {
 
     list(
       "from_wide" = base::get(function_from_name)(
-        annual_earnings = c(45000, 50000, 55000, 60000),
+        annual_earnings = c(50000, 55000, 60000),
+        alpha_scheme = settings_from()$pension$alpha_scheme,
+        standard_tax = settings_from()$tax$standard_tax,
         user_data = settings_from()
       )$df_deductions_category_wide,
+
       "to_wide" = base::get(function_to_name)(
-        annual_earnings = c(60000, 70000, 80000, 90000),
+        annual_earnings = c(50000, 55000, 60000),
+        alpha_scheme = settings_to()$pension$alpha_scheme,
+        standard_tax = settings_to()$tax$standard_tax,
         user_data = settings_to()
       )$df_deductions_category_wide
     )
@@ -68,49 +73,7 @@ app_server <- function(input, output, session) {
   output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 
-  output$test_table1 <- renderTable({df_deductions()$from_wide})
-  output$test_table2 <- renderTable({df_deductions()$to_wide})
+  output$test_table1 <- reactable::renderReactable({reactable::reactable(df_deductions()$from_wide)})
+  output$test_table2 <- reactable::renderReactable({reactable::reactable(df_deductions()$to_wide)})
 
-  # WORKS ----
-  # df_settings <- reactiveValues(from = NULL, to = NULL)
-  #
-  # observeEvent(c(input$select_country_from, input$select_country_to), {
-  #   if (input$select_country_from == input$select_country_to) {
-  #     ns_from <- "1"
-  #     ns_to   <- "2"
-  #   } else {
-  #     ns_from <- "1"
-  #     ns_to   <- "1"
-  #   }
-  #
-  #   # Update the UI
-  #   ui_settings_from_name <- paste0(input$select_country_from, "SettingsUserUI")
-  #   ui_settings_to_name   <- paste0(input$select_country_to, "SettingsUserUI")
-  #
-  #   output$ui_settings <- renderUI({
-  #     bslib::layout_columns(
-  #       col_widths = c(6, 6),
-  #       base::get(ui_settings_from_name)(ns_from),
-  #       base::get(ui_settings_to_name)(ns_to)
-  #     )
-  #   })
-  # })
-  #
-  # observeEvent(input$commit_input_data, {
-  #   if (input$select_country_from == input$select_country_to) {
-  #     ns_from <- "1"
-  #     ns_to   <- "2"
-  #   } else {
-  #     ns_from <- "1"
-  #     ns_to   <- "1"
-  #   }
-  #
-  #   settings_from <- base::get(paste0(input$select_country_from, "SettingsUserServer"))(ns_from)
-  #   settings_to   <- base::get(paste0(input$select_country_to, "SettingsUserServer"))(ns_to)
-  #
-  #   df_settings$from <- settings_from()
-  #   df_settings$to   <- settings_to()
-  # })
-  # output$test_output1 <- renderText({paste0(unlist(df_settings$from, recursive = TRUE), collapse = ", ")})
-  # output$test_output2 <- renderText({paste0(unlist(df_settings$to, recursive = TRUE), collapse = ", ")})
 }

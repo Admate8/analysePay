@@ -2,6 +2,7 @@ uk_settings <- list(
   "pension" = list(
     "rate"          = 4 / 100,
     "source"        = "https://www.civilservicepensionscheme.org.uk/your-pension/managing-your-pension/contribution-rates/",
+    "alpha_scheme"  = TRUE,
     "alpha_rate_1"  = 4.6 / 100,
     "alpha_rate_2"  = 5.45 / 100,
     "alpha_rate_3"  = 7.35 / 100,
@@ -21,14 +22,15 @@ uk_settings <- list(
   ),
 
   "tax" = list(
-    "source"  = "https://www.gov.uk/income-tax-rates",
-    "rate_1"  = 0,
-    "rate_2"  = 20 / 100,
-    "rate_3"  = 40 / 100,
-    "rate_4"  = 45 / 100, # + no personal allowance!
-    "value_1" = 12571,
-    "value_2" = 50270,
-    "value_3" = 125140
+    "source"       = "https://www.gov.uk/income-tax-rates",
+    "standard_tax" = TRUE, # NOT IN USE, but must exist to repeat big chunks of the code in the server
+    "rate_1"       = 0,
+    "rate_2"       = 20 / 100,
+    "rate_3"       = 40 / 100,
+    "rate_4"       = 45 / 100, # + no personal allowance (coded in the calc function)
+    "value_1"      = 12571,
+    "value_2"      = 50270,
+    "value_3"      = 125140
   ),
 
   "sl_plan2" = list(
@@ -108,8 +110,7 @@ calc_uk_deductions <- function(
   # Do some basic checks of the input
   stopifnot(
     "All values must be numerics" = all(is.numeric(annual_earnings)),
-    "All values must be positive" = all(annual_earnings > 0),
-    is.logical(alpha_scheme)
+    "All values must be positive" = all(annual_earnings > 0)
   )
 
   # Use default country settings or user's settings

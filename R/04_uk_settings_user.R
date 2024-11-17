@@ -1,156 +1,181 @@
 
 ukSettingsUserUI <- function(id) {
-  bslib::accordion(
-    multiple = FALSE,
-    width = "100%",
-    open = FALSE,
 
-    # Pension ----
-    bslib::accordion_panel(
-      title = "Pension",
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_pension_rate"),
-        label = "Pension Rate",
-        value = analysePay::uk_settings$pension$rate
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_rate_1"),
-        label = "Alpha Rate Lower",
-        value = analysePay::uk_settings$pension$alpha_rate_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_rate_2"),
-        label = "Alpha Rate Middle",
-        value = analysePay::uk_settings$pension$alpha_rate_2
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_rate_3"),
-        label = "Alpha Rate Upper",
-        value = analysePay::uk_settings$pension$alpha_rate_3
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_rate_4"),
-        label = "Alpha Rate Additional",
-        value = analysePay::uk_settings$pension$alpha_rate_4
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_value_1"),
-        label = "Alpha Threshold Lower",
-        value = analysePay::uk_settings$pension$alpha_value_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_value_2"),
-        label = "Alpha Threshold Middle",
-        value = analysePay::uk_settings$pension$alpha_value_2
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_alpha_value_3"),
-        label = "Alpha Threshold Upper",
-        value = analysePay::uk_settings$pension$alpha_value_3
-      )
+  bslib::layout_columns(
+    col_widths = c(-4, 4, -4, 12),
+
+    shinyWidgets::switchInput(
+      label     = "Alpha pension scheme?",
+      inputId   = shiny::NS(id, "select_extra_settings_uk"),
+      onLabel   = "Yes",
+      offLabel  = "No",
+      value     = TRUE,
+      labelWidth = "100%"
     ),
 
-    # Insurance ----
-    bslib::accordion_panel(
-      title = "National Insurance",
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_ni_rate_1"),
-        label = "Rate Lower",
-        value = analysePay::uk_settings$insurance$rate_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_ni_rate_2"),
-        label = "Rate Middle",
-        value = analysePay::uk_settings$insurance$rate_2
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_ni_rate_3"),
-        label = "Rate Upper",
-        value = analysePay::uk_settings$insurance$rate_3
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_ni_value_1"),
-        label = "Threshold Lower",
-        value = analysePay::uk_settings$insurance$value_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_ni_value_2"),
-        label = "Threshold Upper",
-        value = analysePay::uk_settings$insurance$value_2
-      )
-    ),
+    bslib::accordion(
+      multiple = FALSE,
+      width = "100%",
+      open = FALSE,
 
-    # Tax ----
-    bslib::accordion_panel(
-      title = "Tax",
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_rate_1"),
-        label = "Rate Lower",
-        value = analysePay::uk_settings$tax$rate_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_rate_2"),
-        label = "Rate Middle",
-        value = analysePay::uk_settings$tax$rate_2
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_rate_3"),
-        label = "Rate Upper",
-        value = analysePay::uk_settings$tax$rate_3
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_rate_4"),
-        label = "Rate Additional",
-        value = analysePay::uk_settings$tax$rate_4
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_value_1"),
-        label = "Threshold Lower",
-        value = analysePay::uk_settings$tax$value_1
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_value_2"),
-        label = "Threshold Middle",
-        value = analysePay::uk_settings$tax$value_2
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_tax_value_3"),
-        label = "Threshold Upper",
-        value = analysePay::uk_settings$tax$value_3
-      )
-    ),
+      # Pension ----
+      bslib::accordion_panel(
+        title = "Pension",
 
-    # Student Loan Plan 2 ----
-    bslib::accordion_panel(
-      title = "Student Loan Plan 2",
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_slp2_rate"),
-        label = "Rate",
-        value = analysePay::uk_settings$sl_plan2$rate
-      ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_slp2_value"),
-        label = "Threshold",
-        value = analysePay::uk_settings$sl_plan2$value
-      )
-    ),
+        shiny::conditionalPanel(
+          condition = "input.select_extra_settings_uk == 0",
+          ns        = shiny::NS(id),
 
-    # Student Loan Plan 3 ----
-    bslib::accordion_panel(
-      title = "Student Loan Plan 3",
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_slp3_rate"),
-        label = "Rate",
-        value = analysePay::uk_settings$sl_plan3$rate
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_pension_rate"),
+            label = "Pension Rate",
+            value = analysePay::uk_settings$pension$rate
+          )
+        ),
+
+        shiny::conditionalPanel(
+          condition = "input.select_extra_settings_uk == 1",
+          ns        = shiny::NS(id),
+
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_rate_1"),
+            label = "Alpha Rate Lower",
+            value = analysePay::uk_settings$pension$alpha_rate_1
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_rate_2"),
+            label = "Alpha Rate Middle",
+            value = analysePay::uk_settings$pension$alpha_rate_2
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_rate_3"),
+            label = "Alpha Rate Upper",
+            value = analysePay::uk_settings$pension$alpha_rate_3
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_rate_4"),
+            label = "Alpha Rate Additional",
+            value = analysePay::uk_settings$pension$alpha_rate_4
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_value_1"),
+            label = "Alpha Threshold Lower",
+            value = analysePay::uk_settings$pension$alpha_value_1
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_value_2"),
+            label = "Alpha Threshold Middle",
+            value = analysePay::uk_settings$pension$alpha_value_2
+          ),
+          shiny::numericInput(
+            inputId = shiny::NS(id, "select_uk_alpha_value_3"),
+            label = "Alpha Threshold Upper",
+            value = analysePay::uk_settings$pension$alpha_value_3
+          )
+        )
       ),
-      shiny::numericInput(
-        inputId = shiny::NS(id, "select_uk_slp3_value"),
-        label = "Threshold",
-        value = analysePay::uk_settings$sl_plan3$value
+
+      # Insurance ----
+      bslib::accordion_panel(
+        title = "National Insurance",
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_ni_rate_1"),
+          label = "Rate Lower",
+          value = analysePay::uk_settings$insurance$rate_1
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_ni_rate_2"),
+          label = "Rate Middle",
+          value = analysePay::uk_settings$insurance$rate_2
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_ni_rate_3"),
+          label = "Rate Upper",
+          value = analysePay::uk_settings$insurance$rate_3
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_ni_value_1"),
+          label = "Threshold Lower",
+          value = analysePay::uk_settings$insurance$value_1
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_ni_value_2"),
+          label = "Threshold Upper",
+          value = analysePay::uk_settings$insurance$value_2
+        )
+      ),
+
+      # Tax ----
+      bslib::accordion_panel(
+        title = "Tax",
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_rate_1"),
+          label = "Rate Lower",
+          value = analysePay::uk_settings$tax$rate_1
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_rate_2"),
+          label = "Rate Middle",
+          value = analysePay::uk_settings$tax$rate_2
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_rate_3"),
+          label = "Rate Upper",
+          value = analysePay::uk_settings$tax$rate_3
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_rate_4"),
+          label = "Rate Additional",
+          value = analysePay::uk_settings$tax$rate_4
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_value_1"),
+          label = "Threshold Lower",
+          value = analysePay::uk_settings$tax$value_1
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_value_2"),
+          label = "Threshold Middle",
+          value = analysePay::uk_settings$tax$value_2
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_tax_value_3"),
+          label = "Threshold Upper",
+          value = analysePay::uk_settings$tax$value_3
+        )
+      ),
+
+      # Student Loan Plan 2 ----
+      bslib::accordion_panel(
+        title = "Student Loan Plan 2",
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_slp2_rate"),
+          label = "Rate",
+          value = analysePay::uk_settings$sl_plan2$rate
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_slp2_value"),
+          label = "Threshold",
+          value = analysePay::uk_settings$sl_plan2$value
+        )
+      ),
+
+      # Student Loan Plan 3 ----
+      bslib::accordion_panel(
+        title = "Student Loan Plan 3",
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_slp3_rate"),
+          label = "Rate",
+          value = analysePay::uk_settings$sl_plan3$rate
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_uk_slp3_value"),
+          label = "Threshold",
+          value = analysePay::uk_settings$sl_plan3$value
+        )
       )
     )
   )
-
 }
 
 ukSettingsUserServer <- function(id) {
@@ -158,6 +183,7 @@ ukSettingsUserServer <- function(id) {
 
     reactive({list(
       "pension" = list(
+        "alpha_scheme"  = input$select_extra_settings_uk,
         "rate"          = input$select_uk_pension_rate,
         "alpha_rate_1"  = input$select_uk_alpha_rate_1,
         "alpha_rate_2"  = input$select_uk_alpha_rate_2,
@@ -177,13 +203,14 @@ ukSettingsUserServer <- function(id) {
       ),
 
       "tax" = list(
-        "rate_1"  = input$select_uk_tax_rate_1,
-        "rate_2"  = input$select_uk_tax_rate_2,
-        "rate_3"  = input$select_uk_tax_rate_3,
-        "rate_4"  = input$select_uk_tax_rate_4,
-        "value_1" = input$select_uk_tax_value_1,
-        "value_2" = input$select_uk_tax_value_2,
-        "value_3" = input$select_uk_tax_value_3
+        "standard_tax" = TRUE, # NOT IN USE
+        "rate_1"       = input$select_uk_tax_rate_1,
+        "rate_2"       = input$select_uk_tax_rate_2,
+        "rate_3"       = input$select_uk_tax_rate_3,
+        "rate_4"       = input$select_uk_tax_rate_4,
+        "value_1"      = input$select_uk_tax_value_1,
+        "value_2"      = input$select_uk_tax_value_2,
+        "value_3"      = input$select_uk_tax_value_3
       ),
 
       "sl_plan2" = list(

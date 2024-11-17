@@ -15,7 +15,9 @@ Imports:
     dplyr (>= 1.1.2),
     golem (>= 0.4.1),
     htmltools (>= 0.5.8.1),
+    reactable (>= 0.4.4),
     shiny (>= 1.8.0),
+    shinyWidgets (>= 0.7.6),
     tibble (>= 3.2.1)
 Suggests: 
     knitr,
