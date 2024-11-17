@@ -44,32 +44,32 @@ plSettingsUserUI <- function(id) {
     bslib::accordion_panel(
       title = "Tax",
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_rate"),
+        inputId = shiny::NS(id, "select_pl_tax_rate"),
         label = "Linear Tax",
         value = analysePay::pl_settings$tax$liniowy$rate
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_rate_1"),
+        inputId = shiny::NS(id, "select_pl_tax_rate_1"),
         label = "Step Tax Lower",
         value = analysePay::pl_settings$tax$stopniowy$rate_1
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_rate_2"),
+        inputId = shiny::NS(id, "select_pl_tax_rate_2"),
         label = "Step Tax Middle",
         value = analysePay::pl_settings$tax$stopniowy$rate_2
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_rate_3"),
+        inputId = shiny::NS(id, "select_pl_tax_rate_3"),
         label = "Step Tax Upper",
         value = analysePay::pl_settings$tax$stopniowy$rate_3
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_value_1"),
+        inputId = shiny::NS(id, "select_pl_tax_value_1"),
         label = "Threshold Lower",
         value = analysePay::pl_settings$tax$stopniowy$value_1
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_tax_value_2"),
+        inputId = shiny::NS(id, "select_pl_tax_value_2"),
         label = "Threshold Upper",
         value = analysePay::pl_settings$tax$stopniowy$value_2
       )
@@ -79,12 +79,12 @@ plSettingsUserUI <- function(id) {
     bslib::accordion_panel(
       title = "Student Loan Plan 2",
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_slp2_rate"),
+        inputId = shiny::NS(id, "select_pl_slp2_rate"),
         label = "Rate",
         value = analysePay::pl_settings$sl_plan2$rate
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_slp2_value"),
+        inputId = shiny::NS(id, "select_pl_slp2_value"),
         label = "Threshold",
         value = analysePay::pl_settings$sl_plan2$value
       )
@@ -94,12 +94,12 @@ plSettingsUserUI <- function(id) {
     bslib::accordion_panel(
       title = "Student Loan Plan 3",
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_slp3_rate"),
+        inputId = shiny::NS(id, "select_pl_slp3_rate"),
         label = "Rate",
         value = analysePay::pl_settings$sl_plan3$rate
       ),
       shiny::numericInput(
-        inputId = shiny::NS(id, "select_slp3_value"),
+        inputId = shiny::NS(id, "select_pl_slp3_value"),
         label = "Threshold",
         value = analysePay::pl_settings$sl_plan3$value
       )
@@ -111,7 +111,7 @@ plSettingsUserUI <- function(id) {
 plSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    pl_settings_user <- reactive({list(
+    reactive({list(
       "pension" = list(
         "sk_emerytalna" = list("rate" = input$select_sk_emerytalna_rate),
         "ppk"           = list("rate" = input$select_sk_ppk_rate)
@@ -124,24 +124,24 @@ plSettingsUserServer <- function(id) {
       ),
 
       "tax" = list(
-        "liniowy"   = list("rate" = input$select_tax_rate),
+        "liniowy"   = list("rate" = input$select_pl_tax_rate),
         "stopniowy" = list(
-          "rate_1"  = input$select_tax_rate_1,
-          "rate_2"  = input$select_tax_rate_2,
-          "rate_3"  = input$select_tax_rate_3,
-          "value_1" = input$select_tax_value_1,
-          "value_2" = input$select_tax_value_2
+          "rate_1"  = input$select_pl_tax_rate_1,
+          "rate_2"  = input$select_pl_tax_rate_2,
+          "rate_3"  = input$select_pl_tax_rate_3,
+          "value_1" = input$select_pl_tax_value_1,
+          "value_2" = input$select_pl_tax_value_2
         )
       ),
 
       "sl_plan2" = list(
-        "rate"  = input$select_slp2_rate,
-        "value" = input$select_slp2_value
+        "rate"  = input$select_pl_slp2_rate,
+        "value" = input$select_pl_slp2_value
       ),
 
       "sl_plan3" = list(
-        "rate"  = input$select_slp3_rate,
-        "value" = input$select_slp3_value
+        "rate"  = input$select_pl_slp3_rate,
+        "value" = input$select_pl_slp3_value
       )
     )})
   })

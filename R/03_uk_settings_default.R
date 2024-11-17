@@ -85,8 +85,6 @@ uk_deduction_types <- tibble::tribble(
 #' @param annual_earnings Vector of annual gross earnings.
 #' @param alpha_scheme Should the pension contribution be deducted using alpha scheme?
 #' @param standard_tax Not in use for the UK deductions.
-#' @param incluse_slp2 Include Student Loan Plan 2 in the breakdown?
-#' @param incluse_slp3 Include Student Loan Plan 3 in the breakdown?
 #' @param user_data Use either default setting for the UK (\code{NULL}) or the
 #' data supplied by the user.
 #'
@@ -98,8 +96,6 @@ uk_deduction_types <- tibble::tribble(
 #'    annual_earnings = c(30000, 35000, 50000),
 #'    alpha_scheme    = TRUE,
 #'    standard_tax    = TRUE,
-#'    incluse_slp2    = TRUE,
-#'    incluse_slp3    = TRUE,
 #'    user_data       = NULL
 #' )$df_deductions_category_wide
 #' }
@@ -107,8 +103,6 @@ calc_uk_deductions <- function(
     annual_earnings,
     alpha_scheme  = TRUE,
     standard_tax  = TRUE,
-    incluse_slp2  = TRUE,
-    incluse_slp3  = TRUE,
     user_data     = NULL
 ) {
   # Do some basic checks of the input
@@ -213,22 +207,18 @@ calc_uk_deductions <- function(
 
 
   # Student Loans ----
-  if (incluse_slp2) {
-    sl_plan2_deduction <- ifelse(
-      annual_earnings <= sl_plan2_value, 0,
-      (annual_earnings - sl_plan2_value) * sl_plan2_rate
-    )
-  } else sl_plan2_deduction <- 0
-  if (incluse_slp3) {
-    sl_plan3_deduction <- ifelse(
-      annual_earnings <= sl_plan3_value, 0,
-      (annual_earnings - sl_plan3_value) * sl_plan3_rate
-    )
-  } else sl_plan3_deduction <- 0
-
+  sl_plan2_deduction <- ifelse(
+    annual_earnings <= sl_plan2_value, 0,
+    (annual_earnings - sl_plan2_value) * sl_plan2_rate
+  )
+  sl_plan3_deduction <- ifelse(
+    annual_earnings <= sl_plan3_value, 0,
+    (annual_earnings - sl_plan3_value) * sl_plan3_rate
+  )
 
   # Net Income ----
   net_income <- annual_earnings - (pension_deduction + national_insurance_deduction + tax_deduction + sl_plan2_deduction + sl_plan3_deduction)
+
 
   # Results ----
   df_results_category <- tibble::tibble(

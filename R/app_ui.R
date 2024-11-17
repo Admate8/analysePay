@@ -22,16 +22,26 @@ app_ui <- function(request) {
         choices = c("United Kingdom" = "uk", "Poland" = "pl"),
         selected = NULL
       ),
-      bslib::layout_columns(
-        col_widths = c(6, 6),
-        ukSettingsUserUI("1"),
-        plSettingsUserUI("2")
+      uiOutput("ui_settings"),
+
+      actionButton(
+        inputId = "commit_input_data",
+        label   = "Analyse!"
       ),
 
-      tableOutput("test_table"),
-      br(),
-      tableOutput("test_table2"),
-      textOutput("test_selection_from")
+      # tableOutput("test_table"),
+      # br(),
+      # tableOutput("test_table2"),
+      bslib::layout_columns(
+        col_widths = c(6, 6),
+        textOutput("test_output1"),
+        textOutput("test_output2")
+      ),
+      bslib::layout_columns(
+        col_widths = c(6, 6),
+        tableOutput("test_table1"),
+        tableOutput("test_table2")
+      )
     )
   )
 }

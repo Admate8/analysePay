@@ -8,8 +8,6 @@ calc_uk_deductions(
   annual_earnings,
   alpha_scheme = TRUE,
   standard_tax = TRUE,
-  incluse_slp2 = TRUE,
-  incluse_slp3 = TRUE,
   user_data = NULL
 )
 }
@@ -19,10 +17,6 @@ calc_uk_deductions(
 \item{alpha_scheme}{Should the pension contribution be deducted using alpha scheme?}
 
 \item{standard_tax}{Not in use for the UK deductions.}
-
-\item{incluse_slp2}{Include Student Loan Plan 2 in the breakdown?}
-
-\item{incluse_slp3}{Include Student Loan Plan 3 in the breakdown?}
 
 \item{user_data}{Use either default setting for the UK (\code{NULL}) or the
 data supplied by the user.}
@@ -41,8 +35,6 @@ calc_uk_deductions(
    annual_earnings = c(30000, 35000, 50000),
    alpha_scheme    = TRUE,
    standard_tax    = TRUE,
-   incluse_slp2    = TRUE,
-   incluse_slp3    = TRUE,
    user_data       = NULL
 )$df_deductions_category_wide
 }

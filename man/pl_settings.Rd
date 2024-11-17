@@ -7,12 +7,9 @@
 \format{
 Nested named list with policy attributes / economic data.
 \describe{
-  \item{sk_emerytalna}{Variables related to the "skladka emerytalna" contribution.}
-  \item{sk_rentowa}{Variables related to the "skladka rentowa" contribution.}
-  \item{sk_chorobowa}{Variables related to the "skladka chorobowa" contribution}
-  \item{sk_zdrowotna}{Variables related to the "skladka zdrowotna" contribution}
-  \item{ppk}{Variables related to the "Pracownicze Plany Kapitalowe" contribution}
-  \item{podatek}{Variables related to the tax contribution}
+  \item{pension}{Variables related to the pension contribution.}
+  \item{national_insurance}{Variables related to the national insurance contribution.}
+  \item{tax}{Variables related to the tax contribution}
   \item{sl_plan2}{Variables related to the Student Loan Plan 2 contribution.}
   \item{sl_plan3}{Variables related to the Student Loan Plan 3 (postgraduate loan) contribution.}
   \item{earning_deciles}{Variables related to the national earning deciles.}

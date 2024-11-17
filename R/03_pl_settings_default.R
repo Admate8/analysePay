@@ -45,13 +45,13 @@ pl_settings <- list(
   "sl_plan2" = list(
     "source" = "https://www.gov.uk/government/publications/overseas-earnings-thresholds-for-plan-2-student-loans/overseas-earnings-thresholds-for-plan-2-student-loans-2024-25",
     "rate"   = 9 / 100,
-    "value"  = 16380 / 0.190581
+    "value"  = round(16380 / 0.190581, 2)
   ),
 
   "sl_plan3" = list(
     "source" = "https://www.gov.uk/government/publications/overseas-earnings-thresholds-for-postgraduate-student-loans/overseas-earnings-thresholds-for-postgraduate-student-loans-2024-25",
     "rate"   = 6 / 100,
-    "value"  = 12600 / 0.190581
+    "value"  = round(12600 / 0.190581, 2)
   ),
 
   # The range must be 10 - 95! and names must be of the form 'decile'th
@@ -97,8 +97,6 @@ pl_deduction_types <- tibble::tribble(
 #' @param annual_earnings Vector of annual gross earnings.
 #' @param alpha_scheme Not in use for the PL deductions.
 #' @param standard_tax Use progressive tax (UoP) or linear tax (B2B)?
-#' @param incluse_slp2 Include Student Loan Plan 2 in the breakdown?
-#' @param incluse_slp3 Include Student Loan Plan 3 in the breakdown?
 #' @param user_data Use either default setting for the UK (\code{NULL}) or the
 #' data supplied by the user.
 #'
@@ -110,8 +108,6 @@ pl_deduction_types <- tibble::tribble(
 #'    annual_earnings = c(70000, 80000, 90000),
 #'    alpha_scheme    = TRUE,
 #'    standard_tax    = TRUE,
-#'    incluse_slp2    = TRUE,
-#'    incluse_slp3    = TRUE,
 #'    user_data       = NULL
 #' )$df_deductions_category_wide
 #' }
@@ -119,8 +115,6 @@ calc_pl_deductions <- function(
     annual_earnings,
     alpha_scheme  = TRUE,
     standard_tax  = TRUE,
-    incluse_slp2  = TRUE,
-    incluse_slp3  = TRUE,
     user_data     = NULL
 ) {
   # Do some basic checks of the input
@@ -185,19 +179,14 @@ calc_pl_deductions <- function(
   }
 
   # Student Loans ----
-  if (incluse_slp2) {
-    sl_plan2_deduction <- ifelse(
-      annual_earnings <= sl_plan2_value, 0,
-      (annual_earnings - sl_plan2_value) * sl_plan2_rate
-    )
-  } else sl_plan2_deduction <- 0
-  if (incluse_slp3) {
-    sl_plan3_deduction <- ifelse(
-      annual_earnings <= sl_plan3_value, 0,
-      (annual_earnings - sl_plan3_value) * sl_plan3_rate
-    )
-  } else sl_plan3_deduction <- 0
-
+  sl_plan2_deduction <- ifelse(
+    annual_earnings <= sl_plan2_value, 0,
+    (annual_earnings - sl_plan2_value) * sl_plan2_rate
+  )
+  sl_plan3_deduction <- ifelse(
+    annual_earnings <= sl_plan3_value, 0,
+    (annual_earnings - sl_plan3_value) * sl_plan3_rate
+  )
 
   # Net Income ----
   net_income <- annual_earnings - (emerytalna_deduction + ppk_deduction + rentowa_deduction + chorobowa_deduction + zdrowotna_deduction + tax_deduction + sl_plan2_deduction + sl_plan3_deduction)
