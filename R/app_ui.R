@@ -8,21 +8,33 @@ app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
     bslib::page_fluid(
+      theme = app_theme,
       h1("analysePay"),
 
       bslib::layout_columns(
         col_widths = c(6, 6),
-        shiny::selectInput(
-          inputId = "select_country_from",
-          label = "Base",
-          choices = c("United Kingdom" = "uk", "Poland" = "pl"),
-          selected = NULL
+
+        shinyWidgets::pickerInput(
+          inputId    = "select_country_from",
+          label      = "Base",
+          selected   = NULL,
+          choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
+          choicesOpt = list(content = purrr::map2(
+            c("fi fi-gb", "fi fi-pl"),
+            c("United Kingdom", "Poland"),
+            picker_options_with_flags
+          ))
         ),
-        shiny::selectInput(
-          inputId = "select_country_to",
-          label = "Target",
-          choices = c("United Kingdom" = "uk", "Poland" = "pl"),
-          selected = NULL
+        shinyWidgets::pickerInput(
+          inputId    = "select_country_to",
+          label      = "Target",
+          selected   = NULL,
+          choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
+          choicesOpt = list(content = purrr::map2(
+            c("fi fi-gb", "fi fi-pl"),
+            c("United Kingdom", "Poland"),
+            picker_options_with_flags
+          ))
         )
       ),
       uiOutput("ui_settings"),

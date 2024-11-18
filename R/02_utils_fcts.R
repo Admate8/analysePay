@@ -35,3 +35,14 @@ get_hex_colour_shade <- function(hex_color, factor = 0.2) {
 #' @noRd
 `%notin%` <- Negate(`%in%`)
 
+
+#' Add Flags to the pickerInput Options
+#'
+#' @param flag_class Class name, e.g. 'fi fi-pl'.
+#' @param country Country name.
+picker_options_with_flags <- function(flag_class, country) {
+  shiny::HTML(paste(
+    tags$span(class = flag_class, width = 30, height = 22),
+    country
+  ))
+}

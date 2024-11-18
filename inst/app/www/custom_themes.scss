@@ -1,0 +1,17 @@
+$custom-color: #1A1A1A;
+
+@import url('https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css');
+
+.fi{
+  border-radius: 5px;
+}
+
+.accordion-item{
+  border-radius: 25px;
+  overflow: hidden;
+  background-color: $custom-color;
+}
+
+.selectize-input{
+  color: $body-color !important;
+}

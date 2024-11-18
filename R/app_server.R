@@ -6,7 +6,6 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-
   settings_from <- NULL
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
@@ -55,7 +54,7 @@ app_server <- function(input, output, session) {
 
     list(
       "from_wide" = base::get(function_from_name)(
-        annual_earnings = c(50000, 55000, 60000),
+        annual_earnings = c(50000, 55000, 90000),
         alpha_scheme = settings_from()$pension$alpha_scheme,
         standard_tax = settings_from()$tax$standard_tax,
         user_data = settings_from()
