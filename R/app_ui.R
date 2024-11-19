@@ -9,32 +9,51 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     bslib::page_fluid(
       theme = app_theme,
-      h1("analysePay"),
+
+      tags$div(
+        class = "header-welcome-page",
+        tags$div(
+          style = "width: 50%;",
+          h1("analysePay", class = "display-1"), br(), br(),
+          stringi::stri_rand_lipsum(1)
+        ),
+
+        tags$span(class = "add-attribution", "Background by SVGBackgrounds.com")
+      ),
+
 
       bslib::layout_columns(
-        col_widths = c(6, 6),
+        col_widths = c(-2, 4, 4, -2),
 
-        shinyWidgets::pickerInput(
-          inputId    = "select_country_from",
-          label      = "Base",
-          selected   = NULL,
-          choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
-          choicesOpt = list(content = purrr::map2(
-            c("fi fi-gb", "fi fi-pl"),
-            c("United Kingdom", "Poland"),
-            picker_options_with_flags
-          ))
+        bslib::layout_columns(
+          col_widths = c(-2, 8, -2),
+          shinyWidgets::pickerInput(
+            inputId    = "select_country_from",
+            label      = tags$h1("Base", class = "display-6"),
+            selected   = NULL,
+            choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
+            choicesOpt = list(content = purrr::map2(
+              c("fi fi-gb", "fi fi-pl"),
+              c("United Kingdom", "Poland"),
+              picker_options_with_flags
+            ))
+          ) |>
+            tags$div(style = "text-align: center;")
         ),
-        shinyWidgets::pickerInput(
-          inputId    = "select_country_to",
-          label      = "Target",
-          selected   = NULL,
-          choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
-          choicesOpt = list(content = purrr::map2(
-            c("fi fi-gb", "fi fi-pl"),
-            c("United Kingdom", "Poland"),
-            picker_options_with_flags
-          ))
+        bslib::layout_columns(
+          col_widths = c(-2, 8, -2),
+          shinyWidgets::pickerInput(
+            inputId    = "select_country_to",
+            label      = tags$h1("Target", class = "display-6"),
+            selected   = NULL,
+            choices    = c("United Kingdom" = "uk", "Poland" = "pl"),
+            choicesOpt = list(content = purrr::map2(
+              c("fi fi-gb", "fi fi-pl"),
+              c("United Kingdom", "Poland"),
+              picker_options_with_flags
+            ))
+          ) |>
+            tags$div(style = "text-align: center;")
         )
       ),
       uiOutput("ui_settings"),
@@ -45,7 +64,7 @@ app_ui <- function(request) {
       ),
 
       bslib::layout_columns(
-        col_widths = c(6, 6),
+        col_widths = c(-2, 4, 4, -2),
         textOutput("test_output1"),
         textOutput("test_output2")
       ),
@@ -53,7 +72,9 @@ app_ui <- function(request) {
         col_widths = c(6, 6),
         reactable::reactableOutput("test_table1"),
         reactable::reactableOutput("test_table2")
-      )
+      ),
+
+      echarts4r::echarts4rOutput("test_plot")
 
     )
   )

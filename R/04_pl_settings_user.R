@@ -1,136 +1,143 @@
 plSettingsUserUI <- function(id) {
 
-  bslib::layout_columns(
-    col_widths = c(-4, 4, -4, 12),
+  bslib::accordion(
+    multiple = FALSE,
+    width    = "100%",
+    open     = FALSE,
 
-    shinyWidgets::switchInput(
-      label     = "Linear or step tax system?",
-      inputId   = shiny::NS(id, "select_extra_settings_pl"),
-      onLabel   = "Step",
-      offLabel  = "Linear",
-      value     = TRUE,
-      labelWidth = "100%"
+    # Pension ----
+    bslib::accordion_panel(
+      title = "Pension",
+      value = "accordion-pension",
+      icon  = icon("piggy-bank", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Pension - Mandatory',]$col }")),
+
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
+        label = "State Pension",
+        value = analysePay::pl_settings$pension$sk_emerytalna$rate
+      ),
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_sk_ppk_rate"),
+        label = "PPK",
+        value = analysePay::pl_settings$pension$ppk$rate
+      )
     ),
 
-    bslib::accordion(
-      multiple = FALSE,
-      width = "100%",
-      open = FALSE,
+    # Insurance ----
+    bslib::accordion_panel(
+      title = "Insurance",
+      value = "accordion-insurance",
+      icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
 
-      # Pension ----
-      bslib::accordion_panel(
-        title = "Pension",
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_sk_rentowa_rate"),
+        label = "Social Insurance",
+        value = analysePay::pl_settings$insurance$sk_rentowa$rate
+      ),
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
+        label = "Ilness Insurance",
+        value = analysePay::pl_settings$insurance$sk_chorobowa$rate
+      ),
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
+        label = "Health Insurance",
+        value = analysePay::pl_settings$insurance$sk_zdrowotna$rate
+      )
+    ),
+
+    # Tax ----
+    bslib::accordion_panel(
+      title = "Tax",
+      value = "accordion-tax",
+      icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
+
+      shinyWidgets::materialSwitch(
+        label     = "Step tax?",
+        inputId   = shiny::NS(id, "select_extra_settings_pl"),
+        value     = TRUE,
+        width     = "100%"
+      ),
+
+      shiny::conditionalPanel(
+        condition = "input.select_extra_settings_pl == 0",
+        ns        = shiny::NS(id),
+
         shiny::numericInput(
-          inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
-          label = "State Pension",
-          value = analysePay::pl_settings$pension$sk_emerytalna$rate
-        ),
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_sk_ppk_rate"),
-          label = "PPK",
-          value = analysePay::pl_settings$pension$ppk$rate
+          inputId = shiny::NS(id, "select_pl_tax_rate"),
+          label = "Linear Tax",
+          value = analysePay::pl_settings$tax$liniowy$rate
         )
       ),
 
-      # Insurance ----
-      bslib::accordion_panel(
-        title = "Insurance",
+      shiny::conditionalPanel(
+        condition = "input.select_extra_settings_pl == 1",
+        ns        = shiny::NS(id),
+
         shiny::numericInput(
-          inputId = shiny::NS(id, "select_sk_rentowa_rate"),
-          label = "Social Insurance",
-          value = analysePay::pl_settings$insurance$sk_rentowa$rate
+          inputId = shiny::NS(id, "select_pl_tax_rate_1"),
+          label = "Step Tax Lower",
+          value = analysePay::pl_settings$tax$stopniowy$rate_1
         ),
         shiny::numericInput(
-          inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
-          label = "Ilness Insurance",
-          value = analysePay::pl_settings$insurance$sk_chorobowa$rate
+          inputId = shiny::NS(id, "select_pl_tax_rate_2"),
+          label = "Step Tax Middle",
+          value = analysePay::pl_settings$tax$stopniowy$rate_2
         ),
         shiny::numericInput(
-          inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
-          label = "Health Insurance",
-          value = analysePay::pl_settings$insurance$sk_zdrowotna$rate
+          inputId = shiny::NS(id, "select_pl_tax_rate_3"),
+          label = "Step Tax Upper",
+          value = analysePay::pl_settings$tax$stopniowy$rate_3
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_pl_tax_value_1"),
+          label = "Threshold Lower",
+          value = analysePay::pl_settings$tax$stopniowy$value_1
+        ),
+        shiny::numericInput(
+          inputId = shiny::NS(id, "select_pl_tax_value_2"),
+          label = "Threshold Upper",
+          value = analysePay::pl_settings$tax$stopniowy$value_2
         )
+      )
+    ),
+
+    # Student Loan Plan 2 ----
+    bslib::accordion_panel(
+      title = "Student Loan Plan 2",
+      value = "accordion-slp2",
+      icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
+
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_pl_slp2_rate"),
+        label = "Rate",
+        value = analysePay::pl_settings$sl_plan2$rate
       ),
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_pl_slp2_value"),
+        label = "Threshold",
+        value = analysePay::pl_settings$sl_plan2$value
+      )
+    ),
 
-      # Tax ----
-      bslib::accordion_panel(
-        title = "Tax",
+    # Student Loan Plan 3 ----
+    bslib::accordion_panel(
+      title = "Student Loan Plan 3",
+      value = "accordion-slp2",
+      icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
 
-        shiny::conditionalPanel(
-          condition = "input.select_extra_settings_pl == 0",
-          ns        = shiny::NS(id),
-
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_rate"),
-            label = "Linear Tax",
-            value = analysePay::pl_settings$tax$liniowy$rate
-          )
-        ),
-
-        shiny::conditionalPanel(
-          condition = "input.select_extra_settings_pl == 1",
-          ns        = shiny::NS(id),
-
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_rate_1"),
-            label = "Step Tax Lower",
-            value = analysePay::pl_settings$tax$stopniowy$rate_1
-          ),
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_rate_2"),
-            label = "Step Tax Middle",
-            value = analysePay::pl_settings$tax$stopniowy$rate_2
-          ),
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_rate_3"),
-            label = "Step Tax Upper",
-            value = analysePay::pl_settings$tax$stopniowy$rate_3
-          ),
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_value_1"),
-            label = "Threshold Lower",
-            value = analysePay::pl_settings$tax$stopniowy$value_1
-          ),
-          shiny::numericInput(
-            inputId = shiny::NS(id, "select_pl_tax_value_2"),
-            label = "Threshold Upper",
-            value = analysePay::pl_settings$tax$stopniowy$value_2
-          )
-        )
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_pl_slp3_rate"),
+        label = "Rate",
+        value = analysePay::pl_settings$sl_plan3$rate
       ),
-
-      # Student Loan Plan 2 ----
-      bslib::accordion_panel(
-        title = "Student Loan Plan 2",
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_pl_slp2_rate"),
-          label = "Rate",
-          value = analysePay::pl_settings$sl_plan2$rate
-        ),
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_pl_slp2_value"),
-          label = "Threshold",
-          value = analysePay::pl_settings$sl_plan2$value
-        )
-      ),
-
-      # Student Loan Plan 3 ----
-      bslib::accordion_panel(
-        title = "Student Loan Plan 3",
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_pl_slp3_rate"),
-          label = "Rate",
-          value = analysePay::pl_settings$sl_plan3$rate
-        ),
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_pl_slp3_value"),
-          label = "Threshold",
-          value = analysePay::pl_settings$sl_plan3$value
-        )
+      shiny::numericInput(
+        inputId = shiny::NS(id, "select_pl_slp3_value"),
+        label = "Threshold",
+        value = analysePay::pl_settings$sl_plan3$value
       )
     )
   )
-
 }
 
 

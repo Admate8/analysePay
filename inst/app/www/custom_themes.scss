@@ -1,17 +1,100 @@
-$custom-color: #1A1A1A;
+$pension-col: #0077CC;
+$insurace-col: #FF5733;
+$tax-col: #E63946;
+$sl-col: #9B4DCA;
 
+/* Imprt the country icons and customise them */
 @import url('https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css');
 
-.fi{
+.fi {
   border-radius: 5px;
 }
 
-.accordion-item{
+
+/* Customise accordions */
+.accordion-item {
   border-radius: 25px;
   overflow: hidden;
-  background-color: $custom-color;
+  background-color: $body-tertiary-bg;
+  transition: margin 0.3s ease;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.selectize-input{
-  color: $body-color !important;
+[data-value="accordion-pension"] {
+  box-shadow: 0 0 10px $pension-col;
+  border-color: $pension-col;
+  transition: box-shadow 0.3s ease-in-out;
+  .accordion-header{
+    border-bottom: 1px solid $pension-col;
+  }
 }
+[data-value="accordion-insurance"] {
+  box-shadow: 0 0 10px $insurace-col;
+  border-color: $insurace-col;
+  transition: box-shadow 0.3s ease-in-out;
+  .accordion-header{
+    border-bottom: 1px solid $insurace-col;
+  }
+}
+[data-value="accordion-tax"] {
+  box-shadow: 0 0 10px $tax-col;
+  border-color: $tax-col;
+  transition: box-shadow 0.3s ease-in-out;
+  .accordion-header{
+    border-bottom: 1px solid $tax-col;
+  }
+}
+[data-value="accordion-slp2"] {
+  box-shadow: 0 0 10px $sl-col;
+  border-color: $sl-col;
+  transition: box-shadow 0.3s ease-in-out;
+  .accordion-header{
+    border-bottom: 1px solid $sl-col;
+  }
+}
+[data-value="accordion-slp3"] {
+  box-shadow: 0 0 10px $sl-col;
+  border-color: $sl-col;
+  transition: box-shadow 0.3s ease-in-out;
+  .accordion-header{
+    border-bottom: 1px solid $sl-col;
+  }
+}
+
+
+
+
+.dropdown-menu > li.active > a {
+  color: $body-color;
+  text-decoration: none;
+  background-color: $primary;
+}
+
+
+.header-welcome-page {
+  background-image: url( '../www/bg_prism.svg' );
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-sizing: border-box;
+
+  width: calc(100% + 24px);
+  margin-left: -12px;
+  position: relative;
+  height: 500px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-attribution{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 12px;
+  font-size: 0.5rem;
+  opacity: 0.5;
+}
+
+
