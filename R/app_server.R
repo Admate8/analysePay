@@ -48,6 +48,7 @@ app_server <- function(input, output, session) {
     settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
 
     iv_from <<- base::get(server_settings_from_name)(ns_from())$iv
+    iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
 
   df_deductions <- eventReactive(input$commit_input_data, {
@@ -79,4 +80,6 @@ app_server <- function(input, output, session) {
   output$test_table2 <- reactable::renderReactable({reactable::reactable(df_deductions()$to_wide)})
 
   output$test_iv_from <- renderText({iv_from$is_valid()})
+  output$test_iv_to <- renderText({iv_to$is_valid()})
+  output$test_both_ivs <- renderText({all(iv_from$is_valid(), iv_to$is_valid())})
 }

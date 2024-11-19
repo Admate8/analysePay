@@ -75,6 +75,8 @@ app_ui <- function(request) {
       ),
 
       textOutput("test_iv_from"),
+      textOutput("test_iv_to"),
+      textOutput("test_both_ivs"),
       echarts4r::echarts4rOutput("test_plot")
 
     )

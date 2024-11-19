@@ -186,15 +186,15 @@ $sl-col: #9B4DCA;
   }
 }
 
-/* SL Plan 2 */
+/* Student Loans */
 [id="1-select_uk_slp2_rate"],
 [id="2-select_uk_slp2_rate"],
 [id="1-select_uk_slp3_rate"],
 [id="2-select_uk_slp3_rate"],
 [id="1-select_pl_slp2_rate"],
 [id="2-select_pl_slp2_rate"],
-[id="1-select_uk_slp2_rate"],
-[id="2-select_pl_slp2_rate"] {
+[id="1-select_pl_slp3_rate"],
+[id="2-select_pl_slp3_rate"] {
   background: $sl-col !important;
   border-radius: 4px !important;
   border: 2px solid $sl-col !important;
@@ -273,15 +273,7 @@ $sl-col: #9B4DCA;
     border-bottom: 1px solid $tax-col;
   }
 }
-[data-value="accordion-slp2"] {
-  box-shadow: 0 0 10px $sl-col;
-  border-color: $sl-col;
-  transition: box-shadow 0.3s ease-in-out;
-  .accordion-header{
-    border-bottom: 1px solid $sl-col;
-  }
-}
-[data-value="accordion-slp3"] {
+[data-value="accordion-sl"] {
   box-shadow: 0 0 10px $sl-col;
   border-color: $sl-col;
   transition: box-shadow 0.3s ease-in-out;

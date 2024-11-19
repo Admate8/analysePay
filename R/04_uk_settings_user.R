@@ -222,65 +222,64 @@ ukSettingsUserUI <- function(id) {
         )
       ),
 
-      # Student Loan Plan 2 ----
+      # Student Loans ----
       bslib::accordion_panel(
-        title = tags$strong("Student Loan Plan 2"),
-        value = "accordion-slp2",
+        title = tags$strong("Student Loans"),
+        value = "accordion-sl",
         icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
 
-        tags$h4("Contribution Rate"), br(),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_uk_slp2_rate"),
-          label   = NULL,
-          min     = 0,
-          max     = 15,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::uk_settings$sl_plan2$rate
-        ), br(),
+        bslib::layout_columns(
+          col_widths = c(12, 6, 6),
+          tags$h4("Contribution Rates"),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_uk_slp2_rate"),
+            label   = "Plan 2",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::uk_settings$sl_plan2$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_uk_slp3_rate"),
+            label   = "Plan 3",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::uk_settings$sl_plan3$rate
+          )
+        ),
 
-        tags$h4("Repayment Threshold"),
-        shinyWidgets::autonumericInput(
-          inputId                 = shiny::NS(id, "select_uk_slp2_value"),
-          label                   = NULL,
-          value                   = analysePay::uk_settings$sl_plan2$value,
-          currencySymbol          = "\U00A3",
-          currencySymbolPlacement = "p",
-          decimalCharacter        = ".",
-          digitGroupSeparator     = ",",
-          minimumValue            = 0,
-          maximumValue            = 200000,
-          style                   = "text-align: center; width: 100%;"
-        )
-        # shiny::numericInput(
-        #   inputId = shiny::NS(id, "select_uk_slp2_value"),
-        #   label = "Threshold",
-        #   value = analysePay::uk_settings$sl_plan2$value
-        # )
-      ),
-
-      # Student Loan Plan 3 ----
-      bslib::accordion_panel(
-        title = tags$strong("Student Loan Plan 3"),
-        value = "accordion-slp3",
-        icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
-
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_uk_slp3_rate"),
-          label   = "Contribution Rate",
-          min     = 0,
-          max     = 15,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::uk_settings$sl_plan3$rate
-        ), br(),
-
-        shiny::numericInput(
-          inputId = shiny::NS(id, "select_uk_slp3_value"),
-          label = "Threshold",
-          value = analysePay::uk_settings$sl_plan3$value
+        bslib::layout_columns(
+          col_widths = c(12, 6, 6),
+          tags$h4("Repayment Thresholds"),
+          shinyWidgets::autonumericInput(
+            inputId                 = shiny::NS(id, "select_uk_slp2_value"),
+            label                   = "Plan 2",
+            value                   = analysePay::uk_settings$sl_plan2$value,
+            currencySymbol          = "\U00A3",
+            currencySymbolPlacement = "p",
+            decimalCharacter        = ".",
+            digitGroupSeparator     = ",",
+            minimumValue            = 0,
+            maximumValue            = 200000,
+            style                   = "text-align: center; width: 100%;"
+          ),
+          shinyWidgets::autonumericInput(
+            inputId                 = shiny::NS(id, "select_uk_slp3_value"),
+            label                   = "Plan 3",
+            value                   = analysePay::uk_settings$sl_plan3$value,
+            currencySymbol          = "\U00A3",
+            currencySymbolPlacement = "p",
+            decimalCharacter        = ".",
+            digitGroupSeparator     = ",",
+            minimumValue            = 0,
+            maximumValue            = 200000,
+            style                   = "text-align: center; width: 100%;"
+          )
         )
       )
     )
@@ -355,7 +354,7 @@ ukSettingsUserServer <- function(id) {
     iv$enable()
 
     list(
-      "iv" = iv,
+      "iv"       = iv,
       "settings" = reactive({list(
         "pension" = list(
           "alpha_scheme"  = input$select_extra_settings_uk,
@@ -370,7 +369,9 @@ ukSettingsUserServer <- function(id) {
         ),
 
         "insurance" = list(
-          # Note that 2<->3 because the additional rate is only 2%
+          # Note that [[2]] <-> [[3]] because the additional rate is only 2%
+          # which is smaller than the base rate of 8% and at the time of developing
+          # the code, noUiSliderInput doesn't allow 'unconditional' behaviour.
           "rate_1"  = input$select_uk_ni_rates[[1]] / 100,
           "rate_2"  = input$select_uk_ni_rates[[3]] / 100,
           "rate_3"  = input$select_uk_ni_rates[[2]] / 100,
@@ -379,7 +380,7 @@ ukSettingsUserServer <- function(id) {
         ),
 
         "tax" = list(
-          "standard_tax" = TRUE, # NOT IN USE
+          "standard_tax" = TRUE, # NOT IN USE FOR UK
           "rate_1"       = input$select_uk_tax_rates[[1]] / 100,
           "rate_2"       = input$select_uk_tax_rates[[2]] / 100,
           "rate_3"       = input$select_uk_tax_rates[[3]] / 100,
