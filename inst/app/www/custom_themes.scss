@@ -1,14 +1,242 @@
 $pension-col: #0077CC;
-$insurace-col: #FF5733;
+$insurance-col: #FF5733;
 $tax-col: #E63946;
 $sl-col: #9B4DCA;
 
-/* Imprt the country icons and customise them */
+/* Import the country icons and customise them */
 @import url('https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css');
 
 .fi {
   border-radius: 5px;
 }
+
+
+
+/* Customise noUiSliders */
+/* Category-wide specific customisation */
+/* Make sure the prefix matches the module NS */
+/* Pension */
+[id="1-select_uk_alpha_rates"],
+[id="2-select_uk_alpha_rates"] {
+  background: $pension-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $pension-col !important;
+  box-shadow: 0 0 10px $pension-col !important;
+
+  .noUi-connect {
+    background: $pension-col !important;
+  }
+
+  [data-handle="0"] {
+    .noUi-tooltip:before {
+      content: "Lower: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="1"] {
+    .noUi-tooltip {
+      top: 20px !important;
+      bottom: -47px !important;
+    }
+    .noUi-tooltip:before {
+      content: "Basic: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="2"] {
+    .noUi-tooltip:before {
+      content: "Middle: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="3"] {
+    .noUi-tooltip {
+      top: 20px !important;
+      bottom: -47px !important;
+    }
+    .noUi-tooltip:before {
+      content: "Higher: \A" !important;
+      white-space: pre;
+    }
+  }
+}
+[id="1-select_uk_pension_rate"],
+[id="2-select_uk_pension_rate"],
+[id="1-select_sk_emerytalna_rate"],
+[id="2-select_sk_emerytalna_rate"],
+[id="1-select_sk_ppk_rate"],
+[id="2-select_sk_ppk_rate"] {
+  background: $pension-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $pension-col !important;
+  box-shadow: 0 0 10px $pension-col !important;
+
+  .noUi-connect {
+    background: $pension-col !important;
+  }
+}
+
+/* Insurance */
+[id="1-select_uk_ni_rates"],
+[id="2-select_uk_ni_rates"] {
+  background: $insurance-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $insurance-col !important;
+  box-shadow: 0 0 10px $insurance-col !important;
+
+  .noUi-connect {
+    background: $insurance-col !important;
+  }
+
+  [data-handle="0"] {
+    .noUi-tooltip:before {
+      content: "Allowance: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="1"] {
+    .noUi-tooltip {
+      top: 20px !important;
+      bottom: -47px !important;
+    }
+    .noUi-tooltip:before {
+      content: "Additional: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="2"] {
+    .noUi-tooltip:before {
+      content: "Basic: \A" !important;
+      white-space: pre;
+    }
+  }
+}
+[id="1-select_sk_rentowa_rate"],
+[id="2-select_sk_rentowa_rate"],
+[id="1-select_sk_chorobowa_rate"],
+[id="2-select_sk_chorobowa_rate"],
+[id="1-select_sk_zdrowotna_rate"],
+[id="2-select_sk_zdrowotna_rate"] {
+  background: $insurance-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $insurance-col !important;
+  box-shadow: 0 0 10px $insurance-col !important;
+
+  .noUi-connect {
+    background: $insurance-col !important;
+  }
+}
+
+/* Tax */
+[id="1-select_uk_tax_rates"],
+[id="2-select_uk_tax_rates"],
+[id="1-select_pl_tax_rates"],
+[id="2-select_pl_tax_rates"] {
+  background: $tax-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $tax-col !important;
+  box-shadow: 0 0 10px $tax-col !important;
+
+  .noUi-connect {
+    background: $tax-col !important;
+  }
+
+  [data-handle="0"] {
+    .noUi-tooltip:before {
+      content: "Allowance: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="1"] {
+    .noUi-tooltip {
+      top: 20px !important;
+      bottom: -47px !important;
+    }
+    .noUi-tooltip:before {
+      content: "Basic: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="2"] {
+    .noUi-tooltip:before {
+      content: "Higher: \A" !important;
+      white-space: pre;
+    }
+  }
+  [data-handle="3"] {
+    .noUi-tooltip {
+      top: 20px !important;
+      bottom: -47px !important;
+    }
+    .noUi-tooltip:before {
+      content: "Additional: \A" !important;
+      white-space: pre;
+    }
+  }
+}
+[id="1-select_pl_tax_rate"],
+[id="2-select_pl_tax_rate"] {
+  background: $tax-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $tax-col !important;
+  box-shadow: 0 0 10px $tax-col !important;
+
+  .noUi-connect {
+    background: $tax-col !important;
+  }
+}
+
+/* SL Plan 2 */
+[id="1-select_uk_slp2_rate"],
+[id="2-select_uk_slp2_rate"],
+[id="1-select_uk_slp3_rate"],
+[id="2-select_uk_slp3_rate"],
+[id="1-select_pl_slp2_rate"],
+[id="2-select_pl_slp2_rate"],
+[id="1-select_uk_slp2_rate"],
+[id="2-select_pl_slp2_rate"] {
+  background: $sl-col !important;
+  border-radius: 4px !important;
+  border: 2px solid $sl-col !important;
+  box-shadow: 0 0 10px $sl-col !important;
+
+  .noUi-connect {
+    background: $sl-col !important;
+  }
+}
+
+/* General options */
+.noUi-handle {
+  border: $body-color !important;
+  background: $body-color !important;
+  box-shadow: none !important;
+  height: 18px !important;
+  width: 8px !important;
+  top: -5px !important;
+  right: -5px !important;
+}
+
+.noUi-horizontal {
+  height: 9px !important;
+}
+.noUi-handle::before, .noUi-handle::after {
+  width: 1px !important;
+  background: $body-color !important;
+  top: 2px !important;
+  left: 3.5px !important;
+  right: 0px !important;
+}
+.noUi-tooltip {
+  background: $body-color !important;
+  color: $body-bg !important;
+  font-size: 0.75rem !important;
+  border-radius: 5px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+
+
+
 
 
 /* Customise accordions */
@@ -30,11 +258,11 @@ $sl-col: #9B4DCA;
   }
 }
 [data-value="accordion-insurance"] {
-  box-shadow: 0 0 10px $insurace-col;
-  border-color: $insurace-col;
+  box-shadow: 0 0 10px $insurance-col;
+  border-color: $insurance-col;
   transition: box-shadow 0.3s ease-in-out;
   .accordion-header{
-    border-bottom: 1px solid $insurace-col;
+    border-bottom: 1px solid $insurance-col;
   }
 }
 [data-value="accordion-tax"] {
@@ -63,8 +291,7 @@ $sl-col: #9B4DCA;
 }
 
 
-
-
+/* Customise pickerInput */
 .dropdown-menu > li.active > a {
   color: $body-color;
   text-decoration: none;
@@ -72,6 +299,7 @@ $sl-col: #9B4DCA;
 }
 
 
+/* Add the welcome section */
 .header-welcome-page {
   background-image: url( '../www/bg_prism.svg' );
   background-repeat: no-repeat;

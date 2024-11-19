@@ -3,8 +3,8 @@ palette_global <- list(
   "body_secondary_bg" = "#2A2A2A",
   "body_tertiary_bg"  = "#3A3A3A",
 
-  "body_color"        = "#E0E0E0",
-  "primary"           = "#45B7D1"
+  "body_color"        = "#E0E0E0"
+  #"primary"           = "#45B7D1"
 )
 
 app_theme <- bslib::bs_theme(
@@ -12,7 +12,7 @@ app_theme <- bslib::bs_theme(
   "body-secondary-bg" = palette_global$body_secondary_bg,
   "body-tertiary-bg"  = palette_global$body_tertiary_bg,
   "body-color"        = palette_global$body_color,
-  "primary"           = palette_global$primary,
+  "primary"           = palette_global$body_tertiary_bg,
   "accordion-icon-active-color" = palette_global$body_color,
 
   "accordion-border-radius" = "25px"
