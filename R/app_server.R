@@ -10,6 +10,10 @@ app_server <- function(input, output, session) {
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
   makeReactiveBinding("settings_to")
+  makeReactiveBinding("iv_from")
+  makeReactiveBinding("iv_to")
+  ns_from <- reactiveVal("1")
+  ns_to   <- reactiveVal("1")
 
   # Update country_from and country_to settings depending on the user's selection
   observeEvent(c(input$select_country_from, input$select_country_to), {
@@ -18,11 +22,8 @@ app_server <- function(input, output, session) {
     # are independent, i.e. they have different namespaces. Otherwise, it does
     # not matter
     if (input$select_country_from == input$select_country_to) {
-      ns_from <- "1"
-      ns_to   <- "2"
-    } else {
-      ns_from <- "1"
-      ns_to   <- "1"
+      ns_from("1")
+      ns_to("2")
     }
 
     # Update the UI
@@ -32,8 +33,8 @@ app_server <- function(input, output, session) {
     output$ui_settings <- renderUI({
       bslib::layout_columns(
         col_widths = c(-2, 4, 4, -2),
-        base::get(ui_settings_from_name)(ns_from),
-        base::get(ui_settings_to_name)(ns_to)
+        base::get(ui_settings_from_name)(ns_from()),
+        base::get(ui_settings_to_name)(ns_to())
       )
     })
 
@@ -43,8 +44,10 @@ app_server <- function(input, output, session) {
     server_settings_from_name <- paste0(input$select_country_from, "SettingsUserServer")
     server_settings_to_name   <- paste0(input$select_country_to, "SettingsUserServer")
 
-    settings_from <<- base::get(server_settings_from_name)(ns_from)
-    settings_to   <<- base::get(server_settings_to_name)(ns_to)
+    settings_from <<- base::get(server_settings_from_name)(ns_from())$settings
+    settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
+
+    iv_from <<- base::get(server_settings_from_name)(ns_from())$iv
   })
 
   df_deductions <- eventReactive(input$commit_input_data, {
@@ -75,4 +78,5 @@ app_server <- function(input, output, session) {
   output$test_table1 <- reactable::renderReactable({reactable::reactable(df_deductions()$from_wide)})
   output$test_table2 <- reactable::renderReactable({reactable::reactable(df_deductions()$to_wide)})
 
+  output$test_iv_from <- renderText({iv_from$is_valid()})
 }

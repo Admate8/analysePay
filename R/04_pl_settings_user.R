@@ -186,40 +186,43 @@ plSettingsUserUI <- function(id) {
 plSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    reactive({list(
-      "pension" = list(
-        "alpha_scheme"  = TRUE, # NOT IN USE
-        "sk_emerytalna" = list("rate" = input$select_sk_emerytalna_rate / 100),
-        "ppk"           = list("rate" = input$select_sk_ppk_rate / 100)
-      ),
+    list(
+      "settings" = reactive({list(
+        "pension" = list(
+          "alpha_scheme"  = TRUE, # NOT IN USE
+          "sk_emerytalna" = list("rate" = input$select_sk_emerytalna_rate / 100),
+          "ppk"           = list("rate" = input$select_sk_ppk_rate / 100)
+        ),
 
-      "insurance" = list(
-        "sk_rentowa"   = list("rate" = input$select_sk_rentowa_rate / 100),
-        "sk_chorobowa" = list("rate" = input$select_sk_chorobowa_rate / 100),
-        "sk_zdrowotna" = list("rate" = input$select_sk_zdrowotna_rate / 100)
-      ),
+        "insurance" = list(
+          "sk_rentowa"   = list("rate" = input$select_sk_rentowa_rate / 100),
+          "sk_chorobowa" = list("rate" = input$select_sk_chorobowa_rate / 100),
+          "sk_zdrowotna" = list("rate" = input$select_sk_zdrowotna_rate / 100)
+        ),
 
-      "tax" = list(
-        "standard_tax" = input$select_extra_settings_pl,
-        "liniowy"      = list("rate" = input$select_pl_tax_rate / 100),
-        "stopniowy"    = list(
-          "rate_1"     = input$select_pl_tax_rates[[1]] / 100,
-          "rate_2"     = input$select_pl_tax_rates[[2]] / 100,
-          "rate_3"     = input$select_pl_tax_rates[[3]] / 100,
-          "value_1"    = input$select_pl_tax_value_1,
-          "value_2"    = input$select_pl_tax_value_2
+        "tax" = list(
+          "standard_tax" = input$select_extra_settings_pl,
+          "liniowy"      = list("rate" = input$select_pl_tax_rate / 100),
+          "stopniowy"    = list(
+            "rate_1"     = input$select_pl_tax_rates[[1]] / 100,
+            "rate_2"     = input$select_pl_tax_rates[[2]] / 100,
+            "rate_3"     = input$select_pl_tax_rates[[3]] / 100,
+            "value_1"    = input$select_pl_tax_value_1,
+            "value_2"    = input$select_pl_tax_value_2
+          )
+        ),
+
+        "sl_plan2" = list(
+          "rate"  = input$select_pl_slp2_rate / 100,
+          "value" = input$select_pl_slp2_value
+        ),
+
+        "sl_plan3" = list(
+          "rate"  = input$select_pl_slp3_rate / 100,
+          "value" = input$select_pl_slp3_value
         )
-      ),
+      )})
+    )
 
-      "sl_plan2" = list(
-        "rate"  = input$select_pl_slp2_rate / 100,
-        "value" = input$select_pl_slp2_value
-      ),
-
-      "sl_plan3" = list(
-        "rate"  = input$select_pl_slp3_rate / 100,
-        "value" = input$select_pl_slp3_value
-      )
-    )})
   })
 }

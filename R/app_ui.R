@@ -74,6 +74,7 @@ app_ui <- function(request) {
         reactable::reactableOutput("test_table2")
       ),
 
+      textOutput("test_iv_from"),
       echarts4r::echarts4rOutput("test_plot")
 
     )
