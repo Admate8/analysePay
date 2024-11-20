@@ -25,7 +25,11 @@ ukSettingsUserUI <- function(id) {
         icon  = icon("piggy-bank", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Pension - Mandatory',]$col }")),
 
         shinyWidgets::materialSwitch(
-          label     = "Alpha pension scheme?",
+          label     = label_with_popover(
+            "Alpha pension scheme?",
+            "<a href='https://www.civilservicepensionscheme.org.uk' target='_blank'>Alpha Scheme</a>"
+
+          ),
           inputId   = shiny::NS(id, "select_extra_settings_uk"),
           value     = TRUE,
           width     = "100%"
@@ -35,7 +39,7 @@ ukSettingsUserUI <- function(id) {
           condition = "input.select_extra_settings_uk == 0",
           ns        = shiny::NS(id),
 
-          tags$h4("Contribution Rate"),
+          tags$h5("Contribution Rate"),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_pension_rate"),
             label   = NULL,
@@ -52,7 +56,10 @@ ukSettingsUserUI <- function(id) {
           condition = "input.select_extra_settings_uk == 1",
           ns        = shiny::NS(id),
 
-          tags$h4("Contribution Rates"), br(),
+          title_with_popover(
+            "Contribution Rates",
+            glue::glue("<a href={ analysePay::uk_settings$pension$source } target='_blank'>Find out more!</a>")
+          ), br(),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_alpha_rates"),
             label   = NULL,
@@ -71,7 +78,7 @@ ukSettingsUserUI <- function(id) {
 
           bslib::layout_columns(
             col_widths = c(12, 4, 4, 4),
-            tags$h4("Thresholds"),
+            tags$h5("Thresholds"),
             shinyWidgets::autonumericInput(
               inputId                 = shiny::NS(id, "select_uk_alpha_value_1"),
               label                   = "Lower",
@@ -116,7 +123,11 @@ ukSettingsUserUI <- function(id) {
         value = "accordion-insurance",
         icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
 
-        tags$h4("National Insurance Contribution Rates"), br(),
+        title_with_popover(
+          "National Insurance", size = 4,
+          glue::glue("<a href={ analysePay::uk_settings$insurance$source } target='_blank'>Find out more!</a>")
+        ),
+        tags$h5("Contribution Rates"), br(),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_uk_ni_rates"),
           label   = NULL,
@@ -134,7 +145,7 @@ ukSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Thresholds"),
+          tags$h5("Thresholds"),
           shinyWidgets::autonumericInput(
             inputId                 = shiny::NS(id, "select_uk_ni_value_1"),
             label                   = "Allowance",
@@ -167,7 +178,11 @@ ukSettingsUserUI <- function(id) {
         value = "accordion-tax",
         icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
 
-        tags$h4("Income Tax Contribution Rates"), br(),
+        title_with_popover(
+          "Income Tax", size = 4,
+          glue::glue("<a href={ analysePay::uk_settings$tax$source } target='_blank'>Find out more!</a>")
+        ),
+        tags$h5("Contribution Rates"), br(),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_uk_tax_rates"),
           label   = NULL,
@@ -186,7 +201,7 @@ ukSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 4, 4, 4),
-          tags$h4("Thresholds"),
+          tags$h5("Thresholds"),
           shinyWidgets::autonumericInput(
             inputId                 = shiny::NS(id, "select_uk_tax_value_1"),
             label                   = "Allowance",
@@ -232,7 +247,10 @@ ukSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Contribution Rates"),
+          title_with_popover(
+            "Contribution Rates",
+            glue::glue("<a href={ analysePay::uk_settings$sl_plan2$source } target='_blank'>Find out more!</a>")
+          ),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_slp2_rate"),
             label   = "Plan 2",
@@ -257,7 +275,7 @@ ukSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Repayment Thresholds"),
+          tags$h5("Repayment Thresholds"),
           shinyWidgets::autonumericInput(
             inputId                 = shiny::NS(id, "select_uk_slp2_value"),
             label                   = "Plan 2",

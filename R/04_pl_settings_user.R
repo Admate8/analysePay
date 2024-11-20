@@ -25,10 +25,13 @@ plSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Contribution Rates"),
+          tags$h5("Contribution Rates"),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
-            label   = "State Pension",
+            label   = label_with_popover(
+              "State Pension",
+              glue::glue("<a href={ analysePay::pl_settings$pension$sk_emerytalna$source } target='_blank'>Find out more!</a>")
+            ),
             min     = 0,
             max     = 15,
             step    = 0.01,
@@ -38,7 +41,10 @@ plSettingsUserUI <- function(id) {
           ),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_sk_ppk_rate"),
-            label   = "PPK",
+            label   = label_with_popover(
+              "PPK",
+              glue::glue("<a href={ analysePay::pl_settings$pension$ppk$source } target='_blank'>Find out more!</a>")
+            ),
             min     = 0,
             max     = 10,
             step    = 0.01,
@@ -55,7 +61,10 @@ plSettingsUserUI <- function(id) {
         value = "accordion-insurance",
         icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
 
-        tags$h4("Contribution Rates"),
+        title_with_popover(
+          "Contribution Rates", size = 5,
+          glue::glue("<a href={ analysePay::pl_settings$insurance$sk_rentowa$source } target='_blank'>Find out more!</a>")
+        ),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_sk_rentowa_rate"),
           label   = "Social Insurance (Rentowa)",
@@ -95,7 +104,10 @@ plSettingsUserUI <- function(id) {
         icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
 
         shinyWidgets::materialSwitch(
-          label     = "Step tax?",
+          label     = label_with_popover(
+            "Step tax?",
+            glue::glue("<a href={ analysePay::pl_settings$tax$stopniowy$source } target='_blank'>Find out more!</a>")
+          ),
           inputId   = shiny::NS(id, "select_extra_settings_pl"),
           value     = TRUE,
           width     = "100%"
@@ -105,9 +117,10 @@ plSettingsUserUI <- function(id) {
           condition = "input.select_extra_settings_pl == 0",
           ns        = shiny::NS(id),
 
+          tags$h5("Contribution Rate"),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_pl_tax_rate"),
-            label   = "Linear Tax Contribution Rate",
+            label   = NULL,
             min     = 0,
             max     = 35,
             step    = 0.01,
@@ -121,9 +134,10 @@ plSettingsUserUI <- function(id) {
           condition = "input.select_extra_settings_pl == 1",
           ns        = shiny::NS(id),
 
+          tags$h5("Contribution Rate"), br(),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_pl_tax_rates"),
-            label   = "Linear Tax Contribution Rate",
+            label   = NULL,
             min     = 0,
             max     = 50,
             step    = 0.01,
@@ -134,11 +148,11 @@ plSettingsUserUI <- function(id) {
               analysePay::pl_settings$tax$stopniowy$rate_2,
               analysePay::pl_settings$tax$stopniowy$rate_3
             )
-          ),
+          ), br(), br(),
 
           bslib::layout_columns(
             col_widths = c(12, 6, 6),
-            tags$h4("Repayment Thresholds"),
+            tags$h5("Thresholds"),
             shinyWidgets::autonumericInput(
               inputId                 = shiny::NS(id, "select_pl_tax_value_1"),
               label                   = "Allowance",
@@ -174,7 +188,10 @@ plSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Contribution Rates"),
+          title_with_popover(
+            "Contribution Rates", size = 5,
+            glue::glue("<a href={ analysePay::uk_settings$sl_plan2$source } target='_blank'>Find out more!</a>")
+          ),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_pl_slp2_rate"),
             label   = "Plan 2",
@@ -199,10 +216,13 @@ plSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          tags$h4("Repayment Thresholds"),
+          tags$h5("Repayment Thresholds"),
           shinyWidgets::autonumericInput(
             inputId                 = shiny::NS(id, "select_pl_slp2_value"),
-            label                   = "Plan 2",
+            label                   = label_with_popover(
+              "Plan 2",
+              glue::glue("<a href={ analysePay::pl_settings$sl_plan2$source } target='_blank'>Find out more!</a>")
+            ),
             value                   = analysePay::pl_settings$sl_plan2$value,
             currencySymbol          = "z\U0142",
             currencySymbolPlacement = "s",
@@ -214,7 +234,10 @@ plSettingsUserUI <- function(id) {
           ),
           shinyWidgets::autonumericInput(
             inputId                 = shiny::NS(id, "select_pl_slp3_value"),
-            label                   = "Plan 3",
+            label                   = label_with_popover(
+              "Plan 3",
+              glue::glue("<a href={ analysePay::pl_settings$sl_plan3$source } target='_blank'>Find out more!</a>")
+            ),
             value                   = analysePay::pl_settings$sl_plan3$value,
             currencySymbol          = "z\U0142",
             currencySymbolPlacement = "s",

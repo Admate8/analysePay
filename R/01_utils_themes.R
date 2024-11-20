@@ -16,6 +16,8 @@ app_theme <- bslib::bs_theme(
   "body-color-secondary"        = palette_global$body_color_secondary,
   "primary"                     = palette_global$body_tertiary_bg,
   "accordion-icon-active-color" = palette_global$body_color,
+  "btn-close-color"             = palette_global$body_color,
+  "link-color"                  = palette_global$body_color_secondary,
   "accordion-border-radius"     = "25px",
   "tooltip-border-radius"       = "25px",
   "tooltip-color"               = palette_global$body_color
