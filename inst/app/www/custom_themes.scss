@@ -277,6 +277,19 @@ $accordions: (
   border-color: $body-bg !important;
 }
 
+/* Customise the commit button */
+[id="commit_input_data"] {
+  border-radius: 25px;
+  background-color: $body-secondary-bg;
+  border-color: $body-color-secondary;
+  box-shadow: 0 0 10px $body-color-secondary;
+  transition: box-shadow 0.3s ease-in-out;
+  color: $body-color-secondary;
+}
+[id$="commit_input_data"]:hover {
+  background-color: $body-tertiary-bg;
+  color: $body-color;
+}
 
 
 /* Customise pickerInput */

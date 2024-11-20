@@ -58,9 +58,13 @@ app_ui <- function(request) {
       ),
       uiOutput("ui_settings"),
 
-      actionButton(
-        inputId = "commit_input_data",
-        label   = "Analyse!"
+      bslib::layout_columns(
+        col_widths = c(-5, 2, -5),
+        actionButton(
+          inputId = "commit_input_data",
+          label   = textOutput("commit_button_text"),
+          style   = "font-size: 1.5rem; padding-right: 11px; padding-left: 11px;"
+        )
       ),
 
       bslib::layout_columns(
@@ -100,6 +104,7 @@ golem_add_external_resources <- function() {
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "analysePay"
-    )
+    ),
+    shinyjs::useShinyjs()
   )
 }

@@ -6,6 +6,7 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
+  # Preserve inputs ----
   settings_from <- NULL
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
@@ -50,6 +51,20 @@ app_server <- function(input, output, session) {
     iv_from <<- base::get(server_settings_from_name)(ns_from())$iv
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
+
+  # Commit settings button ----
+  observe({
+    if (all(iv_from$is_valid(), iv_to$is_valid())) {
+      shinyjs::enable("commit_input_data")
+      output$commit_button_text <- renderText({"Analyse!"})
+    } else {
+      shinyjs::disable("commit_input_data")
+      output$commit_button_text <- renderText({"Invalid Settings!"})
+    }
+  })
+
+
+
 
   df_deductions <- eventReactive(input$commit_input_data, {
 
