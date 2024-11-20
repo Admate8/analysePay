@@ -1,126 +1,199 @@
 plSettingsUserUI <- function(id) {
 
-  bslib::accordion(
-    multiple = FALSE,
-    width    = "100%",
-    open     = FALSE,
+  tags$div(
+    tags$div(
+      style   = glue::glue("text-align-last: right;"),
+      actionButton(
+        inputId = shiny::NS(id, "restore_defaults_pl"),
+        label   = NULL,
+        icon    = shiny::icon("wrench", style = "font-size: 1.5rem;"),
+        width   = "26px"
+      ) |>
+        bslib::tooltip("Restore default settings", id = "tt_pl_settings")
+    ),
 
-    # Pension ----
-    bslib::accordion_panel(
-      title = tags$strong("Pension"),
-      value = "accordion-pension",
-      icon  = icon("piggy-bank", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Pension - Mandatory',]$col }")),
+    bslib::accordion(
+      multiple = FALSE,
+      width    = "100%",
+      open     = FALSE,
 
-      bslib::layout_columns(
-        col_widths = c(12, 6, 6),
+      # Pension ----
+      bslib::accordion_panel(
+        title = tags$strong("Pension"),
+        value = "accordion-pension",
+        icon  = icon("piggy-bank", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Pension - Mandatory',]$col }")),
+
+        bslib::layout_columns(
+          col_widths = c(12, 6, 6),
+          tags$h4("Contribution Rates"),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
+            label   = "State Pension",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_ppk_rate"),
+            label   = "PPK",
+            min     = 0,
+            max     = 10,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$pension$ppk$rate
+          )
+        )
+      ),
+
+      # Insurance ----
+      bslib::accordion_panel(
+        title = tags$strong("Insurance"),
+        value = "accordion-insurance",
+        icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
+
         tags$h4("Contribution Rates"),
         shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
-          label   = "State Pension",
+          inputId = shiny::NS(id, "select_sk_rentowa_rate"),
+          label   = "Social Insurance (Rentowa)",
+          min     = 0,
+          max     = 5,
+          step    = 0.01,
+          width   = "100%",
+          format  = shinyWidgets::wNumbFormat(suffix = "%"),
+          value   = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate
+        ),
+        shinyWidgets::noUiSliderInput(
+          inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
+          label   = "Ilness Insurance (Chorobowa)",
+          min     = 0,
+          max     = 5,
+          step    = 0.01,
+          width   = "100%",
+          format  = shinyWidgets::wNumbFormat(suffix = "%"),
+          value   = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate
+        ),
+        shinyWidgets::noUiSliderInput(
+          inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
+          label   = "Health Insurance (Zdrowotna)",
           min     = 0,
           max     = 15,
           step    = 0.01,
           width   = "100%",
           format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate
+          value   = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate
+        )
+      ),
+
+      # Tax ----
+      bslib::accordion_panel(
+        title = tags$strong("Tax"),
+        value = "accordion-tax",
+        icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
+
+        shinyWidgets::materialSwitch(
+          label     = "Step tax?",
+          inputId   = shiny::NS(id, "select_extra_settings_pl"),
+          value     = TRUE,
+          width     = "100%"
         ),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_sk_ppk_rate"),
-          label   = "PPK",
-          min     = 0,
-          max     = 10,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$pension$ppk$rate
-        )
-      )
-    ),
 
-    # Insurance ----
-    bslib::accordion_panel(
-      title = tags$strong("Insurance"),
-      value = "accordion-insurance",
-      icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
+        shiny::conditionalPanel(
+          condition = "input.select_extra_settings_pl == 0",
+          ns        = shiny::NS(id),
 
-      tags$h4("Contribution Rates"),
-      shinyWidgets::noUiSliderInput(
-        inputId = shiny::NS(id, "select_sk_rentowa_rate"),
-        label   = "Social Insurance (Rentowa)",
-        min     = 0,
-        max     = 5,
-        step    = 0.01,
-        width   = "100%",
-        format  = shinyWidgets::wNumbFormat(suffix = "%"),
-        value   = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate
-      ),
-      shinyWidgets::noUiSliderInput(
-        inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
-        label   = "Ilness Insurance (Chorobowa)",
-        min     = 0,
-        max     = 5,
-        step    = 0.01,
-        width   = "100%",
-        format  = shinyWidgets::wNumbFormat(suffix = "%"),
-        value   = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate
-      ),
-      shinyWidgets::noUiSliderInput(
-        inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
-        label   = "Health Insurance (Zdrowotna)",
-        min     = 0,
-        max     = 15,
-        step    = 0.01,
-        width   = "100%",
-        format  = shinyWidgets::wNumbFormat(suffix = "%"),
-        value   = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate
-      )
-    ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_pl_tax_rate"),
+            label   = "Linear Tax Contribution Rate",
+            min     = 0,
+            max     = 35,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$tax$liniowy$rate
+          )
+        ),
 
-    # Tax ----
-    bslib::accordion_panel(
-      title = tags$strong("Tax"),
-      value = "accordion-tax",
-      icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
+        shiny::conditionalPanel(
+          condition = "input.select_extra_settings_pl == 1",
+          ns        = shiny::NS(id),
 
-      shinyWidgets::materialSwitch(
-        label     = "Step tax?",
-        inputId   = shiny::NS(id, "select_extra_settings_pl"),
-        value     = TRUE,
-        width     = "100%"
-      ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_pl_tax_rates"),
+            label   = "Linear Tax Contribution Rate",
+            min     = 0,
+            max     = 50,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * c(
+              analysePay::pl_settings$tax$stopniowy$rate_1,
+              analysePay::pl_settings$tax$stopniowy$rate_2,
+              analysePay::pl_settings$tax$stopniowy$rate_3
+            )
+          ),
 
-      shiny::conditionalPanel(
-        condition = "input.select_extra_settings_pl == 0",
-        ns        = shiny::NS(id),
-
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_pl_tax_rate"),
-          label   = "Linear Tax Contribution Rate",
-          min     = 0,
-          max     = 35,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$tax$liniowy$rate
+          bslib::layout_columns(
+            col_widths = c(12, 6, 6),
+            tags$h4("Repayment Thresholds"),
+            shinyWidgets::autonumericInput(
+              inputId                 = shiny::NS(id, "select_pl_tax_value_1"),
+              label                   = "Allowance",
+              value                   = analysePay::pl_settings$tax$stopniowy$value_1,
+              currencySymbol          = "z\U0142",
+              currencySymbolPlacement = "s",
+              decimalCharacter        = ".",
+              digitGroupSeparator     = ",",
+              minimumValue            = 0,
+              style                   = "text-align: center; width: 100%;"
+            ),
+            shinyWidgets::autonumericInput(
+              inputId                 = shiny::NS(id, "select_pl_tax_value_2"),
+              label                   = "Upper",
+              value                   = analysePay::pl_settings$tax$stopniowy$value_2,
+              currencySymbol          = "z\U0142",
+              currencySymbolPlacement = "s",
+              decimalCharacter        = ".",
+              digitGroupSeparator     = ",",
+              minimumValue            = 0,
+              maximumValue            = 1000000,
+              style                   = "text-align: center; width: 100%;"
+            )
+          )
         )
       ),
 
-      shiny::conditionalPanel(
-        condition = "input.select_extra_settings_pl == 1",
-        ns        = shiny::NS(id),
+      # Student Loans ----
+      bslib::accordion_panel(
+        title = tags$strong("Student Loans"),
+        value = "accordion-sl",
+        icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
 
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_pl_tax_rates"),
-          label   = "Linear Tax Contribution Rate",
-          min     = 0,
-          max     = 50,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * c(
-            analysePay::pl_settings$tax$stopniowy$rate_1,
-            analysePay::pl_settings$tax$stopniowy$rate_2,
-            analysePay::pl_settings$tax$stopniowy$rate_3
+        bslib::layout_columns(
+          col_widths = c(12, 6, 6),
+          tags$h4("Contribution Rates"),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_pl_slp2_rate"),
+            label   = "Plan 2",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$sl_plan2$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_pl_slp3_rate"),
+            label   = "Plan 3",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$sl_plan3$rate
           )
         ),
 
@@ -128,20 +201,21 @@ plSettingsUserUI <- function(id) {
           col_widths = c(12, 6, 6),
           tags$h4("Repayment Thresholds"),
           shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_pl_tax_value_1"),
-            label                   = "Allowance",
-            value                   = analysePay::pl_settings$tax$stopniowy$value_1,
+            inputId                 = shiny::NS(id, "select_pl_slp2_value"),
+            label                   = "Plan 2",
+            value                   = analysePay::pl_settings$sl_plan2$value,
             currencySymbol          = "z\U0142",
             currencySymbolPlacement = "s",
             decimalCharacter        = ".",
             digitGroupSeparator     = ",",
             minimumValue            = 0,
+            maximumValue            = 1000000,
             style                   = "text-align: center; width: 100%;"
           ),
           shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_pl_tax_value_2"),
-            label                   = "Upper",
-            value                   = analysePay::pl_settings$tax$stopniowy$value_2,
+            inputId                 = shiny::NS(id, "select_pl_slp3_value"),
+            label                   = "Plan 3",
+            value                   = analysePay::pl_settings$sl_plan3$value,
             currencySymbol          = "z\U0142",
             currencySymbolPlacement = "s",
             decimalCharacter        = ".",
@@ -152,67 +226,6 @@ plSettingsUserUI <- function(id) {
           )
         )
       )
-    ),
-
-    # Student Loans ----
-    bslib::accordion_panel(
-      title = tags$strong("Student Loans"),
-      value = "accordion-sl",
-      icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
-
-      bslib::layout_columns(
-        col_widths = c(12, 6, 6),
-        tags$h4("Contribution Rates"),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_pl_slp2_rate"),
-          label   = "Plan 2",
-          min     = 0,
-          max     = 15,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$sl_plan2$rate
-        ),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_pl_slp3_rate"),
-          label   = "Plan 3",
-          min     = 0,
-          max     = 15,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$sl_plan3$rate
-        )
-      ),
-
-      bslib::layout_columns(
-        col_widths = c(12, 6, 6),
-        tags$h4("Repayment Thresholds"),
-        shinyWidgets::autonumericInput(
-          inputId                 = shiny::NS(id, "select_pl_slp2_value"),
-          label                   = "Plan 2",
-          value                   = analysePay::pl_settings$sl_plan2$value,
-          currencySymbol          = "z\U0142",
-          currencySymbolPlacement = "s",
-          decimalCharacter        = ".",
-          digitGroupSeparator     = ",",
-          minimumValue            = 0,
-          maximumValue            = 1000000,
-          style                   = "text-align: center; width: 100%;"
-        ),
-        shinyWidgets::autonumericInput(
-          inputId                 = shiny::NS(id, "select_pl_slp3_value"),
-          label                   = "Plan 3",
-          value                   = analysePay::pl_settings$sl_plan3$value,
-          currencySymbol          = "z\U0142",
-          currencySymbolPlacement = "s",
-          decimalCharacter        = ".",
-          digitGroupSeparator     = ",",
-          minimumValue            = 0,
-          maximumValue            = 1000000,
-          style                   = "text-align: center; width: 100%;"
-        )
-      )
     )
   )
 }
@@ -221,10 +234,10 @@ plSettingsUserUI <- function(id) {
 plSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    # Validate the input
+    # Validate the inputs ----
     iv <- shinyvalidate::InputValidator$new()
 
-    # Tax ----
+    ## Tax ----
     observeEvent(c(input$select_pl_tax_value_1, input$select_pl_tax_value_2), {
       iv$add_rule(
         "select_pl_tax_value_1",
@@ -238,6 +251,36 @@ plSettingsUserServer <- function(id) {
 
     iv$enable()
 
+    # Reset default settings ----
+    observeEvent(input$restore_defaults_pl, {
+      ## Pension ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_emerytalna_rate", value = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_ppk_rate", value = 100 * analysePay::pl_settings$pension$ppk$rate)
+
+      ## Insurance ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_rentowa_rate", value = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_chorobowa_rate", value = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_zdrowotna_rate", value = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate)
+
+      ## Tax ----
+      shinyWidgets::updateMaterialSwitch(session, "select_extra_settings_pl", value = TRUE)
+      shinyWidgets::updateNoUiSliderInput(session, "select_pl_tax_rate", value = 100 * analysePay::pl_settings$tax$liniowy$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_pl_tax_rates", value = 100 * c(
+        analysePay::pl_settings$tax$stopniowy$rate_1,
+        analysePay::pl_settings$tax$stopniowy$rate_2,
+        analysePay::pl_settings$tax$stopniowy$rate_3
+      ))
+      shinyWidgets::updateAutonumericInput(session, "select_pl_tax_value_1", value = analysePay::pl_settings$tax$stopniowy$value_1)
+      shinyWidgets::updateAutonumericInput(session, "select_pl_tax_value_2", value = analysePay::pl_settings$tax$stopniowy$value_2)
+
+      ## Student Loans ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_pl_slp2_rate", value = 100 * analysePay::pl_settings$sl_plan2$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_pl_slp3_rate", value = 100 * analysePay::pl_settings$sl_plan3$rate)
+      shinyWidgets::updateAutonumericInput(session, "select_pl_slp2_value", value = analysePay::pl_settings$sl_plan2$value)
+      shinyWidgets::updateAutonumericInput(session, "select_pl_slp3_value", value = analysePay::pl_settings$sl_plan3$value)
+    })
+
+    # Return reactives ----
     list(
       "iv"       = iv,
       "settings" = reactive({list(

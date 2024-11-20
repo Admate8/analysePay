@@ -16,8 +16,7 @@ $sl-col: #9B4DCA;
 /* Category-wide specific customisation */
 /* Make sure the prefix matches the module NS */
 /* Pension */
-[id="1-select_uk_alpha_rates"],
-[id="2-select_uk_alpha_rates"] {
+[id$="select_uk_alpha_rates"] {
   background: $pension-col !important;
   border-radius: 4px !important;
   border: 2px solid $pension-col !important;
@@ -60,12 +59,9 @@ $sl-col: #9B4DCA;
     }
   }
 }
-[id="1-select_uk_pension_rate"],
-[id="2-select_uk_pension_rate"],
-[id="1-select_sk_emerytalna_rate"],
-[id="2-select_sk_emerytalna_rate"],
-[id="1-select_sk_ppk_rate"],
-[id="2-select_sk_ppk_rate"] {
+[id$="select_uk_pension_rate"],
+[id$="select_sk_emerytalna_rate"],
+[id$="select_sk_ppk_rate"] {
   background: $pension-col !important;
   border-radius: 4px !important;
   border: 2px solid $pension-col !important;
@@ -77,8 +73,8 @@ $sl-col: #9B4DCA;
 }
 
 /* Insurance */
-[id="1-select_uk_ni_rates"],
-[id="2-select_uk_ni_rates"] {
+[id$="select_uk_ni_rates"],
+[id$="select_uk_ni_rates"] {
   background: $insurance-col !important;
   border-radius: 4px !important;
   border: 2px solid $insurance-col !important;
@@ -111,12 +107,9 @@ $sl-col: #9B4DCA;
     }
   }
 }
-[id="1-select_sk_rentowa_rate"],
-[id="2-select_sk_rentowa_rate"],
-[id="1-select_sk_chorobowa_rate"],
-[id="2-select_sk_chorobowa_rate"],
-[id="1-select_sk_zdrowotna_rate"],
-[id="2-select_sk_zdrowotna_rate"] {
+[id$="select_sk_rentowa_rate"],
+[id$="select_sk_chorobowa_rate"],
+[id$="select_sk_zdrowotna_rate"] {
   background: $insurance-col !important;
   border-radius: 4px !important;
   border: 2px solid $insurance-col !important;
@@ -128,10 +121,8 @@ $sl-col: #9B4DCA;
 }
 
 /* Tax */
-[id="1-select_uk_tax_rates"],
-[id="2-select_uk_tax_rates"],
-[id="1-select_pl_tax_rates"],
-[id="2-select_pl_tax_rates"] {
+[id$="select_uk_tax_rates"],
+[id$="select_pl_tax_rates"] {
   background: $tax-col !important;
   border-radius: 4px !important;
   border: 2px solid $tax-col !important;
@@ -174,8 +165,7 @@ $sl-col: #9B4DCA;
     }
   }
 }
-[id="1-select_pl_tax_rate"],
-[id="2-select_pl_tax_rate"] {
+[id$="select_pl_tax_rate"] {
   background: $tax-col !important;
   border-radius: 4px !important;
   border: 2px solid $tax-col !important;
@@ -187,14 +177,10 @@ $sl-col: #9B4DCA;
 }
 
 /* Student Loans */
-[id="1-select_uk_slp2_rate"],
-[id="2-select_uk_slp2_rate"],
-[id="1-select_uk_slp3_rate"],
-[id="2-select_uk_slp3_rate"],
-[id="1-select_pl_slp2_rate"],
-[id="2-select_pl_slp2_rate"],
-[id="1-select_pl_slp3_rate"],
-[id="2-select_pl_slp3_rate"] {
+[id$="select_uk_slp2_rate"],
+[id$="select_uk_slp3_rate"],
+[id$="select_pl_slp2_rate"],
+[id$="select_pl_slp3_rate"] {
   background: $sl-col !important;
   border-radius: 4px !important;
   border: 2px solid $sl-col !important;
@@ -239,6 +225,7 @@ $sl-col: #9B4DCA;
 
 
 
+
 /* Customise accordions */
 .accordion-item {
   border-radius: 25px;
@@ -249,38 +236,47 @@ $sl-col: #9B4DCA;
   margin-bottom: 10px;
 }
 
-[data-value="accordion-pension"] {
-  box-shadow: 0 0 10px $pension-col;
-  border-color: $pension-col;
-  transition: box-shadow 0.3s ease-in-out;
-  .accordion-header{
-    border-bottom: 1px solid $pension-col;
+
+$accordions: (
+  "accordion-pension": $pension-col,
+  "accordion-insurance": $insurance-col,
+  "accordion-tax": $tax-col,
+  "accordion-sl": $sl-col
+);
+
+@each $value, $color in $accordions {
+  [data-value="#{$value}"] {
+    box-shadow: 0 0 10px $color;
+    border-color: $color;
+    transition: box-shadow 0.3s ease-in-out;
+
+    .accordion-header {
+      border-bottom: 1px solid $color;
+    }
+    .accordion-button:hover {
+      background-color: $color !important;
+    }
   }
 }
-[data-value="accordion-insurance"] {
-  box-shadow: 0 0 10px $insurance-col;
-  border-color: $insurance-col;
-  transition: box-shadow 0.3s ease-in-out;
-  .accordion-header{
-    border-bottom: 1px solid $insurance-col;
-  }
+
+
+/* Customise restore settings buttons */
+[id$="restore_defaults_uk"],
+[id$="restore_defaults_pl"] {
+  padding: 0;
+  border-color: $body-bg;
 }
-[data-value="accordion-tax"] {
-  box-shadow: 0 0 10px $tax-col;
-  border-color: $tax-col;
-  transition: box-shadow 0.3s ease-in-out;
-  .accordion-header{
-    border-bottom: 1px solid $tax-col;
-  }
+[id$="restore_defaults_uk"]:hover,
+[id$="restore_defaults_pl"]:hover {
+  background-color: $body-bg;
+  border-color: $body-bg;
 }
-[data-value="accordion-sl"] {
-  box-shadow: 0 0 10px $sl-col;
-  border-color: $sl-col;
-  transition: box-shadow 0.3s ease-in-out;
-  .accordion-header{
-    border-bottom: 1px solid $sl-col;
-  }
+[id$="restore_defaults_uk"]:active,
+[id$="restore_defaults_pl"]:active {
+  background-color: $body-bg !important;
+  border-color: $body-bg !important;
 }
+
 
 
 /* Customise pickerInput */

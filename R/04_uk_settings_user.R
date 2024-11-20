@@ -1,15 +1,17 @@
 
 ukSettingsUserUI <- function(id) {
 
-  bslib::layout_columns(
-    col_widths = c(-9, 1, -2, 12),
-    actionButton(
-      inputId = "goButton",
-      label   = NULL,
-      icon    = shiny::icon("wrench"),
-      width   = "100px",
+  tags$div(
+    tags$div(
+      style   = glue::glue("text-align-last: right;"),
+      actionButton(
+        inputId = shiny::NS(id, "restore_defaults_uk"),
+        label   = NULL,
+        icon    = shiny::icon("wrench", style = "font-size: 1.5rem;"),
+        width   = "26px"
+      ) |>
+        bslib::tooltip("Restore default settings", id = "tt_uk_settings")
     ),
-
 
     bslib::accordion(
       multiple = FALSE,
@@ -284,16 +286,15 @@ ukSettingsUserUI <- function(id) {
       )
     )
   )
-
 }
 
 ukSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
-    # Validate the input
+    # Validate the inputs ----
     iv <- shinyvalidate::InputValidator$new()
 
-    # Pension ----
+    ## Pension ----
     observeEvent(c(
       input$select_uk_alpha_value_1,
       input$select_uk_alpha_value_2,
@@ -316,7 +317,7 @@ ukSettingsUserServer <- function(id) {
       )
     })
 
-    # Insurance ----
+    ## Insurance ----
     observeEvent(c(input$select_uk_ni_value_1, input$select_uk_ni_value_2), {
       iv$add_rule(
         "select_uk_ni_value_1",
@@ -328,7 +329,7 @@ ukSettingsUserServer <- function(id) {
       )
     })
 
-    # Tax ----
+    ## Tax ----
     observeEvent(c(
       input$select_uk_tax_value_1,
       input$select_uk_tax_value_2,
@@ -353,6 +354,49 @@ ukSettingsUserServer <- function(id) {
 
     iv$enable()
 
+    # Reset default settings ----
+    observeEvent(input$restore_defaults_uk, {
+      ## Pension ----
+      shinyWidgets::updateMaterialSwitch(session, "select_extra_settings_uk", value = TRUE)
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_pension_rate", value = 100 * analysePay::uk_settings$pension$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_alpha_rates", value = 100 * c(
+        analysePay::uk_settings$pension$alpha_rate_1,
+        analysePay::uk_settings$pension$alpha_rate_2,
+        analysePay::uk_settings$pension$alpha_rate_3,
+        analysePay::uk_settings$pension$alpha_rate_4
+      ))
+      shinyWidgets::updateAutonumericInput(session, "select_uk_alpha_value_1", value = analysePay::uk_settings$pension$alpha_value_1)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_alpha_value_2", value = analysePay::uk_settings$pension$alpha_value_2)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_alpha_value_3", value = analysePay::uk_settings$pension$alpha_value_3)
+
+      ## Insurance ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_ni_rates", value = 100 * c(
+        analysePay::uk_settings$insurance$rate_1,
+        analysePay::uk_settings$insurance$rate_3,
+        analysePay::uk_settings$insurance$rate_2
+      ))
+      shinyWidgets::updateAutonumericInput(session, "select_uk_ni_value_1", value = analysePay::uk_settings$insurance$value_1)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_ni_value_2", value = analysePay::uk_settings$insurance$value_2)
+
+      ## Tax ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_tax_rates", value = 100 * c(
+        analysePay::uk_settings$tax$rate_1,
+        analysePay::uk_settings$tax$rate_2,
+        analysePay::uk_settings$tax$rate_3,
+        analysePay::uk_settings$tax$rate_4
+      ))
+      shinyWidgets::updateAutonumericInput(session, "select_uk_tax_value_1", value = analysePay::uk_settings$tax$value_1)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_tax_value_2", value = analysePay::uk_settings$tax$value_2)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_tax_value_3", value = analysePay::uk_settings$tax$value_3)
+
+      # #Student Loans ----
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_slp2_rate", value = 100 * analysePay::uk_settings$sl_plan2$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_uk_slp3_rate", value = 100 * analysePay::uk_settings$sl_plan3$rate)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_slp2_value", value = analysePay::uk_settings$sl_plan2$value)
+      shinyWidgets::updateAutonumericInput(session, "select_uk_slp3_value", value = analysePay::uk_settings$sl_plan3$value)
+    })
+
+    # Return reactives ----
     list(
       "iv"       = iv,
       "settings" = reactive({list(
