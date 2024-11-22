@@ -4,8 +4,19 @@ palette_global <- list(
   "body_tertiary_bg"     = "#3A3A3A",
 
   "body_color"           = "#E0E0E0",
-  "body_color_secondary" = "#B0B0B0"
+  "body_color_secondary" = "#B0B0B0",
   #"primary"           = "#45B7D1"
+
+  "categories"           = list(
+    "pension_color"       = "#0077CC",
+    "pension_color_vol"   = "#00A6FB",
+    "insurance_color"     = "#FF5733",
+    "insurance_color_vol" = "#FF8C42",
+    "tax_color"           = "#E63946",
+    "sl_plan2_color"      = "#9B4DCA",
+    "sl_plan3_color"      = "#C774CF",
+    "net_color"           = "#F8C630"
+  )
 )
 
 app_theme <- bslib::bs_theme(
@@ -25,17 +36,13 @@ app_theme <- bslib::bs_theme(
   bslib::bs_add_rules(sass::sass_file("inst/app/www/custom_themes.scss")) |>
   bslib::bs_add_variables(
     "accordion-bg"  = "$body-secondary-bg",
+    # Categories
+    "pension-color"       = palette_global$categories$pension_color,
+    "pension-color-vol"   = palette_global$categories$pension_color_vol,
+    "insurance-color"     = palette_global$categories$insurance_color,
+    "insurance-color-vol" = palette_global$categories$insurance_color_vol,
+    "tax-color"           = palette_global$categories$tax_color,
+    "sl-plan2-color"      = palette_global$categories$sl_plan2_color,
+    "sl-plan3-color"      = palette_global$categories$sl_plan3_color,
     .where = "declarations"
   )
-
-palette_cat_wide <- tibble::tribble(
-  ~category,               ~col,
-  "Earnings",              "white",
-  "Pension - Mandatory",   "#0077CC",
-  "Pension - Voluntary",   "#00A6FB",
-  "Insurance - Mandatory", "#FF5733",
-  "Insurance - Voluntary", "#FF8C42",
-  "Tax",                   "#E63946",
-  "Student Loan",          "#9B4DCA",
-  "Net Income",            "#F8C630"
-)

@@ -21,7 +21,7 @@ plSettingsUserUI <- function(id) {
       bslib::accordion_panel(
         title = tags$strong("Pension"),
         value = "accordion-pension",
-        icon  = icon("piggy-bank", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Pension - Mandatory',]$col }")),
+        icon  = icon("piggy-bank", style = glue::glue("color: { palette_global$categories$pension_color }")),
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
@@ -42,7 +42,7 @@ plSettingsUserUI <- function(id) {
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_sk_ppk_rate"),
             label   = label_with_popover(
-              "PPK",
+              "PPK Pension",
               glue::glue("<a href={ analysePay::pl_settings$pension$ppk$source } target='_blank'>Find out more!</a>")
             ),
             min     = 0,
@@ -59,7 +59,7 @@ plSettingsUserUI <- function(id) {
       bslib::accordion_panel(
         title = tags$strong("Insurance"),
         value = "accordion-insurance",
-        icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Insurance - Mandatory',]$col }")),
+        icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_global$categories$insurance_color }")),
 
         title_with_popover(
           "Contribution Rates", size = 5,
@@ -77,7 +77,7 @@ plSettingsUserUI <- function(id) {
         ),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
-          label   = "Ilness Insurance (Chorobowa)",
+          label   = "Illness Insurance (Chorobowa)",
           min     = 0,
           max     = 5,
           step    = 0.01,
@@ -99,9 +99,9 @@ plSettingsUserUI <- function(id) {
 
       # Tax ----
       bslib::accordion_panel(
-        title = tags$strong("Tax"),
+        title = tags$strong("Income Tax"),
         value = "accordion-tax",
-        icon  = icon("money-bill-wave", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Tax',]$col }")),
+        icon  = icon("money-bill-wave", style = glue::glue("color: { palette_global$categories$tax_color }")),
 
         shinyWidgets::materialSwitch(
           label     = label_with_popover(
@@ -184,7 +184,7 @@ plSettingsUserUI <- function(id) {
       bslib::accordion_panel(
         title = tags$strong("Student Loans"),
         value = "accordion-sl",
-        icon  = icon("credit-card", style = glue::glue("color: { palette_cat_wide[palette_cat_wide$category == 'Student Loan',]$col }")),
+        icon  = icon("credit-card", style = glue::glue("color: { palette_global$categories$sl_plan2_color }")),
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
@@ -339,6 +339,26 @@ plSettingsUserServer <- function(id) {
         "sl_plan3" = list(
           "rate"  = input$select_pl_slp3_rate / 100,
           "value" = input$select_pl_slp3_value
+        ),
+
+        # Global non-reactive values
+        "global" = list(
+          "full_name" = pl_settings$global$full_name,
+          "short_cut" = pl_settings$global$short_cut,
+          "currency"  = pl_settings$global$currency,
+          "locale"    = pl_settings$global$locale
+        ),
+        "earning_deciles" = list(
+          "10th"   = pl_settings$earning_deciles$`10th`,
+          "20th"   = pl_settings$earning_deciles$`20th`,
+          "30th"   = pl_settings$earning_deciles$`30th`,
+          "40th"   = pl_settings$earning_deciles$`40th`,
+          "50th"   = pl_settings$earning_deciles$`50th`,
+          "60th"   = pl_settings$earning_deciles$`60th`,
+          "70th"   = pl_settings$earning_deciles$`70th`,
+          "80th"   = pl_settings$earning_deciles$`80th`,
+          "90th"   = pl_settings$earning_deciles$`90th`,
+          "95th"   = pl_settings$earning_deciles$`95th`
         )
       )})
     )
