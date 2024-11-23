@@ -8,6 +8,7 @@ palette_global <- list(
   #"primary"           = "#45B7D1"
 
   "categories"           = list(
+    "earnings_color"      = "#E0E0E0",
     "pension_color"       = "#0077CC",
     "pension_color_vol"   = "#00A6FB",
     "insurance_color"     = "#FF5733",
@@ -15,7 +16,7 @@ palette_global <- list(
     "tax_color"           = "#E63946",
     "sl_plan2_color"      = "#9B4DCA",
     "sl_plan3_color"      = "#C774CF",
-    "net_color"           = "#F8C630"
+    "net_color"           = "#2D936C"
   )
 )
 

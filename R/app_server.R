@@ -100,7 +100,11 @@ app_server <- function(input, output, session) {
         resizable     = FALSE,
         compact       = TRUE,
         showSortIcon  = FALSE,
-        defaultColDef = reactable::colDef(html = TRUE),
+        defaultColDef = reactable::colDef(
+          html        = TRUE,
+          style       = "font-size: 0.75rem;",
+          headerStyle = "font-size: 0.80rem;"
+        ),
         columns       = list(
           split = reactable::colDef(
             name  = "",
@@ -120,79 +124,32 @@ app_server <- function(input, output, session) {
   })
 
   output$ui_categories_table <- renderUI({
-    bslib::layout_columns(
-      col_widths = c(-2, 8, -2),
+    tags$div(
+      style = "position: relative;",
+      reactable::reactableOutput("table_categories") |> custom_spinner(),
       tags$div(
-        style = "position: relative;",
-        reactable::reactableOutput("table_categories") |> custom_spinner(),
-        tags$div(
-          style = "position: absolute; right: 0; top: 0; z-index: 20;",
-          tags$span(
-            shiny::icon("asterisk", style = "font-size: 1rem;") |>
-              bslib::tooltip("Deducted before the Income Tax"),
-            shiny::HTML("&nbsp&nbsp"),
-            shiny::icon("percentage", style = "font-size: 1rem;") |>
-              bslib::tooltip(shiny::HTML(
-                "<b>Bracket Percentages</b><br><br>
+        style = "position: absolute; left: 60px; top: 0; z-index: 20;",
+        tags$span(
+          shiny::icon("asterisk", style = "font-size: 1rem;") |>
+            bslib::tooltip("Deducted before the Income Tax"),
+          shiny::HTML("&nbsp&nbsp"),
+          shiny::icon("percentage", style = "font-size: 1rem;") |>
+            bslib::tooltip(shiny::HTML(
+              "<b>Bracket Percentages</b><br><br>
                   Sometimes, deductions consist of multiple country-specific,
                   smaller deductions. In such cases, a percentage split is
                   displayed next to each, indicating its contribution to the
                   total deduction. That enables you to recover their original
                   values."
-              ))
-          )
+            ))
         )
       )
     )
   })
 
+  output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 
-
-  output$test_plot <- echarts4r::renderEcharts4r({
-
-    get_gradient <- function(col, factor) {
-      shaded_col <- get_hex_colour_shade(col, factor)
-      htmlwidgets::JS(paste0(
-        "new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '", col, "' },
-                { offset: 0.4, color: '", shaded_col, "' },
-                { offset: 0.6, color: '", shaded_col, "' },
-                { offset: 1, color: '", col, "' }
-            ])"
-      ))
-    }
-    mtcars |>
-      dplyr::group_by(carb) |>
-      dplyr::summarise(
-        sum1 = sum(disp),
-        sum2 = sum(hp),
-        .groups = "drop"
-      ) |>
-      dplyr::mutate(carb = as.character(carb)) |>
-      echarts4r::e_chart(x = carb) |>
-      echarts4r::e_bar(serie = sum1, stack = "1",
-        itemStyle = list(color = get_gradient("#0077CC", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum2, stack = "1",
-        itemStyle = list(color = get_gradient("#00A6FB", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum1, stack = "1",
-         itemStyle = list(color = get_gradient("#FF5733", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum2, stack = "1",
-        itemStyle = list(color = get_gradient("#FF8C42", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum1, stack = "1",
-        itemStyle = list(color = get_gradient("#E63946", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum2, stack = "1",
-        itemStyle = list(color = get_gradient("#9B4DCA", 0.2))
-      ) |>
-      echarts4r::e_bar(serie = sum1, stack = "1",
-        itemStyle = list(color = get_gradient("#F8C630", 0.3))
-      )
-
-  })
 }

@@ -135,13 +135,15 @@ get_df_earnings_dist <- function(
       dplyr::select(deciles, actuals = actual_values_from) |>
       cbind(df_fit_deduction_from$df_deductions) |>
       dplyr::mutate(actuals = ifelse(is.na(actuals), 0, 1)) |>
-      dplyr::rename_with(~ paste0(., "_from"), -deciles),
+      dplyr::rename_with(~ paste0(., "_from"), -deciles) |>
+      dplyr::mutate(country_from = country_from),
 
     df_earnings_dist |>
       dplyr::select(deciles, actuals = actual_values_to) |>
       cbind(df_fit_deduction_to$df_deductions) |>
       dplyr::mutate(actuals = ifelse(is.na(actuals), 0, 1)) |>
-      dplyr::rename_with(~ paste0(., "_to"), -deciles),
+      dplyr::rename_with(~ paste0(., "_to"), -deciles) |>
+      dplyr::mutate(country_to = country_to),
 
     by = "deciles"
   ) |>

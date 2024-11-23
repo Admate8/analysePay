@@ -14,7 +14,7 @@ app_ui <- function(request) {
         id = "fullpage", # match with the JS id - this is the body content
         style = "width: calc(100% + 24px);",
 
-        # Welcome page ----
+        # Page 1 ----
         tags$div(
           class = "section welcome-page-content",
 
@@ -81,23 +81,35 @@ app_ui <- function(request) {
               style   = "font-size: 1.5rem;"
             )
           )
-
-
         ),
 
+        # Page 2 ----
         tags$div(
           class = "section",
 
-          tags$div(
+          br(),
+          bslib::layout_columns(
+            col_widths = c(6, 6, 12),
             class = "add-left-right-margins",
-            tags$h2("Earnings & Deductions by Deciles", class = "display-6"),
-            uiOutput("ui_categories_table")
+
+            tags$div(
+              class = "h-100 d-flex align-items-center flex-wrap",
+              tags$h2(tags$strong("Overview"), class = "display-6"),
+              tags$h2("Earnings & Deductions by Deciles", class = "display-6")
+            ),
+            bslib::card(
+              uiOutput("ui_categories_table"),
+              class = "custom-card"
+            ),
+            echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "440px")
           )
         ),
+
+        # Page 3 ----
         tags$div(
           class = "section",
 
-          echarts4r::echarts4rOutput("test_plot", height = "600px")
+          "Something"
         )
 
       ),

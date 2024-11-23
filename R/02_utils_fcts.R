@@ -100,7 +100,7 @@ label_with_popover <- function(label, message, icon = "info-circle") {
 custom_reactable_theme <- function() {
   reactable::reactableTheme(
     color           = palette_global$body_color,
-    backgroundColor = palette_global$body_bg,
-    borderColor     = palette_global$body_tertiary_bg
+    backgroundColor = palette_global$body_tertiary_bg,
+    borderColor     = palette_global$body_secondary_bg
   )
 }

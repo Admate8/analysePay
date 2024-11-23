@@ -363,4 +363,10 @@ $lighter-accordions: (
   margin-right: calc(100% / 24);
 }
 
+.custom-card {
+  background-color: $body-tertiary-bg;
+  color: $body-color;
+  border-radius: 25px;
+}
+
 
