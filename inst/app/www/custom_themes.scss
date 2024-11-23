@@ -357,4 +357,10 @@ $lighter-accordions: (
   opacity: 0.5;
 }
 
-
+.try-class {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50px;
+  z-index: 200;
+}

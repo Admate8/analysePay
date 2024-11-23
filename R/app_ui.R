@@ -67,16 +67,25 @@ app_ui <- function(request) {
         )
       ),
 
-      bslib::layout_columns(
-        col_widths = c(-2, 8, -2),
-        reactable::reactableOutput("table_categories") |> custom_spinner()
-      ),
-
       # bslib::layout_columns(
       #   col_widths = c(-2, 4, 4, -2),
       #   textOutput("test_output1"),
       #   textOutput("test_output2")
       # ),
+      br(),
+      bslib::layout_columns(
+        col_widths = c(-1, 10, -1),
+        tags$div(
+          hr(),
+          tags$h2("Earnings & Deductions by Deciles", class = "display-6")
+        )
+
+      ),
+
+      uiOutput("ui_categories_table"),
+
+
+
 
 
       echarts4r::echarts4rOutput("test_plot", height = "600px")

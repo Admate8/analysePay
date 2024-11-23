@@ -64,6 +64,7 @@ app_server <- function(input, output, session) {
     }
   })
 
+  # Set the main data ----
   # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -72,6 +73,7 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
+  # Render the categories table ----
   df_categories <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
       settings_from = settings_from(),
@@ -88,7 +90,9 @@ app_server <- function(input, output, session) {
         palette_global$categories$sl_plan3_color,
         palette_global$categories$net_color
       ))
-  })
+  }, ignoreNULL = FALSE)
+
+
   output$table_categories <- reactable::renderReactable({
     df_categories() |>
       reactable::reactable(
@@ -113,6 +117,33 @@ app_server <- function(input, output, session) {
         ),
         theme = custom_reactable_theme()
       )
+  })
+
+  output$ui_categories_table <- renderUI({
+    bslib::layout_columns(
+      col_widths = c(-2, 8, -2),
+      tags$div(
+        style = "position: relative;",
+        reactable::reactableOutput("table_categories") |> custom_spinner(),
+        tags$div(
+          style = "position: absolute; right: 0; top: 0; z-index: 20;",
+          tags$span(
+            shiny::icon("asterisk", style = "font-size: 1rem;") |>
+              bslib::tooltip("Deducted before the Income Tax"),
+            shiny::HTML("&nbsp&nbsp"),
+            shiny::icon("percentage", style = "font-size: 1rem;") |>
+              bslib::tooltip(shiny::HTML(
+                "<b>Bracket Percentages</b><br><br>
+                  Sometimes, deductions consist of multiple country-specific,
+                  smaller deductions. In such cases, a percentage split is
+                  displayed next to each, indicating its contribution to the
+                  total deduction. That enables you to recover their original
+                  values."
+              ))
+          )
+        )
+      )
+    )
   })
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
