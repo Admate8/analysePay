@@ -33,7 +33,7 @@ app_server <- function(input, output, session) {
 
     output$ui_settings <- renderUI({
       bslib::layout_columns(
-        col_widths = c(-2, 4, 4, -2),
+        col_widths = c(6, 6),
         base::get(ui_settings_from_name)(ns_from()),
         base::get(ui_settings_to_name)(ns_to())
       )

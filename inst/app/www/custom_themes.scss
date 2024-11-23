@@ -295,17 +295,18 @@ $lighter-accordions: (
 [id$="restore_defaults_uk"],
 [id$="restore_defaults_pl"] {
   padding: 0;
-  border-color: $body-bg;
+  border-color: transparent !important;
+  color: $body-color-secondary;
 }
 [id$="restore_defaults_uk"]:hover,
 [id$="restore_defaults_pl"]:hover {
-  background-color: $body-bg;
-  border-color: $body-bg;
+  background-color: transparent;
+  border-color: transparent;
 }
 [id$="restore_defaults_uk"]:active,
 [id$="restore_defaults_pl"]:active {
-  background-color: $body-bg !important;
-  border-color: $body-bg !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 
 /* Customise the commit button */
@@ -332,20 +333,11 @@ $lighter-accordions: (
 
 
 /* Add the welcome section */
-.header-welcome-page {
+.welcome-page-content {
   background-image: url( '../www/bg_prism.svg' );
   background-repeat: no-repeat;
   background-size: cover;
-  box-sizing: border-box;
-
-  width: calc(100% + 24px);
   margin-left: -12px;
-  position: relative;
-  height: 500px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .add-attribution{
@@ -353,14 +345,22 @@ $lighter-accordions: (
   bottom: 0;
   right: 0;
   margin-right: 12px;
-  font-size: 0.5rem;
+  font-size: 0.75rem;
   opacity: 0.5;
 }
 
-.try-class {
-  position: absolute;
+.add-navigation{
+  position: fixed;
+  bottom: 0;
   right: 0;
-  top: 0;
-  width: 50px;
-  z-index: 200;
+  margin-right: 12px;
+  margin-bottom: 25px;
+  opacity: 0.5;
 }
+
+.add-left-right-margins {
+  margin-left: calc(100% / 24);
+  margin-right: calc(100% / 24);
+}
+
+

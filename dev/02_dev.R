@@ -16,7 +16,7 @@ usethis::use_package("reactablefmtr", min_version = TRUE)
 usethis::use_package("shinycssloaders", min_version = TRUE)
 usethis::use_tidy_description()
 
-# golem::add_js_file("script_try")
+# golem::add_js_file("full_page_actions")
 # golem::add_js_handler("handlers")
 # golem::add_css_file("custom_try")
 # golem::add_sass_file("custom_try")
