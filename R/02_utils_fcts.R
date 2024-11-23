@@ -1,3 +1,11 @@
+#' Define Custom Spinner Animation
+#'
+#' @param ui_element UI to attache the spinner to.
+#' @param col Spinner colour.
+#'
+custom_spinner <- function(ui_element, col = palette_global$body_tertiary_bg) {
+  shinycssloaders::withSpinner(ui_element, color = col, size = 1.5, type = 6)
+}
 
 
 #' Shade Hex Colour
@@ -82,5 +90,17 @@ label_with_popover <- function(label, message, icon = "info-circle") {
       shiny::icon(icon)
     ),
     shiny::HTML(message)
+  )
+}
+
+
+#' Customise the Reactable Tables
+#'
+#' @noRd
+custom_reactable_theme <- function() {
+  reactable::reactableTheme(
+    color           = palette_global$body_color,
+    backgroundColor = palette_global$body_bg,
+    borderColor     = palette_global$body_tertiary_bg
   )
 }

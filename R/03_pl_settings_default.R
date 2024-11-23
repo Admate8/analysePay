@@ -193,7 +193,7 @@ calc_pl_deductions <- function(
     ~split,                  ~categories,
     "Pension - Mandatory",   "State Pension*",
     "Pension - Voluntary",   "PPK Pension",
-    "Insurance - Mandatory", paste0("State Insurance* (", rentowa_perc, "%), Health Insurance* (", 100 - rentowa_perc, "%)"),
+    "Insurance - Mandatory", paste0("State Insurance* (", rentowa_perc, "%), <br>Health Insurance* (", 100 - rentowa_perc, "%)"),
     "Insurance - Voluntary", "Illness Insurance",
     "Income Tax",            "Income Tax",
     "Student Loan Plan 2",   "Student Loan Plan 2",

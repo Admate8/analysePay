@@ -12,6 +12,8 @@ usethis::use_package("shinyvalidate", min_version = TRUE)
 usethis::use_package("shinyjs", min_version = TRUE)
 usethis::use_package("htmlwidgets", min_version = TRUE)
 usethis::use_package("tidyr", min_version = TRUE)
+usethis::use_package("reactablefmtr", min_version = TRUE)
+usethis::use_package("shinycssloaders", min_version = TRUE)
 usethis::use_tidy_description()
 
 # golem::add_js_file("script_try")

@@ -67,13 +67,16 @@ app_ui <- function(request) {
         )
       ),
 
-      #reactable::reactableOutput("data_test4"),
-      tableOutput("data_test5"),
       bslib::layout_columns(
-        col_widths = c(-2, 4, 4, -2),
-        textOutput("test_output1"),
-        textOutput("test_output2")
+        col_widths = c(-2, 8, -2),
+        reactable::reactableOutput("table_categories") |> custom_spinner()
       ),
+
+      # bslib::layout_columns(
+      #   col_widths = c(-2, 4, 4, -2),
+      #   textOutput("test_output1"),
+      #   textOutput("test_output2")
+      # ),
 
 
       echarts4r::echarts4rOutput("test_plot", height = "600px")

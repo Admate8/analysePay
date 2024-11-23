@@ -64,7 +64,7 @@ app_server <- function(input, output, session) {
     }
   })
 
-  # Observe the "Analyse!" button - this is the main data source in the app
+  # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
       settings_from = settings_from(),
@@ -72,32 +72,52 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
+  df_categories <- eventReactive(input$commit_input_data, {
+    get_df_earnings_dist(
+      settings_from = settings_from(),
+      settings_to   = settings_to()
+    )$df_cat_table |>
+      # Join in the colours from the global options
+      cbind(col = c(
+        palette_global$categories$pension_color,
+        palette_global$categories$pension_color_vol,
+        palette_global$categories$insurance_color,
+        palette_global$categories$insurance_color_vol,
+        palette_global$categories$tax_color,
+        palette_global$categories$sl_plan2_color,
+        palette_global$categories$sl_plan3_color,
+        palette_global$categories$net_color
+      ))
+  })
+  output$table_categories <- reactable::renderReactable({
+    df_categories() |>
+      reactable::reactable(
+        sortable      = FALSE,
+        resizable     = FALSE,
+        compact       = TRUE,
+        showSortIcon  = FALSE,
+        defaultColDef = reactable::colDef(html = TRUE),
+        columns       = list(
+          split = reactable::colDef(
+            name  = "",
+            cell  = reactablefmtr::pill_buttons(
+              data = df_categories(),
+              color_ref           = "col",
+              bold_text           = TRUE,
+              brighten_text_color = palette_global$body_color,
+              text_color          = palette_global$body_bg
+            ),
+            width = 220
+          ),
+          col = reactable::colDef(show = FALSE)
+        ),
+        theme = custom_reactable_theme()
+      )
+  })
+
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 
-
-  # df_deductions <- eventReactive(input$commit_input_data, {
-  #
-  #   function_from_name <- paste0("calc_", input$select_country_from, "_deductions")
-  #   function_to_name   <- paste0("calc_", input$select_country_to, "_deductions")
-  #
-  #   list(
-  #     "from_wide" = base::get(function_from_name)(
-  #       annual_earnings = c(50000, 55000, 90000),
-  #       alpha_scheme = settings_from()$pension$alpha_scheme,
-  #       standard_tax = settings_from()$tax$standard_tax,
-  #       user_data = settings_from()
-  #     )$df_deductions_category_wide,
-  #
-  #     "to_wide" = base::get(function_to_name)(
-  #       annual_earnings = c(50000, 55000, 60000),
-  #       alpha_scheme = settings_to()$pension$alpha_scheme,
-  #       standard_tax = settings_to()$tax$standard_tax,
-  #       user_data = settings_to()
-  #     )$df_deductions_category_wide
-  #   )
-  # })
-  #
 
   output$test_plot <- echarts4r::renderEcharts4r({
 
