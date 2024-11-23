@@ -10,7 +10,7 @@ golem::fill_desc(
 )
 golem::set_golem_options()
 golem::install_dev_deps()
-usethis::use_mit_license("MIT")
+usethis::use_mit_license("GPL v3")
 usethis::use_readme_rmd(open = FALSE)
 devtools::build_readme()
 usethis::use_code_of_conduct(contact = "adrian9.wisnios@gmail.com")
