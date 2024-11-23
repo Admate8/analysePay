@@ -8,7 +8,7 @@ calc_pl_deductions(
   annual_earnings,
   alpha_scheme = TRUE,
   standard_tax = TRUE,
-  user_data = NULL
+  settings = pl_settings
 )
 }
 \arguments{
@@ -18,12 +18,10 @@ calc_pl_deductions(
 
 \item{standard_tax}{Use progressive tax (UoP) or linear tax (B2B)?}
 
-\item{user_data}{Use either default setting for the UK (\code{NULL}) or the
-data supplied by the user.}
+\item{settings}{Use either default setting for the PL or the data supplied by the user.}
 }
 \value{
-Tibbles with deduction and net income values by either the category
-or the category wide (see \code{pl_deduction_types}).
+Tibbles with deductions and net income values.
 }
 \description{
 Note that the arguments must be the same across all \code{calc_\{country\}_deductions}
@@ -31,11 +29,6 @@ to ensure that all Shiny settings are reversible.
 }
 \examples{
 \dontrun{
-calc_pl_deductions(
-   annual_earnings = c(70000, 80000, 90000),
-   alpha_scheme    = TRUE,
-   standard_tax    = TRUE,
-   user_data       = NULL
-)$df_deductions_category_wide
+calc_pl_deductions(annual_earnings = c(NA, 70000, 80000, 90000, NA))$df_deductions
 }
 }

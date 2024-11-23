@@ -10,6 +10,8 @@ usethis::use_package("glue", min_version = TRUE)
 usethis::use_package("echarts4r", min_version = TRUE)
 usethis::use_package("shinyvalidate", min_version = TRUE)
 usethis::use_package("shinyjs", min_version = TRUE)
+usethis::use_package("htmlwidgets", min_version = TRUE)
+usethis::use_package("tidyr", min_version = TRUE)
 usethis::use_tidy_description()
 
 # golem::add_js_file("script_try")

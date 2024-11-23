@@ -8,7 +8,7 @@ calc_uk_deductions(
   annual_earnings,
   alpha_scheme = TRUE,
   standard_tax = TRUE,
-  user_data = NULL
+  settings = uk_settings
 )
 }
 \arguments{
@@ -18,12 +18,10 @@ calc_uk_deductions(
 
 \item{standard_tax}{Not in use for the UK deductions.}
 
-\item{user_data}{Use either default setting for the UK (\code{NULL}) or the
-data supplied by the user.}
+\item{settings}{Use either default setting for the UK or the data supplied by the user.}
 }
 \value{
-Tibbles with deduction and net income values by either the category
-or the category wide (see \code{uk_deduction_types}).
+Tibbles with deductions and net income values.
 }
 \description{
 Note that the arguments must be the same across all \code{calc_\{country\}_deductions}
@@ -31,11 +29,6 @@ functions to ensure that all Shiny settings are reversible.
 }
 \examples{
 \dontrun{
-calc_uk_deductions(
-   annual_earnings = c(30000, 35000, 50000),
-   alpha_scheme    = TRUE,
-   standard_tax    = TRUE,
-   user_data       = NULL
-)$df_deductions_category_wide
+calc_uk_deductions(annual_earnings = c(NA, 30000, 35000, 50000, NA))$df_deductions
 }
 }

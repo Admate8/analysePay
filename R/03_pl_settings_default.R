@@ -1,4 +1,10 @@
 pl_settings <- list(
+  "global" = list(
+    "full_name" = "Poland",
+    "short_cut" = "pl",
+    "currency"  = "PLN",
+    "locale"    = "pl-PL" # 'https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp'
+  ),
   "pension" = list(
     "alpha_scheme"  = TRUE, # NOT IN USE, but must exist to repeat big chunks of the code in the server
     "sk_emerytalna" = list(
@@ -57,9 +63,9 @@ pl_settings <- list(
   ),
 
   # The range must be 10 - 95! and names must be of the form 'decile'th
-  # to stay consistent in the code
+  # to stay consistent in the code. Note that id the deciles change, so must the
+  # reference in the server in `04_pl_settings_user.R`!
   "earning_deciles" = list(
-    "source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html",
     "10th"   = 12 * 4242,
     "20th"   = 12 * 4536.2,
     "30th"   = 12 * 5138.72,
@@ -70,25 +76,10 @@ pl_settings <- list(
     "80th"   = 12 * 9929.3,
     "90th"   = 12 * 13012.14,
     "95th"   = 12 * 17500 # Estimated (not in the source)
-  )
+  ),
+  "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html"
 )
 usethis::use_data(pl_settings, overwrite = TRUE)
-
-
-# Category is unique to the country but category_wide is common across countries
-pl_deduction_types <- tibble::tribble(
-  ~category,            ~category_wide,
-  "Earnings",           "Earnings",
-  "Emerytalna",         "Pension - Mandatory",
-  "PPK",                "Pension - Voluntary",
-  "Rentowa",            "Insurance - Mandatory",
-  "Chorobowa",          "Insurance - Voluntary",
-  "Zdrowotna",          "Insurance - Mandatory",
-  "Tax",                "Tax",
-  "SL Plan 2",          "Student Loan",
-  "SL Plan 3",          "Student Loan",
-  "Net Income",         "Net Income"
-)
 
 
 #' Calculate PL Deductions Breakdown Given Gross Annual Earnings
@@ -99,56 +90,40 @@ pl_deduction_types <- tibble::tribble(
 #' @param annual_earnings Vector of annual gross earnings.
 #' @param alpha_scheme Not in use for the PL deductions.
 #' @param standard_tax Use progressive tax (UoP) or linear tax (B2B)?
-#' @param user_data Use either default setting for the UK (\code{NULL}) or the
-#' data supplied by the user.
+#' @param settings Use either default setting for the PL or the data supplied by the user.
 #'
-#' @return Tibbles with deduction and net income values by either the category
-#' or the category wide (see \code{pl_deduction_types}).
+#' @return Tibbles with deductions and net income values.
 #' @examples
 #' \dontrun{
-#' calc_pl_deductions(
-#'    annual_earnings = c(70000, 80000, 90000),
-#'    alpha_scheme    = TRUE,
-#'    standard_tax    = TRUE,
-#'    user_data       = NULL
-#' )$df_deductions_category_wide
+#' calc_pl_deductions(annual_earnings = c(NA, 70000, 80000, 90000, NA))$df_deductions
 #' }
 calc_pl_deductions <- function(
     annual_earnings,
     alpha_scheme  = TRUE,
     standard_tax  = TRUE,
-    user_data     = NULL
+    settings      = pl_settings
 ) {
-  # Do some basic checks of the input
-  stopifnot(
-    "All values must be numerics" = all(is.numeric(annual_earnings)),
-    "All values must be positive" = all(annual_earnings > 0)
-  )
 
-  # Use default country settings if settings_user == FALSE
-  if (is.null(user_data)) pl_settings <- analysePay::pl_settings
-  else pl_settings <- user_data
+  # Define a set of variables from the `settings` argument
+  emerytalna_rate = settings$pension$sk_emerytalna$rate
+  ppk_rate        = settings$pension$ppk$rate
 
-  # Define a set of variables from the pl_settings object
-  emerytalna_rate = pl_settings$pension$sk_emerytalna$rate
-  ppk_rate        = pl_settings$pension$ppk$rate
+  rentowa_rate    = settings$insurance$sk_rentowa$rate
+  chorobowa_rate  = settings$insurance$sk_chorobowa$rate
+  zdrowotna_rate  = settings$insurance$sk_zdrowotna$rate
 
-  rentowa_rate    = pl_settings$insurance$sk_rentowa$rate
-  chorobowa_rate  = pl_settings$insurance$sk_chorobowa$rate
-  zdrowotna_rate  = pl_settings$insurance$sk_zdrowotna$rate
+  tax_stopniowy_rate_1  = settings$tax$stopniowy$rate_1
+  tax_stopniowy_rate_2  = settings$tax$stopniowy$rate_2
+  tax_stopniowy_rate_3  = settings$tax$stopniowy$rate_3
+  tax_stopniowy_value_1 = settings$tax$stopniowy$value_1
+  tax_stopniowy_value_2 = settings$tax$stopniowy$value_2
+  tax_liniowy_rate      = settings$tax$liniowy$rate
 
-  tax_stopniowy_rate_1  = pl_settings$tax$stopniowy$rate_1
-  tax_stopniowy_rate_2  = pl_settings$tax$stopniowy$rate_2
-  tax_stopniowy_rate_3  = pl_settings$tax$stopniowy$rate_3
-  tax_stopniowy_value_1 = pl_settings$tax$stopniowy$value_1
-  tax_stopniowy_value_2 = pl_settings$tax$stopniowy$value_2
-  tax_liniowy_rate      = pl_settings$tax$liniowy$rate
+  sl_plan2_rate  = settings$sl_plan2$rate
+  sl_plan2_value = settings$sl_plan2$value
 
-  sl_plan2_rate  = pl_settings$sl_plan2$rate
-  sl_plan2_value = pl_settings$sl_plan2$value
-
-  sl_plan3_rate  = pl_settings$sl_plan3$rate
-  sl_plan3_value = pl_settings$sl_plan3$value
+  sl_plan3_rate  = settings$sl_plan3$rate
+  sl_plan3_value = settings$sl_plan3$value
 
   # Calculate deductions and net income
   # Pension ----
@@ -194,34 +169,40 @@ calc_pl_deductions <- function(
 
 
   # Results ----
-  df_results_category <- tibble::tibble(
-    earnings   = annual_earnings,
-    emerytalna = emerytalna_deduction,
-    ppk        = ppk_deduction,
-    rentowa    = rentowa_deduction,
-    chorobowa  = chorobowa_deduction,
-    zdrowotna  = zdrowotna_deduction,
-    tax        = tax_deduction,
-    sl_plan_2  = sl_plan2_deduction,
-    sl_plan_3  = sl_plan3_deduction,
-    net_income = net_income
-  ) |>
-    dplyr::mutate(dplyr::across(-earnings, function(x) x / earnings, .names = "{.col}_perc"))
-
-  df_results_category_wide <- tibble::tibble(
+  # Make sure this table contains all categories
+  df_deductions <- tibble::tibble(
     earnings            = annual_earnings,
     pension_mandatory   = emerytalna_deduction,
     pension_voluntary   = ppk_deduction,
     insurance_mandatory = rentowa_deduction + zdrowotna_deduction,
     insurance_voluntary = chorobowa_deduction,
-    tax                 = tax_deduction,
-    student_loan        = sl_plan2_deduction + sl_plan3_deduction,
+    income_tax          = tax_deduction,
+    student_loan_plan_2 = sl_plan2_deduction,
+    student_loan_plan_3 = sl_plan3_deduction,
     net_income          = net_income
   ) |>
     dplyr::mutate(dplyr::across(-earnings, function(x) x / earnings, .names = "{.col}_perc"))
 
+  # `insurance_mandatory` consist of two parts - find their percentage contribution
+  # they will be the same regardless of annual earnings. Add them to the data
+  rentowa_perc <- round(100 * rentowa_deduction[1] / (rentowa_deduction[1] + zdrowotna_deduction[1]), 2)
+
+  # Each tax system has a different system, so this needs to be hard-coded
+  # We only need this for a legend-table, so everything should display ready
+  df_deductions_split <- tibble::tribble(
+    ~split,                  ~categories,
+    "Pension - Mandatory",   "State Pension*",
+    "Pension - Voluntary",   "PPK Pension",
+    "Insurance - Mandatory", paste0("State Insurance* (", rentowa_perc, "%), Health Insurance* (", 100 - rentowa_perc, "%)"),
+    "Insurance - Voluntary", "Illness Insurance",
+    "Income Tax",            "Income Tax",
+    "Student Loan Plan 2",   "Student Loan Plan 2",
+    "Student Loan Plan 3",   "Student Loan Plan 3",
+    "Net Income",            "Net Income"
+  )
+
   return(list(
-    "df_deductions_category"      = df_results_category,
-    "df_deductions_category_wide" = df_results_category_wide
+    "df_deductions"       = df_deductions,
+    "df_deductions_split" = df_deductions_split
   ))
 }

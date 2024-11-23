@@ -67,21 +67,16 @@ app_ui <- function(request) {
         )
       ),
 
+      #reactable::reactableOutput("data_test4"),
+      tableOutput("data_test5"),
       bslib::layout_columns(
         col_widths = c(-2, 4, 4, -2),
         textOutput("test_output1"),
         textOutput("test_output2")
       ),
-      bslib::layout_columns(
-        col_widths = c(6, 6),
-        reactable::reactableOutput("test_table1"),
-        reactable::reactableOutput("test_table2")
-      ),
 
-      textOutput("test_iv_from"),
-      textOutput("test_iv_to"),
-      textOutput("test_both_ivs"),
-      echarts4r::echarts4rOutput("test_plot")
+
+      echarts4r::echarts4rOutput("test_plot", height = "600px")
 
     )
   )

@@ -1,17 +1,3 @@
-#' Data of Available Countries - Should I Want to Expand the Tool
-#'
-#' 'country' must be of two characters to stay consistent with the code flow.
-#' 'locale' must be one of the options availablke here:
-#' https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp
-#'
-#' @return Tibble with countries and their currencies.
-available_counties <- function() {
-  tibble::tribble(
-    ~country, ~currency, ~locale,
-    "uk",     "GBP",     "en-GB",
-    "pl",     "PLN",     "pl-PL"
-  )
-}
 
 
 #' Shade Hex Colour

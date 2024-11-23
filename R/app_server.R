@@ -45,6 +45,7 @@ app_server <- function(input, output, session) {
     server_settings_from_name <- paste0(input$select_country_from, "SettingsUserServer")
     server_settings_to_name   <- paste0(input$select_country_to, "SettingsUserServer")
 
+    # Define the following variables as global
     settings_from <<- base::get(server_settings_from_name)(ns_from())$settings
     settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
 
@@ -63,38 +64,84 @@ app_server <- function(input, output, session) {
     }
   })
 
-
-
-
-  df_deductions <- eventReactive(input$commit_input_data, {
-
-    function_from_name <- paste0("calc_", input$select_country_from, "_deductions")
-    function_to_name   <- paste0("calc_", input$select_country_to, "_deductions")
-
-    list(
-      "from_wide" = base::get(function_from_name)(
-        annual_earnings = c(50000, 55000, 90000),
-        alpha_scheme = settings_from()$pension$alpha_scheme,
-        standard_tax = settings_from()$tax$standard_tax,
-        user_data = settings_from()
-      )$df_deductions_category_wide,
-
-      "to_wide" = base::get(function_to_name)(
-        annual_earnings = c(50000, 55000, 60000),
-        alpha_scheme = settings_to()$pension$alpha_scheme,
-        standard_tax = settings_to()$tax$standard_tax,
-        user_data = settings_to()
-      )$df_deductions_category_wide
-    )
+  # Observe the "Analyse!" button - this is the main data source in the app
+  df_main <- eventReactive(input$commit_input_data, {
+    get_df_earnings_dist(
+      settings_from = settings_from(),
+      settings_to   = settings_to()
+    )$df_main
   })
 
-  output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
-  output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
+  # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
+  # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 
-  output$test_table1 <- reactable::renderReactable({reactable::reactable(df_deductions()$from_wide)})
-  output$test_table2 <- reactable::renderReactable({reactable::reactable(df_deductions()$to_wide)})
 
-  output$test_iv_from <- renderText({iv_from$is_valid()})
-  output$test_iv_to <- renderText({iv_to$is_valid()})
-  output$test_both_ivs <- renderText({all(iv_from$is_valid(), iv_to$is_valid())})
+  # df_deductions <- eventReactive(input$commit_input_data, {
+  #
+  #   function_from_name <- paste0("calc_", input$select_country_from, "_deductions")
+  #   function_to_name   <- paste0("calc_", input$select_country_to, "_deductions")
+  #
+  #   list(
+  #     "from_wide" = base::get(function_from_name)(
+  #       annual_earnings = c(50000, 55000, 90000),
+  #       alpha_scheme = settings_from()$pension$alpha_scheme,
+  #       standard_tax = settings_from()$tax$standard_tax,
+  #       user_data = settings_from()
+  #     )$df_deductions_category_wide,
+  #
+  #     "to_wide" = base::get(function_to_name)(
+  #       annual_earnings = c(50000, 55000, 60000),
+  #       alpha_scheme = settings_to()$pension$alpha_scheme,
+  #       standard_tax = settings_to()$tax$standard_tax,
+  #       user_data = settings_to()
+  #     )$df_deductions_category_wide
+  #   )
+  # })
+  #
+
+  output$test_plot <- echarts4r::renderEcharts4r({
+
+    get_gradient <- function(col, factor) {
+      shaded_col <- get_hex_colour_shade(col, factor)
+      htmlwidgets::JS(paste0(
+        "new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '", col, "' },
+                { offset: 0.4, color: '", shaded_col, "' },
+                { offset: 0.6, color: '", shaded_col, "' },
+                { offset: 1, color: '", col, "' }
+            ])"
+      ))
+    }
+    mtcars |>
+      dplyr::group_by(carb) |>
+      dplyr::summarise(
+        sum1 = sum(disp),
+        sum2 = sum(hp),
+        .groups = "drop"
+      ) |>
+      dplyr::mutate(carb = as.character(carb)) |>
+      echarts4r::e_chart(x = carb) |>
+      echarts4r::e_bar(serie = sum1, stack = "1",
+        itemStyle = list(color = get_gradient("#0077CC", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum2, stack = "1",
+        itemStyle = list(color = get_gradient("#00A6FB", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum1, stack = "1",
+         itemStyle = list(color = get_gradient("#FF5733", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum2, stack = "1",
+        itemStyle = list(color = get_gradient("#FF8C42", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum1, stack = "1",
+        itemStyle = list(color = get_gradient("#E63946", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum2, stack = "1",
+        itemStyle = list(color = get_gradient("#9B4DCA", 0.2))
+      ) |>
+      echarts4r::e_bar(serie = sum1, stack = "1",
+        itemStyle = list(color = get_gradient("#F8C630", 0.3))
+      )
+
+  })
 }
