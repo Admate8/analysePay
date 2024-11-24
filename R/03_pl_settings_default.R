@@ -14,7 +14,8 @@ pl_settings <- list(
     # Pracownicze Plany Kapitalowe (PPK)
     "ppk" = list(
       "source" = "https://www.mojeppk.pl",
-      "rate"   = 2 / 100
+      "rate"   = 2 / 100,
+      "rate_employer" = 1.5 / 100
     )
   ),
 
@@ -105,8 +106,9 @@ calc_pl_deductions <- function(
 ) {
 
   # Define a set of variables from the `settings` argument
-  emerytalna_rate = settings$pension$sk_emerytalna$rate
-  ppk_rate        = settings$pension$ppk$rate
+  emerytalna_rate   = settings$pension$sk_emerytalna$rate
+  ppk_rate          = settings$pension$ppk$rate
+  ppk_rate_employer = settings$pension$ppk$rate_employer
 
   rentowa_rate    = settings$insurance$sk_rentowa$rate
   chorobowa_rate  = settings$insurance$sk_chorobowa$rate
@@ -125,19 +127,30 @@ calc_pl_deductions <- function(
   sl_plan3_rate  = settings$sl_plan3$rate
   sl_plan3_value = settings$sl_plan3$value
 
+  # https://www.podatki.gov.pl/pit/ulgi-odliczenia-i-zwolnienia/odliczenie-skladek-na-ubezpieczenie-zdrowotne/#:~:text=Łączna%20wysokość%20składek%20na%20ubezpieczenie,ten%20wynosi%2011%20600%20zł.
+  max_annual_health_insurance <- 11600
+  koszty_uzyskania_przychodu  <- 12 * 250
+
   # Calculate deductions and net income
+  # https://www.hrkadryiplace.pl/obnizenie-skladki-zdrowotnej-do-wysokosci-zaliczki-na-podatek-umowa-o-prace-zlecenia-jezek-przemyslaw/#:~:text=Kwotę%2C%20o%20której%20mowa%20w%20art.,dzień%2031%20grudnia%202021%20r.&text=4%20900%20zł%20–%204%20047,zł%20%3D%20852%2C24%20zł.
+
   # Pension ----
   emerytalna_deduction <- annual_earnings * emerytalna_rate
   ppk_deduction        <- annual_earnings * ppk_rate
 
   # Insurance ----
-  rentowa_deduction   <- annual_earnings * rentowa_rate
-  chorobowa_deduction <- annual_earnings * chorobowa_rate
-  zdrowotna_deduction <- (annual_earnings - emerytalna_deduction - rentowa_deduction - chorobowa_deduction) * zdrowotna_rate
+  rentowa_deduction        <- annual_earnings * rentowa_rate
+  chorobowa_deduction      <- annual_earnings * chorobowa_rate
+  insurance_tax_deductable <- emerytalna_deduction + rentowa_deduction + chorobowa_deduction
+
+  ## Health Insurance - this is tricky
+  zdrowotna_1 <- (annual_earnings - insurance_tax_deductable) * zdrowotna_rate
+  zdrowotna_2 <- (annual_earnings - insurance_tax_deductable - koszty_uzyskania_przychodu) * 0.17 - 12 * 43.76
+  zdrowotna_deduction <- ifelse(zdrowotna_1 <= zdrowotna_2, zdrowotna_1, zdrowotna_2)
+  zdrowotna_deduction <- ifelse(zdrowotna_deduction <= max_annual_health_insurance, zdrowotna_deduction, max_annual_health_insurance)
 
   # Tax ----
-  # Nie mozna od niego odliczyc skladki chorobowej i ppk
-  taxable_earnings <- annual_earnings - (emerytalna_deduction + rentowa_deduction + zdrowotna_deduction)
+  taxable_earnings <- annual_earnings + ppk_rate_employer * annual_earnings - insurance_tax_deductable - koszty_uzyskania_przychodu
 
   if (standard_tax == TRUE) {
     tax_deduction <- ifelse(
@@ -153,6 +166,7 @@ calc_pl_deductions <- function(
   } else {
     tax_deduction <- taxable_earnings * tax_liniowy_rate
   }
+  tax_deduction <- 12 * round(tax_deduction / 12)
 
   # Student Loans ----
   sl_plan2_deduction <- ifelse(

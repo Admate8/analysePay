@@ -24,7 +24,7 @@ plSettingsUserUI <- function(id) {
         icon  = icon("piggy-bank", style = glue::glue("color: { palette_global$categories$pension_color }")),
 
         bslib::layout_columns(
-          col_widths = c(12, 6, 6),
+          col_widths = c(12, 6, 6, -6, 6),
           tags$h5("Contribution Rates"),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
@@ -46,11 +46,24 @@ plSettingsUserUI <- function(id) {
               glue::glue("<a href={ analysePay::pl_settings$pension$ppk$source } target='_blank'>Find out more!</a>")
             ),
             min     = 0,
-            max     = 10,
+            max     = 5,
             step    = 0.01,
             width   = "100%",
             format  = shinyWidgets::wNumbFormat(suffix = "%"),
             value   = 100 * analysePay::pl_settings$pension$ppk$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_ppk_emp_rate"),
+            label   = label_with_popover(
+              "PPK Pension Employer",
+              glue::glue("<a href={ analysePay::pl_settings$pension$ppk$source } target='_blank'>Find out more!</a>")
+            ),
+            min     = 0,
+            max     = 5,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$pension$ppk$rate_employer
           )
         )
       ),
@@ -310,7 +323,10 @@ plSettingsUserServer <- function(id) {
         "pension" = list(
           "alpha_scheme"  = TRUE, # NOT IN USE FOR PL
           "sk_emerytalna" = list("rate" = input$select_sk_emerytalna_rate / 100),
-          "ppk"           = list("rate" = input$select_sk_ppk_rate / 100)
+          "ppk"           = list(
+            "rate"          = input$select_sk_ppk_rate / 100,
+            "rate_employer" = input$select_sk_ppk_emp_rate / 100
+          )
         ),
 
         "insurance" = list(
