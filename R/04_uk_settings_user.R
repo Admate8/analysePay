@@ -1,3 +1,26 @@
+#' Set Up Common PL Settings for autonumericInput
+#'
+#' @noRd
+uk_autonumericInput <- function(
+    inputId,
+    label,
+    value,
+    ...
+) {
+  shinyWidgets::autonumericInput(
+    inputId                 = inputId,
+    label                   = label,
+    value                   = value,
+    currencySymbol          = analysePay::uk_settings$global$currencySymbol,
+    currencySymbolPlacement = analysePay::uk_settings$global$currencySymbolPlacement,
+    decimalCharacter        = analysePay::uk_settings$global$decimalCharacter,
+    digitGroupSeparator     = analysePay::uk_settings$global$digitGroupSeparator,
+    minimumValue            = analysePay::uk_settings$global$minimumValue,
+    style                   = "text-align: center; width: 100%;",
+    ...
+  )
+}
+
 
 ukSettingsUserUI <- function(id) {
 
@@ -10,7 +33,7 @@ ukSettingsUserUI <- function(id) {
         icon    = shiny::icon("wrench", style = "font-size: 1.5rem;"),
         width   = "26px"
       ) |>
-        bslib::tooltip("Restore default settings", id = "tt_uk_settings")
+        bslib::tooltip("Restore default settings", id = shiny::NS(id, "tt_uk_settings"))
     ),
 
     bslib::accordion(
@@ -79,42 +102,24 @@ ukSettingsUserUI <- function(id) {
           bslib::layout_columns(
             col_widths = c(12, 4, 4, 4),
             tags$h5("Thresholds"),
-            shinyWidgets::autonumericInput(
-              inputId                 = shiny::NS(id, "select_uk_alpha_value_1"),
-              label                   = "Lower",
-              value                   = analysePay::uk_settings$pension$alpha_value_1,
-              currencySymbol          = "\U00A3",
-              currencySymbolPlacement = "p",
-              decimalPlaces           = 0,
-              decimalCharacter        = ".",
-              digitGroupSeparator     = ",",
-              minimumValue            = 0,
-              style                   = "text-align: center;"
+            uk_autonumericInput(
+              inputId = shiny::NS(id, "select_uk_alpha_value_1"),
+              label   = "Lower",
+              value   = analysePay::uk_settings$pension$alpha_value_1,
+              decimalPlaces = 0
             ),
-            shinyWidgets::autonumericInput(
-              inputId                 = shiny::NS(id, "select_uk_alpha_value_2"),
-              label                   = "Middle",
-              value                   = analysePay::uk_settings$pension$alpha_value_2,
-              currencySymbol          = "\U00A3",
-              currencySymbolPlacement = "p",
-              decimalPlaces           = 0,
-              decimalCharacter        = ".",
-              digitGroupSeparator     = ",",
-              minimumValue            = 0,
-              style                   = "text-align: center;"
+            uk_autonumericInput(
+              inputId = shiny::NS(id, "select_uk_alpha_value_2"),
+              label   = "Middle",
+              value   = analysePay::uk_settings$pension$alpha_value_2,
+              decimalPlaces = 0
             ),
-            shinyWidgets::autonumericInput(
-              inputId                 = shiny::NS(id, "select_uk_alpha_value_3"),
-              label                   = "Upper",
-              value                   = analysePay::uk_settings$pension$alpha_value_3,
-              currencySymbol          = "\U00A3",
-              currencySymbolPlacement = "p",
-              decimalPlaces           = 0,
-              decimalCharacter        = ".",
-              digitGroupSeparator     = ",",
-              minimumValue            = 0,
-              maximumValue            = 200000, # some upper limit
-              style                   = "text-align: center;"
+            uk_autonumericInput(
+              inputId = shiny::NS(id, "select_uk_alpha_value_3"),
+              label   = "Upper",
+              value   = analysePay::uk_settings$pension$alpha_value_3,
+              maximumValue  = 200000,
+              decimalPlaces = 0
             )
           )
         )
@@ -149,28 +154,16 @@ ukSettingsUserUI <- function(id) {
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
           tags$h5("Thresholds"),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_ni_value_1"),
-            label                   = "Allowance",
-            value                   = analysePay::uk_settings$insurance$value_1,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            style                   = "text-align: center;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_ni_value_1"),
+            label   = "Allowance",
+            value   = analysePay::uk_settings$insurance$value_1
           ),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_ni_value_2"),
-            label                   = "Basic",
-            value                   = analysePay::uk_settings$pension$alpha_value_2,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 200000,
-            style                   = "text-align: center;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_ni_value_2"),
+            label   = "Basic",
+            value   = analysePay::uk_settings$pension$alpha_value_2,
+            maximumValue  = 200000
           )
         )
       ),
@@ -205,42 +198,24 @@ ukSettingsUserUI <- function(id) {
         bslib::layout_columns(
           col_widths = c(12, 4, 4, 4),
           tags$h5("Thresholds"),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_tax_value_1"),
-            label                   = "Allowance",
-            value                   = analysePay::uk_settings$tax$value_1,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalPlaces           = 0,
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            style                   = "text-align: center;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_tax_value_1"),
+            label   = "Allowance",
+            value   = analysePay::uk_settings$tax$value_1,
+            decimalPlaces = 0
           ),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_tax_value_2"),
-            label                   = "Basic",
-            value                   = analysePay::uk_settings$tax$value_2,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalPlaces           = 0,
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            style                   = "text-align: center;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_tax_value_2"),
+            label   = "Basic",
+            value   = analysePay::uk_settings$tax$value_2,
+            decimalPlaces = 0
           ),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_tax_value_3"),
-            label                   = "Upper",
-            value                   = analysePay::uk_settings$pension$alpha_value_3,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-             decimalPlaces           = 0,
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 200000, # some upper limit
-            style                   = "text-align: center;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_tax_value_3"),
+            label   = "Upper",
+            value   = analysePay::uk_settings$pension$alpha_value_3,
+            decimalPlaces = 0,
+            maximumValue  = 200000
           )
         )
       ),
@@ -282,29 +257,17 @@ ukSettingsUserUI <- function(id) {
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
           tags$h5("Repayment Thresholds"),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_slp2_value"),
-            label                   = "Plan 2",
-            value                   = analysePay::uk_settings$sl_plan2$value,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 200000,
-            style                   = "text-align: center; width: 100%;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_slp2_value"),
+            label   = "Plan 2",
+            value   = analysePay::uk_settings$sl_plan2$value,
+            maximumValue = 200000
           ),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_uk_slp3_value"),
-            label                   = "Plan 3",
-            value                   = analysePay::uk_settings$sl_plan3$value,
-            currencySymbol          = "\U00A3",
-            currencySymbolPlacement = "p",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 200000,
-            style                   = "text-align: center; width: 100%;"
+          uk_autonumericInput(
+            inputId = shiny::NS(id, "select_uk_slp3_value"),
+            label   = "Plan 3",
+            value   = analysePay::uk_settings$sl_plan3$value,
+            maximumValue = 200000
           )
         )
       )

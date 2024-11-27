@@ -3,7 +3,7 @@
 #' @param ui_element UI to attache the spinner to.
 #' @param col Spinner colour.
 #'
-custom_spinner <- function(ui_element, col = palette_global$body_tertiary_bg) {
+custom_spinner <- function(ui_element, col = palette_global$body_color) {
   shinycssloaders::withSpinner(ui_element, color = col, size = 1.5, type = 6)
 }
 

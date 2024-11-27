@@ -1,3 +1,28 @@
+#' Set Up Common PL Settings for autonumericInput
+#'
+#' @noRd
+pl_autonumericInput <- function(
+    inputId,
+    label,
+    value,
+    ...
+  ) {
+  shinyWidgets::autonumericInput(
+    inputId                 = inputId,
+    label                   = label,
+    value                   = value,
+    currencySymbol          = analysePay::pl_settings$global$currencySymbol,
+    currencySymbolPlacement = analysePay::pl_settings$global$currencySymbolPlacement,
+    decimalCharacter        = analysePay::pl_settings$global$decimalCharacter,
+    digitGroupSeparator     = analysePay::pl_settings$global$digitGroupSeparator,
+    minimumValue            = analysePay::pl_settings$global$minimumValue,
+    maximumValue            = analysePay::pl_settings$global$maximumValue,
+    style                   = "text-align: center; width: 100%;",
+    ...
+  )
+}
+
+
 plSettingsUserUI <- function(id) {
 
   tags$div(
@@ -9,7 +34,7 @@ plSettingsUserUI <- function(id) {
         icon    = shiny::icon("wrench", style = "font-size: 1.5rem;"),
         width   = "26px"
       ) |>
-        bslib::tooltip("Restore default settings", id = "tt_pl_settings")
+        bslib::tooltip("Restore default settings", id = shiny::NS(id, "tt_pl_settings"))
     ),
 
     bslib::accordion(
@@ -166,28 +191,15 @@ plSettingsUserUI <- function(id) {
           bslib::layout_columns(
             col_widths = c(12, 6, 6),
             tags$h5("Thresholds"),
-            shinyWidgets::autonumericInput(
-              inputId                 = shiny::NS(id, "select_pl_tax_value_1"),
-              label                   = "Allowance",
-              value                   = analysePay::pl_settings$tax$stopniowy$value_1,
-              currencySymbol          = "z\U0142",
-              currencySymbolPlacement = "s",
-              decimalCharacter        = ".",
-              digitGroupSeparator     = ",",
-              minimumValue            = 0,
-              style                   = "text-align: center; width: 100%;"
+            pl_autonumericInput(
+              inputId = shiny::NS(id, "select_pl_tax_value_1"),
+              label   = "Allowance",
+              value   = analysePay::pl_settings$tax$stopniowy$value_1
             ),
-            shinyWidgets::autonumericInput(
-              inputId                 = shiny::NS(id, "select_pl_tax_value_2"),
-              label                   = "Upper",
-              value                   = analysePay::pl_settings$tax$stopniowy$value_2,
-              currencySymbol          = "z\U0142",
-              currencySymbolPlacement = "s",
-              decimalCharacter        = ".",
-              digitGroupSeparator     = ",",
-              minimumValue            = 0,
-              maximumValue            = 1000000,
-              style                   = "text-align: center; width: 100%;"
+            pl_autonumericInput(
+              inputId = shiny::NS(id, "select_pl_tax_value_2"),
+              label   = "Upper",
+              value   = analysePay::pl_settings$tax$stopniowy$value_2
             )
           )
         )
@@ -230,35 +242,21 @@ plSettingsUserUI <- function(id) {
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
           tags$h5("Repayment Thresholds"),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_pl_slp2_value"),
-            label                   = label_with_popover(
+          pl_autonumericInput(
+            inputId = shiny::NS(id, "select_pl_slp2_value"),
+            label   = label_with_popover(
               "Plan 2",
               glue::glue("<a href={ analysePay::pl_settings$sl_plan2$source } target='_blank'>Find out more!</a>")
             ),
-            value                   = analysePay::pl_settings$sl_plan2$value,
-            currencySymbol          = "z\U0142",
-            currencySymbolPlacement = "s",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 1000000,
-            style                   = "text-align: center; width: 100%;"
+            value   = analysePay::pl_settings$sl_plan2$value
           ),
-          shinyWidgets::autonumericInput(
-            inputId                 = shiny::NS(id, "select_pl_slp3_value"),
-            label                   = label_with_popover(
+          pl_autonumericInput(
+            inputId = shiny::NS(id, "select_pl_slp3_value"),
+            label   = label_with_popover(
               "Plan 3",
               glue::glue("<a href={ analysePay::pl_settings$sl_plan3$source } target='_blank'>Find out more!</a>")
             ),
-            value                   = analysePay::pl_settings$sl_plan3$value,
-            currencySymbol          = "z\U0142",
-            currencySymbolPlacement = "s",
-            decimalCharacter        = ".",
-            digitGroupSeparator     = ",",
-            minimumValue            = 0,
-            maximumValue            = 1000000,
-            style                   = "text-align: center; width: 100%;"
+            value   = analysePay::pl_settings$sl_plan3$value
           )
         )
       )

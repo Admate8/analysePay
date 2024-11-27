@@ -3,7 +3,14 @@ pl_settings <- list(
     "full_name" = "Poland",
     "short_cut" = "pl",
     "currency"  = "PLN",
-    "locale"    = "pl-PL" # 'https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp'
+    "locale"    = "pl-PL", # 'https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp',
+    # Settings for autonumericInput
+    "currencySymbol"          = "z\U0142",
+    "currencySymbolPlacement" = "s",
+    "decimalCharacter"        = ",",
+    "digitGroupSeparator"     = " ",
+    "minimumValue"            = 0,
+    "maximumValue"            = 1000000
   ),
   "pension" = list(
     "alpha_scheme"  = TRUE, # NOT IN USE, but must exist to repeat big chunks of the code in the server

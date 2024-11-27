@@ -3,7 +3,14 @@ uk_settings <- list(
     "full_name" = "United Kingdom",
     "short_cut" = "uk",
     "currency"  = "GBP",
-    "locale"    = "en-GB" # 'https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp'
+    "locale"    = "en-GB", # 'https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp'
+    # Settings for autonumericInput
+    "currencySymbol"          = "\U00A3",
+    "currencySymbolPlacement" = "p",
+    "decimalCharacter"        = ".",
+    "digitGroupSeparator"     = ",",
+    "minimumValue"            = 0,
+    "maximumValue"            = 200000
   ),
   "pension" = list(
     "rate"          = 4 / 100,

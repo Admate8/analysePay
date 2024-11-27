@@ -4,7 +4,7 @@
 \alias{custom_spinner}
 \title{Define Custom Spinner Animation}
 \usage{
-custom_spinner(ui_element, col = palette_global$body_tertiary_bg)
+custom_spinner(ui_element, col = palette_global$body_color)
 }
 \arguments{
 \item{ui_element}{UI to attache the spinner to.}
