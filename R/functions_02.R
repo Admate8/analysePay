@@ -1,120 +1,3 @@
-#' Get Customised Echarts e_bar Styling
-#'
-#' @param col Colour.
-#' @param factor Shade factor.
-#' @param reverse Logical - should the shades be reversed?
-#'
-#' @noRd
-get_gradient <- function(col, factor, reverse = FALSE) {
-  shaded_col <- get_hex_colour_shade(col, factor)
-
-  if (reverse == FALSE) {
-    htmlwidgets::JS(paste0(
-      "new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '", col, "' },
-                { offset: 0.4, color: '", shaded_col, "' },
-                { offset: 0.6, color: '", shaded_col, "' },
-                { offset: 1, color: '", col, "' }
-            ])"
-    ))
-  } else {
-    htmlwidgets::JS(paste0(
-      "new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '", shaded_col, "' },
-                { offset: 0.4, color: '", col, "' },
-                { offset: 0.6, color: '", col, "' },
-                { offset: 1, color: '", shaded_col, "' }
-            ])"
-    ))
-  }
-}
-
-
-#' Create Custom Echart Tooltip
-#'
-#' Customise tooltip depending on the country currency.
-#'
-#' @param country Country short cut name.
-#'
-#' @noRd
-get_echart_tooltip <- function(country = "uk") {
-
-  settings <- paste0(country, "_settings")
-  locale   <- base::get(settings)$global$locale
-  currency <- base::get(settings)$global$currency
-
-  htmlwidgets::JS(paste0(
-    "function (value) {
-        if (value === undefined || value === null || value === '') {
-          return '-';
-        }
-        return parseFloat(value).toLocaleString('", locale, "', {
-        style: 'currency', currency: '", currency,"', maximumFractionDigits: 0
-        });
-      }"
-  ))
-}
-
-
-#' Draw a Custom Bar Serie
-#'
-#' @param ... Other \code{echarts4r::e_bar_} arguments.
-#' @param serie Serie name.
-#' @param color Serie colour.
-#' @param stack Stack group.
-#' @param country Country short cut name.
-#'
-#' @noRd
-draw_echart_bar_serie <- function(..., serie, color, stack, country = "uk") {
-
-  col_gradient      <- get_gradient(color, 0.3)
-  col_gradient_emph <- get_gradient(color, 0.3, TRUE)
-  col               <- palette_global$categories[[color]]
-  name              <- paste0(toupper(country), ": ", stringr::str_to_title(gsub("_", " ", gsub("_perc|_from|_to", "", serie))))
-
-  echarts4r::e_bar_(
-    serie     = serie,
-    name      = name,
-    color     = col,
-    tooltip   = list(valueFormatter = htmlwidgets::JS(
-      "function(value) {
-        return parseFloat(value) + '%';
-      }"
-    )),
-    stack     = stack,
-    itemStyle = list(color = col_gradient),
-    emphasis  = list(itemStyle = list(color = col_gradient_emph), focus = "series"),
-    ...
-  )
-}
-
-#' Draw a Custom Scatter Serie
-#'
-#' @param ... Other \code{echarts4r::e_bar_} arguments.
-#' @param serie Serie name.
-#' @param index Y-axis index.
-#' @param country Country short cut name.
-#'
-#' @noRd
-draw_echart_scatter_serie <- function(..., serie, index, country = "uk") {
-
-  col     <- palette_global$categories$earnings_color
-  name    <- paste0(toupper(country), ": ", stringr::str_to_title(gsub("_", " ", gsub("_perc|_from|_to", "", serie))))
-  tooltip <- list(valueFormatter = get_echart_tooltip(country))
-
-  echarts4r::e_scatter_(
-    serie       = serie,
-    name        = name,
-    color       = col,
-    stack       = stack,
-    symbol_size = 10,
-    tooltip     = tooltip,
-    y_index     = index,
-    emphasis    = list(focus = "series"),
-    ...
-  )
-}
-
 
 #' Plot Earnings by Decile Deductions Breakdown
 #'
@@ -126,31 +9,127 @@ plot_earnings_decile_dist <- function(df) {
   country_from <- purrr::discard(unique(df$country_from), is.na)
   country_to   <- purrr::discard(unique(df$country_to), is.na)
 
-  df |>
-    # Show only available deciles from the sources
-    dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
-    dplyr::mutate(
-      deciles = paste0(as.factor(deciles), "th"),
-      dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
-    ) |>
-    echarts4r::e_chart(x = deciles) |>
-    draw_echart_bar_serie(serie = "net_income_perc_from",          color = palette_global$categories$net_color,           stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "student_loan_plan_3_perc_from", color = palette_global$categories$sl_plan3_color,      stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "student_loan_plan_2_perc_from", color = palette_global$categories$sl_plan2_color,      stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "income_tax_perc_from",          color = palette_global$categories$tax_color,           stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "insurance_voluntary_perc_from", color = palette_global$categories$insurance_color_vol, stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "insurance_mandatory_perc_from", color = palette_global$categories$insurance_color,     stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "pension_voluntary_perc_from",   color = palette_global$categories$pension_color_vol,   stack = "0", country = country_from) |>
-    draw_echart_bar_serie(serie = "pension_mandatory_perc_from",   color = palette_global$categories$pension_color,       stack = "0", country = country_from) |>
 
-    draw_echart_bar_serie(serie = "net_income_perc_to",            color = palette_global$categories$net_color,           stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "student_loan_plan_3_perc_to",   color = palette_global$categories$sl_plan3_color,      stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "student_loan_plan_2_perc_to",   color = palette_global$categories$sl_plan2_color,      stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "income_tax_perc_to",            color = palette_global$categories$tax_color,           stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "insurance_voluntary_perc_to",   color = palette_global$categories$insurance_color_vol, stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "insurance_mandatory_perc_to",   color = palette_global$categories$insurance_color,     stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "pension_voluntary_perc_to",     color = palette_global$categories$pension_color_vol,   stack = "1", country = country_to) |>
-    draw_echart_bar_serie(serie = "pension_mandatory_perc_to",     color = palette_global$categories$pension_color,       stack = "1", country = country_to) |>
+  # Draw Custom Bar Serie ----
+  draw_echart_bar_serie <- function(e_chart_object, serie, color, stack, country = "uk") {
+
+    col_gradient      <- get_gradient(color, 0.3)
+    col_gradient_emph <- get_gradient(color, 0.3, TRUE)
+    col               <- palette_global$categories[[color]]
+    name              <- paste0(toupper(country), ": ", stringr::str_to_title(gsub("_", " ", gsub("_perc|_from|_to", "", serie))))
+
+    e_chart_object |>
+      echarts4r::e_bar_(
+        serie     = serie,
+        name      = name,
+        color     = col,
+        tooltip   = list(valueFormatter = htmlwidgets::JS(
+          "function(value) {
+        return parseFloat(value) + '%';
+      }"
+        )),
+        stack     = stack,
+        itemStyle = list(color = col_gradient),
+        emphasis  = list(itemStyle = list(color = col_gradient_emph), focus = "series")
+      )
+  }
+
+  # Draw Custom Scatter Serie
+  draw_echart_scatter_serie <- function(..., serie, index, country = "uk") {
+
+    col     <- palette_global$categories$earnings_color
+    name    <- paste0(toupper(country), ": ", stringr::str_to_title(gsub("_", " ", gsub("_perc|_from|_to", "", serie))))
+    tooltip <- list(valueFormatter = get_echart_tooltip(country))
+
+    echarts4r::e_scatter_(
+      serie       = serie,
+      name        = name,
+      color       = col,
+      stack       = stack,
+      symbol_size = 10,
+      tooltip     = tooltip,
+      y_index     = index,
+      itemStyle   = list(opacity = 1),
+      emphasis    = list(focus = "series"),
+      ...
+    )
+  }
+
+  # Define a set of objects for the echart ----
+  set_of_series <- paste0(c(
+    "net_income_perc_",
+    "student_loan_plan_3_perc_",
+    "student_loan_plan_2_perc_",
+    "income_tax_perc_",
+    "insurance_voluntary_perc_",
+    "insurance_mandatory_perc_",
+    "pension_voluntary_perc_",
+    "pension_mandatory_perc_"
+  ), c(rep("from", 8), rep("to", 8)))
+
+  # Must match the order above
+  set_of_colors <- rep(c(
+    palette_global$categories$net_color,
+    palette_global$categories$sl_plan3_color,
+    palette_global$categories$sl_plan2_color,
+    palette_global$categories$tax_color,
+    palette_global$categories$insurance_color_vol,
+    palette_global$categories$insurance_color,
+    palette_global$categories$pension_color_vol,
+    palette_global$categories$pension_color
+  ), 2)
+
+  set_of_stacks    <- c(rep("0", 8), rep("1", 8))
+  set_of_countries <- c(rep(country_from, 8), rep(country_to, 8))
+
+  purrr::reduce(
+    .x = seq_along(set_of_series),
+
+    # Start with an initialized chart
+    .init = df |>
+      # Show only available deciles from the sources
+      dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
+      dplyr::mutate(
+        deciles = paste0(as.factor(deciles), "th"),
+        dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
+      ) |>
+      echarts4r::e_chart(x = deciles),
+
+    # Apply the function with various settings from the lists
+    .f = ~ draw_echart_bar_serie(
+      .x,
+      set_of_series[.y],
+      set_of_colors[.y],
+      set_of_stacks[.y],
+      set_of_countries[.y]
+    )
+  ) |>
+
+  # df |>
+  #   # Show only available deciles from the sources
+  #   dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
+  #   dplyr::mutate(
+  #     deciles = paste0(as.factor(deciles), "th"),
+  #     dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
+  #   ) |>
+  #   echarts4r::e_chart(x = deciles) |>
+  #   draw_echart_bar_serie(serie = "net_income_perc_from",          color = palette_global$categories$net_color,           stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "student_loan_plan_3_perc_from", color = palette_global$categories$sl_plan3_color,      stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "student_loan_plan_2_perc_from", color = palette_global$categories$sl_plan2_color,      stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "income_tax_perc_from",          color = palette_global$categories$tax_color,           stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "insurance_voluntary_perc_from", color = palette_global$categories$insurance_color_vol, stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "insurance_mandatory_perc_from", color = palette_global$categories$insurance_color,     stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "pension_voluntary_perc_from",   color = palette_global$categories$pension_color_vol,   stack = "0", country = country_from) |>
+  #   draw_echart_bar_serie(serie = "pension_mandatory_perc_from",   color = palette_global$categories$pension_color,       stack = "0", country = country_from) |>
+  #
+  #   draw_echart_bar_serie(serie = "net_income_perc_to",            color = palette_global$categories$net_color,           stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "student_loan_plan_3_perc_to",   color = palette_global$categories$sl_plan3_color,      stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "student_loan_plan_2_perc_to",   color = palette_global$categories$sl_plan2_color,      stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "income_tax_perc_to",            color = palette_global$categories$tax_color,           stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "insurance_voluntary_perc_to",   color = palette_global$categories$insurance_color_vol, stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "insurance_mandatory_perc_to",   color = palette_global$categories$insurance_color,     stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "pension_voluntary_perc_to",     color = palette_global$categories$pension_color_vol,   stack = "1", country = country_to) |>
+  #   draw_echart_bar_serie(serie = "pension_mandatory_perc_to",     color = palette_global$categories$pension_color,       stack = "1", country = country_to) |>
 
     draw_echart_scatter_serie(serie = "earnings_from", index = 1, country = country_from) |>
     draw_echart_scatter_serie(serie = "earnings_to",   index = 2, country = country_to) |>
@@ -182,5 +161,11 @@ plot_earnings_decile_dist <- function(df) {
       offset        = 20
     ) |>
     echarts4r::e_legend(show = FALSE) |>
-    echarts4r::e_tooltip(axisPointer = list(type = "shadow"))
+    echarts4r::e_tooltip(
+      axisPointer = list(type = "shadow"),
+      backgroundColor = palette_global$body_tertiary_bg,
+      textStyle       = list(color = palette_global$body_color),
+      borderRadius    = 25,
+      padding         = 15
+    )
 }
