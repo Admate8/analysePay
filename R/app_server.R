@@ -147,8 +147,63 @@ app_server <- function(input, output, session) {
     )
   })
 
-  output$plot_earnings_decile_dist     <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+  output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+
+  # Page 3 ----
+  ## Render reactive ui (country-dependent) to get user's annual earnings
+  output$ui_provide_annual_earnings <- renderUI({
+
+    country_from <- purrr::discard(unique(df_main()$country_from), is.na)
+
+    base::get(paste0(country_from, "_autonumericInput"))(
+      inputId = "provide_annual_earnings",
+      label   = "Set annual earnings",
+      value   = base::get(paste0(country_from, "_settings"))$earning_deciles$`50th`
+    )
+  })
+
+  ## Render the interpolated distribution with nominal deductions breakdown plot
   output$plot_int_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_decile_dist(df_main(), input$select_calc_period)})
+
+  ## Update the plot with mark lines
+  observeEvent(c(input$provide_annual_earnings, input$select_calc_period), {
+
+    ### Make sure we don't pass unreasonable bounds
+    lower_bound   <- min(df_main()$earnings_from, na.rm = TRUE)
+    upper_bound   <- max(df_main()$earnings_from, na.rm = TRUE)
+    pass_earnings <- ifelse(
+      input$provide_annual_earnings < lower_bound, lower_bound,
+      ifelse(
+        input$provide_annual_earnings > upper_bound, upper_bound,
+        input$provide_annual_earnings
+      ))
+
+    proxy_int_earnings_decile_dist(
+      plot            = echarts4r::echarts4rProxy("plot_int_earnings_decile_dist", data = NULL),
+      annual_earnings = pass_earnings,
+      df              = df_main(),
+      period          = input$select_calc_period
+    )
+  })
+
+  ## Validate the annual earnings input
+  iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
+  iv_provide_annual_earnings$add_rule(
+    "provide_annual_earnings",
+    function(value) {
+      if (is.null(value)) "Supply annual earnings..."
+      else if (value > max(df_main()$earnings_from, na.rm = TRUE)) "Try a smaller value..."
+      else if (value < min(df_main()$earnings_from, na.rm = TRUE)) "Try a bigger value..."
+    }
+  )
+  iv_provide_annual_earnings$enable()
+
+  output$test <- echarts4r::renderEcharts4r({
+    mtcars |>
+      echarts4r::e_chart(x = cyl) |>
+      echarts4r::e_bar(disp) |>
+      echarts4r::e_legend(show = FALSE)
+  })
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})

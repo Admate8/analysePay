@@ -1,3 +1,43 @@
+#' Return Corresponding Decile Value from the Target Distribution
+#'
+#' Because we interpolated decile values, and deciles are a sequence from 10 to 95
+#' by 0.1, it is not guaranteed that a custom earnings will have its decile. This
+#' function checks this and return the point the closest to the supplied value.
+#' For example, if 25000 does not have it's decile (but say, 25024 and 24900
+#' are the 10.2th and 10th decile receptively), the function will return a point
+#' c(10.2, 25024) because 25024 is closer to 25000 than 24900.
+#'
+#' @param annual_earnings Annual earnings in the "country from" (base) currency.
+#' @param df Data returned by \code{get_df_earnings_dist()$df_main}.
+#'
+#' @return Two points - one with the closest value and decile from the base
+#' distribution and the other corresponding decile with its value from the
+#' target distribution.
+#'
+#' @noRd
+map_deciles <- function(annual_earnings, df) {
+
+  country_from <- purrr::discard(unique(df$country_from), is.na)
+  country_to   <- purrr::discard(unique(df$country_to), is.na)
+
+  # Get the base and target distributions
+  dist_from <- df$earnings_from
+  dist_to   <- df$earnings_to
+
+  # Find the closest value
+  closest_index <- which.min(abs(dist_from - annual_earnings))
+
+  corresponding_decile     <- df$deciles[closest_index]
+  corresponding_value_from <- df$earnings_from[closest_index]
+  corresponding_value_to   <- df$earnings_to[closest_index]
+
+  # Return as points
+  return(list(
+    "point_from" = c(corresponding_decile, corresponding_value_from),
+    "point_to"   = c(corresponding_decile, corresponding_value_to)
+  ))
+}
+
 
 #' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Deciles
 #'
@@ -143,16 +183,16 @@ plot_int_earnings_decile_dist <- function(df, period) {
       set_of_types[.y]
     )
   ) |>
-    echarts4r::e_grid(top = "20%", right = "7%", left = "1%", height = "35%") |>
-    echarts4r::e_grid(right = "7%", left = "1%", height = "35%", top = "60%") |>
+    echarts4r::e_grid(top = "22%", right = "1.5%", left = "7%", height = "35%") |>
+    echarts4r::e_grid(top = "62%", right = "1.5%", left = "7%", height = "35%") |>
     echarts4r::e_y_axis(
-      gridIndex = 1,         index = 0, position = "right",
+      gridIndex = 1,         index = 0, position = "left",
       max       = "dataMax", nameTextStyle = list(align = "right"),
       axisLabel = list(formatter = get_echart_tooltip(country_to)),
       splitLine = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
     echarts4r::e_y_axis(
-      gridIndex = 0,         index = 1, position = "right",
+      gridIndex = 0,         index = 1, position = "left",
       max       = "dataMax", nameTextStyle = list(align = "right"),
       axisLabel = list(formatter = get_echart_tooltip(country_from)),
       splitLine = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
@@ -249,4 +289,68 @@ plot_int_earnings_decile_dist <- function(df, period) {
         list(type = "inverse", title = "Inverse")
       )
     )
+}
+
+
+
+proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
+
+  # Define global settings ----
+  country_from <- purrr::discard(unique(df$country_from), is.na)
+  country_to   <- purrr::discard(unique(df$country_to), is.na)
+
+
+  # Define points ----
+  points       <- map_deciles(annual_earnings, df)
+  scale_factor <- ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
+  ## Scale the y-coordinates of the points
+  points$point_from[2] <- points$point_from[2] / scale_factor
+  points$point_to[2]   <- points$point_to[2] / scale_factor
+  max_dist_to          <- (max(df$earnings_to, na.rm = TRUE) / scale_factor) - 1
+
+
+  plot |>
+    echarts4r::e_mark_p(
+      type        = "line",
+      serie_index = 1,
+      emphasis    = list(disabled = TRUE),
+      lineStyle   = list(color = "red"),
+      data        = list(
+        list(xAxis = "0th", yAxis = points$point_from[[2]], symbolSize = 6),
+        list(xAxis = paste0(points$point_from[[1]], "th"), yAxis = points$point_from[[2]], symbol = "none")
+      )
+    ) |>
+    echarts4r::e_mark_p(
+      type        = "line",
+      serie_index = 1,
+      emphasis    = list(disabled = TRUE),
+      lineStyle   = list(color = "red"),
+      data        = list(
+        list(xAxis = paste0(points$point_from[[1]], "th"), yAxis = points$point_from[[2]], symbol = "none"),
+        list(xAxis = paste0(points$point_from[[1]], "th"), yAxis = 0, symbol = "none")
+      )
+    ) |>
+
+    echarts4r::e_mark_p(
+      type        = "line",
+      serie_index = 11,
+      emphasis    = list(disabled = TRUE),
+      lineStyle   = list(color = "red"),
+      data        = list(
+        list(xAxis = paste0(points$point_to[[1]], "th"), yAxis = max_dist_to, symbol = "none"),
+        list(xAxis = paste0(points$point_to[[1]], "th"), yAxis = points$point_to[[2]], symbol = "none")
+      )
+    ) |>
+    echarts4r::e_mark_p(
+      type        = "line",
+      serie_index = 11,
+      emphasis    = list(disabled = TRUE),
+      lineStyle   = list(color = "red"),
+      data        = list(
+        list(xAxis = paste0(points$point_to[[1]], "th"), yAxis = points$point_to[[2]], symbol = "none"),
+        list(xAxis = "0th", yAxis = points$point_to[[2]], symbolSize = 6)
+      )
+    ) |>
+    echarts4r::e_merge()
+
 }

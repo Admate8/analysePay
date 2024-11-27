@@ -370,4 +370,12 @@ $lighter-accordions: (
   border-radius: 25px;
 }
 
+/* Customise radio buttons */
+[id="select_calc_period"] {
+   .btn {
+      background-color: $body-bg;
+      color: $body-color !important;
+      border: 0.5px solid $body-color-secondary !important;
+    }
+}
 

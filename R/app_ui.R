@@ -117,16 +117,30 @@ app_ui <- function(request) {
 
 
             bslib::layout_columns(
-              col_widths = c(12, 12),
-              shinyWidgets::radioGroupButtons(
-                inputId    = "select_calc_period",
-                label      = "Show calcs by...",
-                choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
-                selected   = "year",
-                individual = TRUE,
-                size       = "sm"
+              col_widths = c(12, 12, 12),
+              tags$div(
+                class = "h-100 d-flex align-items-center flex-wrap",
+                tags$h2(tags$strong("Overview"), class = "display-6"),
+                tags$h2("Interpolated Earnings", class = "display-6")
               ),
-              "Something"
+
+              bslib::layout_columns(
+                col_widths = c(6, 6),
+                class = "h-100 p-4 d-flex align-items-center custom-card",
+
+                shinyWidgets::radioGroupButtons(
+                  inputId    = "select_calc_period",
+                  label      = "Show earnings by...",
+                  choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
+                  selected   = "year",
+                  individual = TRUE,
+                  size       = "sm",
+                  justified  = TRUE
+                ),
+                uiOutput("ui_provide_annual_earnings")
+              ),
+
+              echarts4r::echarts4rOutput("test", height = "34rem")
             )
           )
         )
