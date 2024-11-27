@@ -101,7 +101,7 @@ app_ui <- function(request) {
               uiOutput("ui_categories_table"),
               class = "custom-card"
             ),
-            echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "440px")
+            echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "27.5rem") |> custom_spinner()
           )
         ),
 
@@ -109,7 +109,26 @@ app_ui <- function(request) {
         tags$div(
           class = "section",
 
-          "Something"
+          bslib::layout_columns(
+            col_widths = c(8, 4),
+            class = "add-left-right-margins",
+
+            echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
+
+
+            bslib::layout_columns(
+              col_widths = c(12, 12),
+              shinyWidgets::radioGroupButtons(
+                inputId    = "select_calc_period",
+                label      = "Show calcs by...",
+                choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
+                selected   = "year",
+                individual = TRUE,
+                size       = "sm"
+              ),
+              "Something"
+            )
+          )
         )
 
       ),

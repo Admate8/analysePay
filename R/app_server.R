@@ -147,7 +147,8 @@ app_server <- function(input, output, session) {
     )
   })
 
-  output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+  output$plot_earnings_decile_dist     <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+  output$plot_int_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_decile_dist(df_main(), input$select_calc_period)})
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})

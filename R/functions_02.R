@@ -25,8 +25,8 @@ plot_earnings_decile_dist <- function(df) {
         color     = col,
         tooltip   = list(valueFormatter = htmlwidgets::JS(
           "function(value) {
-        return parseFloat(value) + '%';
-      }"
+            return parseFloat(value) + '%';
+          }"
         )),
         stack     = stack,
         itemStyle = list(color = col_gradient),
@@ -104,36 +104,9 @@ plot_earnings_decile_dist <- function(df) {
       set_of_countries[.y]
     )
   ) |>
-
-  # df |>
-  #   # Show only available deciles from the sources
-  #   dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
-  #   dplyr::mutate(
-  #     deciles = paste0(as.factor(deciles), "th"),
-  #     dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
-  #   ) |>
-  #   echarts4r::e_chart(x = deciles) |>
-  #   draw_echart_bar_serie(serie = "net_income_perc_from",          color = palette_global$categories$net_color,           stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "student_loan_plan_3_perc_from", color = palette_global$categories$sl_plan3_color,      stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "student_loan_plan_2_perc_from", color = palette_global$categories$sl_plan2_color,      stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "income_tax_perc_from",          color = palette_global$categories$tax_color,           stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "insurance_voluntary_perc_from", color = palette_global$categories$insurance_color_vol, stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "insurance_mandatory_perc_from", color = palette_global$categories$insurance_color,     stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "pension_voluntary_perc_from",   color = palette_global$categories$pension_color_vol,   stack = "0", country = country_from) |>
-  #   draw_echart_bar_serie(serie = "pension_mandatory_perc_from",   color = palette_global$categories$pension_color,       stack = "0", country = country_from) |>
-  #
-  #   draw_echart_bar_serie(serie = "net_income_perc_to",            color = palette_global$categories$net_color,           stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "student_loan_plan_3_perc_to",   color = palette_global$categories$sl_plan3_color,      stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "student_loan_plan_2_perc_to",   color = palette_global$categories$sl_plan2_color,      stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "income_tax_perc_to",            color = palette_global$categories$tax_color,           stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "insurance_voluntary_perc_to",   color = palette_global$categories$insurance_color_vol, stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "insurance_mandatory_perc_to",   color = palette_global$categories$insurance_color,     stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "pension_voluntary_perc_to",     color = palette_global$categories$pension_color_vol,   stack = "1", country = country_to) |>
-  #   draw_echart_bar_serie(serie = "pension_mandatory_perc_to",     color = palette_global$categories$pension_color,       stack = "1", country = country_to) |>
-
     draw_echart_scatter_serie(serie = "earnings_from", index = 1, country = country_from) |>
     draw_echart_scatter_serie(serie = "earnings_to",   index = 2, country = country_to) |>
-    echarts4r::e_grid(right = "5%", left = "5%", bottom = "5%", top = "9%") |>
+    echarts4r::e_grid(right = "5%", left = "3%", bottom = "5%", top = "9%") |>
     echarts4r::e_y_axis(
       gridIndex     = 0,
       index         = 0,
@@ -141,7 +114,8 @@ plot_earnings_decile_dist <- function(df) {
       alignTicks    = TRUE,
       name          = "Percentage\nBreakdown",
       nameTextStyle = list(align = "left"),
-      axisLabel     = list(formatter = '{value}%')
+      axisLabel     = list(formatter = '{value}%'),
+      splitLine     = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
     echarts4r::e_y_axis(
       gridIndex     = 0,
@@ -150,7 +124,8 @@ plot_earnings_decile_dist <- function(df) {
       alignTicks    = TRUE,
       axisLabel     = list(rotate = 45, formatter = get_echart_tooltip(country_from)),
       name          = "Annual\nEarnings",
-      nameTextStyle = list(align = "right")
+      nameTextStyle = list(align = "right"),
+      splitLine     = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
     echarts4r::e_y_axis(
       gridIndex     = 0,
@@ -158,7 +133,8 @@ plot_earnings_decile_dist <- function(df) {
       position      = "right",
       axisLabel     = list(rotate = 45, formatter = get_echart_tooltip(country_to)),
       alignTicks    = TRUE,
-      offset        = 20
+      offset        = 20,
+      splitLine     = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
     echarts4r::e_legend(show = FALSE) |>
     echarts4r::e_tooltip(
