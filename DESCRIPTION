@@ -19,6 +19,7 @@ Imports:
     here (>= 1.0.1),
     htmltools (>= 0.5.8.1),
     htmlwidgets (>= 1.6.4),
+    pkgload,
     purrr (>= 1.0.1),
     reactable (>= 0.4.4),
     reactablefmtr (>= 2.0.0),

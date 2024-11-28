@@ -222,7 +222,7 @@ app_ui <- function(request) {
             tags$div(
               tags$div(
                 class = "d-flex justify-content-center align-items-center image-me",
-                tags$img(src = "/www/me.jpg")
+                tags$img(src = "../www/me.jpg")
               ),
               tags$h1("About me", class = "display-4"),
               tags$p(class = "text-justify", "I'm Adrian, and I'm a Data Analyst specialising in the higher education sector in England. I create, maintain and improve the student loan borrower simulation models and assess the impact of policy and macroeconomic determinants on loan repayments."),
