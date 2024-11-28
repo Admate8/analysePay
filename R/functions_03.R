@@ -187,13 +187,23 @@ plot_int_earnings_decile_dist <- function(df, period) {
     echarts4r::e_grid(top = "62%", right = "1.5%", left = "7%", height = "35%") |>
     echarts4r::e_y_axis(
       gridIndex = 1,         index = 0, position = "left",
-      max       = "dataMax", nameTextStyle = list(align = "right"),
+      max       = "dataMax",  name = "Target Country",
+      nameTextStyle = list(
+        align      = "left",
+        color      = palette_global$body_color_secondary,
+        fontWeight = "bold"
+      ),
       axisLabel = list(formatter = get_echart_tooltip(country_to)),
       splitLine = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
     echarts4r::e_y_axis(
       gridIndex = 0,         index = 1, position = "left",
-      max       = "dataMax", nameTextStyle = list(align = "right"),
+      max       = "dataMax", name  = "Base Country",
+      nameTextStyle = list(
+        align      = "left",
+        color      = palette_global$body_color_secondary,
+        fontWeight = "bold"
+      ),
       axisLabel = list(formatter = get_echart_tooltip(country_from)),
       splitLine = list(lineStyle = list(color = palette_global$body_tertiary_bg, width = 0.5))
     ) |>
@@ -265,8 +275,8 @@ plot_int_earnings_decile_dist <- function(df, period) {
       height            = "60px",
       orient            = "vertical",
       padding           = 15,
-      backgroundColor   = palette_global$body_tertiary_bg,
-      borderColor       = palette_global$body_tertiary_bg,
+      backgroundColor   = palette_global$body_secondary_bg,
+      borderColor       = palette_global$body_secondary_bg,
       textStyle         = list(color = palette_global$body_color),
       lineStyle         = list(inactiveColor = get_hex_colour_shade(palette_global$body_color_secondary, -0.5)),
       inactiveColor     = get_hex_colour_shade(palette_global$body_color_secondary, -0.5),
@@ -274,8 +284,8 @@ plot_int_earnings_decile_dist <- function(df, period) {
       selectorLabel     = list(
         fontWeight      = "bold",
         color           = palette_global$body_color,
-        backgroundColor = palette_global$body_secondary_bg,
-        borderColor     = palette_global$body_secondary_bg,
+        backgroundColor = palette_global$body_bg,
+        borderColor     = palette_global$body_bg,
         padding         = 10
       ),
       selectorButtonGap = 20,
@@ -288,10 +298,6 @@ plot_int_earnings_decile_dist <- function(df, period) {
         list(type = "all", title = "Select All"),
         list(type = "inverse", title = "Inverse")
       )
-    ) |>
-    echarts4r::e_title(
-      text = "Source (base)", link = base::get(paste0(country_from, "_settings"))$decile_source,
-      subtext = "Source (target)", sublink = base::get(paste0(country_from, "_settings"))$decile_source
     )
 }
 

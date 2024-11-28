@@ -113,7 +113,16 @@ app_ui <- function(request) {
             col_widths = c(8, 4),
             class = "add-left-right-margins",
 
-            echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
+            tags$div(
+              style = "position: relative;",
+              echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
+
+              tags$div(
+                style = "position: absolute; left: 0; top: 0; z-index: 20;",
+                uiOutput("ui_earnings_sources")
+              )
+            ),
+
 
 
             bslib::layout_columns(
@@ -143,6 +152,12 @@ app_ui <- function(request) {
               echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
             )
           )
+        ),
+
+        # Last page ----
+        tags$div(
+          class = "section",
+          "Something"
         )
 
       ),

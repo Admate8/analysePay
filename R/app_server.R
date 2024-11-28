@@ -6,7 +6,8 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # Preserve inputs ----
+  # Page 1 ----
+  ## Preserve inputs
   settings_from <- NULL
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
@@ -16,7 +17,7 @@ app_server <- function(input, output, session) {
   ns_from <- reactiveVal("1")
   ns_to   <- reactiveVal("1")
 
-  # Update country_from and country_to settings depending on the user's selection
+  ## Update country_from and country_to settings depending on the user's selection
   observeEvent(c(input$select_country_from, input$select_country_to), {
 
     # If country_from == country_to we need to make sure both setting options
@@ -27,7 +28,7 @@ app_server <- function(input, output, session) {
       ns_to("2")
     }
 
-    # Update the UI
+    ### Update the UI
     ui_settings_from_name <- paste0(input$select_country_from, "SettingsUserUI")
     ui_settings_to_name   <- paste0(input$select_country_to, "SettingsUserUI")
 
@@ -39,13 +40,13 @@ app_server <- function(input, output, session) {
       )
     })
 
-    # Update server-global settings
+    ### Update server-global settings
     # Define universal settings to avoid multiple if-else conditions
     # As long as {country}SettingsUserServer has the same name, we can do this.
     server_settings_from_name <- paste0(input$select_country_from, "SettingsUserServer")
     server_settings_to_name   <- paste0(input$select_country_to, "SettingsUserServer")
 
-    # Define the following variables as global
+    ### Define the following variables as global
     settings_from <<- base::get(server_settings_from_name)(ns_from())$settings
     settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
 
@@ -53,7 +54,7 @@ app_server <- function(input, output, session) {
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
 
-  # Commit settings button ----
+  ### Commit settings button
   observe({
     if (all(iv_from$is_valid(), iv_to$is_valid())) {
       shinyjs::enable("commit_input_data")
@@ -64,7 +65,7 @@ app_server <- function(input, output, session) {
     }
   })
 
-  # Set the main data ----
+  ## Set the main data
   # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -73,13 +74,14 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
-  # Render the categories table ----
+  # Page 2 ----
+  ## Render the categories table
   df_categories <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
       settings_from = settings_from(),
       settings_to   = settings_to()
     )$df_cat_table |>
-      # Join in the colours from the global options
+      ### Join in the colours from the global options
       cbind(col = c(
         palette_global$categories$pension_color,
         palette_global$categories$pension_color_vol,
@@ -205,6 +207,41 @@ app_server <- function(input, output, session) {
   )
   iv_provide_annual_earnings$enable()
 
+  ## Render deciles & earnings sources
+  output$ui_earnings_sources <- renderUI({
+
+    country_from <- purrr::discard(unique(df_main()$country_from), is.na)
+    country_to   <- purrr::discard(unique(df_main()$country_to), is.na)
+
+    #base::get(paste0(country_from, "_settings"))$decile_source
+    tags$span(
+      bslib::popover(
+        trigger = list(shiny::icon("sourcetree", style = "font-size: 1rem;")),
+        tags$a(
+          shiny::HTML("Data Source:<br>Earnings by Deciles (Base)"),
+          target = "_blank",
+          href = get(paste0(country_from, "_settings"))$decile_source
+        )
+      ),
+      shiny::HTML("&nbsp&nbsp"),
+      bslib::popover(
+        trigger = list(shiny::icon("sourcetree", style = "font-size: 1rem;")),
+        tags$a(
+          shiny::HTML("Data Source:<br>Earnings by Deciles (Target)"),
+          target = "_blank",
+          href = get(paste0(country_to, "_settings"))$decile_source
+        )
+      ),
+      shiny::HTML("&nbsp&nbsp"),
+      bslib::tooltip(
+        trigger = list(shiny::icon("info-circle", style = "font-size: 1rem;")),
+        "As the continuous distribution of the earnings by deciles is not
+        published, the unavailable data has been interpolated by fitting a
+        spline. The scatter series in the plot below represents the actual
+        data from the sources."
+      )
+    )
+  })
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
