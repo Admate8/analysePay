@@ -106,7 +106,7 @@ plot_earnings_decile_dist <- function(df) {
   ) |>
     draw_echart_scatter_serie(serie = "earnings_from", index = 1, country = country_from) |>
     draw_echart_scatter_serie(serie = "earnings_to",   index = 2, country = country_to) |>
-    echarts4r::e_grid(right = "5%", left = "3%", bottom = "5%", top = "9%") |>
+    echarts4r::e_grid(right = "6%", left = "3%", bottom = "5%", top = "9%") |>
     echarts4r::e_y_axis(
       gridIndex     = 0,
       index         = 0,

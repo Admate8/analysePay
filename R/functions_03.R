@@ -183,8 +183,8 @@ plot_int_earnings_decile_dist <- function(df, period) {
       set_of_types[.y]
     )
   ) |>
-    echarts4r::e_grid(top = "22%", right = "1.5%", left = "7%", height = "35%") |>
-    echarts4r::e_grid(top = "62%", right = "1.5%", left = "7%", height = "35%") |>
+    echarts4r::e_grid(top = "22%", right = "1.5%", left = "7.5%", height = "35%") |>
+    echarts4r::e_grid(top = "62%", right = "1.5%", left = "7.5%", height = "35%") |>
     echarts4r::e_y_axis(
       gridIndex = 1,         index = 0, position = "left",
       max       = "dataMax",  name = "Target Country",

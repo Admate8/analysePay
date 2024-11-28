@@ -87,7 +87,7 @@ pl_settings <- list(
   ),
   "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html"
 )
-usethis::use_data(pl_settings, overwrite = TRUE)
+#usethis::use_data(pl_settings, overwrite = TRUE)
 
 
 #' Calculate PL Deductions Breakdown Given Gross Annual Earnings

@@ -77,7 +77,7 @@ uk_settings <- list(
   ),
   "decile_source" = "https://www.statista.com/statistics/416102/average-annual-gross-pay-percentiles-united-kingdom/"
 )
-usethis::use_data(uk_settings, overwrite = TRUE)
+#usethis::use_data(uk_settings, overwrite = TRUE)
 
 
 #' Calculate UK Deductions Breakdown Given Gross Annual Earnings

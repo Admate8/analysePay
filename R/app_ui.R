@@ -27,8 +27,16 @@ app_ui <- function(request) {
               style = "margin-right: 20px;",
               h1("analysePay", class = "display-1"),
               # Make some room after the title
-              tags$div(style = "margin-top: 100px;"),
-              paste(stringi::stri_rand_lipsum(2), collapse = ". ")
+              tags$div(style = "margin-top: 80px;"),
+              tags$h1("Picture this:"),
+              tags$ul(
+                tags$li(class = "text-justify", style = "margin-bottom: 10px;", "The National Insurance rates are tweaked again, and headlines scream about how the \"average worker\" will save \U00A3xxx. But wait... you don't earn the median salary. So, what does it actually mean for your pocket?"),
+                tags$li(class = "text-justify", style = "margin-bottom: 10px;", "The student loan repayment threshold stays frozen for another year. How much more will you be shelling out so the Treasury can balance its books? (Hint: probably more than you'd like!)"),
+                tags$li(class = "text-justify", "Now, let's spice it up - you get a job offer abroad (just Poland for now, but stay with me here). How do you figure out if the move makes sense financially? What does life after tax and costs look like in another country compared to the UK?")
+              ),
+              br(),
+              tags$h3("That's where analysePay steps in!"),
+              tags$p(class = "text-justify", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes...")
             ),
 
             bslib::layout_columns(
@@ -165,17 +173,17 @@ app_ui <- function(request) {
               class = "h-100 d-flex align-items-center",
 
               tags$div(
-                tags$h1(tags$span("Hi", ), class = "display-1"),
+                tags$h1("Hi", class = "display-1"),
                 tags$h1("Thanks for popping in! ", class = "display-6"),
                 tags$div(style = "margin-top: 10rem;"),
-                tags$p(
-                  "I created analysePay because, at the time, I couldn’t find any
+                tags$p(class = "text-justify",
+                  "I created analysePay because, at the time, I couldn't find any
                 tools that offered the functionality I needed while
                 navigating some potentially life-changing decisions.
                 I truly hope you found it insightful and engaging!
                 If you know of any fascinating data sources that could
                 be integrated into the app, or if you have ideas for improvement,
-                I’d love to hear from you! :)"
+                I'd love to hear from you! :)"
                 ),
                 br(), br(),
                 tags$span(
@@ -217,9 +225,9 @@ app_ui <- function(request) {
                 tags$img(src = "/www/me.jpg")
               ),
               tags$h1("About me", class = "display-4"),
-              tags$p("I'm Adrian, and I'm a Data Analyst specialising in the higher education sector in England. I create, maintain and improve the student loan borrower simulation models and assess the impact of policy and macroeconomic determinants on loan repayments."),
-              tags$p("I'm also an R enthusiast who is passionate about everything related to this versatile language. Ever since I was introduced to R during my undergraduate studies, I've been hooked! I love exploring its endless possibilities, from experimenting with innovative approaches to data processing and visualisation to effectively communicating insights to non-technical audiences."),
-              tags$p("Staying motivated and open-minded, I constantly seek opportunities for further personal development. I believe that positive change originates in firm and well-rounded character, and by improving yourself as a human being, you impact the broader community, which leads to meaningful experiences.")
+              tags$p(class = "text-justify", "I'm Adrian, and I'm a Data Analyst specialising in the higher education sector in England. I create, maintain and improve the student loan borrower simulation models and assess the impact of policy and macroeconomic determinants on loan repayments."),
+              tags$p(class = "text-justify", "I'm also an R enthusiast who is passionate about everything related to this versatile language. Ever since I was introduced to R during my undergraduate studies, I've been hooked! I love exploring its endless possibilities, from experimenting with innovative approaches to data processing and visualisation to effectively communicating insights to non-technical audiences."),
+              tags$p(class = "text-justify", "Staying motivated and open-minded, I constantly seek opportunities for further personal development. I believe that positive change originates in firm and well-rounded character, and by improving yourself as a human being, you impact the broader community, which leads to meaningful experiences.")
             )
           )
         )
