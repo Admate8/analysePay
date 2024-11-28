@@ -140,7 +140,7 @@ app_ui <- function(request) {
                 uiOutput("ui_provide_annual_earnings")
               ),
 
-              echarts4r::echarts4rOutput("test", height = "34rem")
+              echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
             )
           )
         )

@@ -128,7 +128,7 @@ app_server <- function(input, output, session) {
       style = "position: relative;",
       reactable::reactableOutput("table_categories") |> custom_spinner(),
       tags$div(
-        style = "position: absolute; left: 60px; top: 0; z-index: 20;",
+        style = "position: absolute; left: 0; top: 0; z-index: 20;",
         tags$span(
           shiny::icon("asterisk", style = "font-size: 1rem;") |>
             bslib::tooltip("Deducted before the Income Tax"),
@@ -186,6 +186,13 @@ app_server <- function(input, output, session) {
     )
   })
 
+  observeEvent(c(input$provide_annual_earnings, df_main()), {
+    req(df_main())
+    req(input$provide_annual_earnings)
+    ## Render the radar plot showing percentage deduction comparison
+    output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(input$provide_annual_earnings, df_main())})
+  })
+
   ## Validate the annual earnings input
   iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
   iv_provide_annual_earnings$add_rule(
@@ -198,12 +205,6 @@ app_server <- function(input, output, session) {
   )
   iv_provide_annual_earnings$enable()
 
-  output$test <- echarts4r::renderEcharts4r({
-    mtcars |>
-      echarts4r::e_chart(x = cyl) |>
-      echarts4r::e_bar(disp) |>
-      echarts4r::e_legend(show = FALSE)
-  })
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})

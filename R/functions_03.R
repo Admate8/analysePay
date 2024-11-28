@@ -288,6 +288,10 @@ plot_int_earnings_decile_dist <- function(df, period) {
         list(type = "all", title = "Select All"),
         list(type = "inverse", title = "Inverse")
       )
+    ) |>
+    echarts4r::e_title(
+      text = "Source (base)", link = base::get(paste0(country_from, "_settings"))$decile_source,
+      subtext = "Source (target)", sublink = base::get(paste0(country_from, "_settings"))$decile_source
     )
 }
 
@@ -353,4 +357,103 @@ proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
     ) |>
     echarts4r::e_merge()
 
+}
+
+
+plot_radar_perc <- function(annual_earnings, df) {
+
+  country_from  <- purrr::discard(unique(df$country_from), is.na)
+  country_to    <- purrr::discard(unique(df$country_to), is.na)
+  points_decile <- map_deciles(annual_earnings, df)$point_from[1]
+
+  # Prepare the data for the Radar chart
+  df_plot <- df |>
+    dplyr::filter(deciles == points_decile) |> # Filter for a single decile
+    dplyr::select(dplyr::contains("perc")) |>
+    tidyr::pivot_longer(cols = dplyr::everything()) |>
+    dplyr::mutate(
+      value       = ifelse(is.na(value), 0L, value),
+      destination = ifelse(grepl("_perc_from$", name), "from", "to"),
+      name        = stringr::str_replace_all(sub("_perc_(from|to)$", "", name), "_", " "),
+      name        = stringr::str_to_title(name),
+      value       = round(100 * value, 2)
+    ) |>
+    tidyr::pivot_wider(
+      names_from  = "destination",
+      values_from = "value"
+    ) |>
+    #cbind("max" = c(15, 10, 10, 5, 25, 10, 10, 100)) |>
+    dplyr::arrange(dplyr::desc(dplyr::row_number()))
+
+  # Define the radar chart options with different max values for each axis
+  radar_options <- list(
+    list(name = "Net\nIncome",          max = 100, color = palette_global$categories$net_color),
+    list(name = "Student\nLoan\nPlan 3", max = 10,  color = palette_global$categories$sl_plan3_color),
+    list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
+    list(name = "Income\nTax",          max = 25,  color = palette_global$categories$tax_color),
+    list(name = "Insurance\nVoluntary", max = 5 ,  color = palette_global$categories$insurance_color_vol),
+    list(name = "Insurance\nMandatory", max = 10,  color = palette_global$categories$insurance_color),
+    list(name = "Pension\nVoluntary",   max = 10,  color = palette_global$categories$pension_color_vol),
+    list(name = "Pension\nMandatory",   max = 15,  color = palette_global$categories$pension_color)
+  )
+
+  # Create radar chart
+  df_plot |>
+    echarts4r::e_charts(name) |>
+    echarts4r::e_radar(
+      from,
+      name      = "Base (%)",
+      areaStyle = list(opacity = 0.2),
+      lineStyle = list(width = 0.5),
+      symbol    = "diamond"
+    ) |>
+    echarts4r::e_radar(to, name = "Target (%)", areaStyle = list()) |>
+    echarts4r::e_color(color = c("#FCEC52", "#F44174")) |>
+    echarts4r::e_radar_opts(
+      indicator = radar_options,
+      nameGap   = 20,
+      radius    = "62%",
+      axisName  = list(
+        backgroundColor = palette_global$body_tertiary_bg,
+        padding         = 10,
+        borderRadius    = 15,
+        fontSize        = 10,
+        fontWeight      = "bold"
+      ),
+      #axisTick = list(show = TRUE, color = palette_global$body_color_secondary, width = 0.5),
+      axisLabel = list(
+        show         = TRUE,
+        formatter    = "{value}%",
+        showMinLabel = FALSE,
+        fontSize     = "0.55rem"
+      ),
+      splitArea = list(
+        show = TRUE,
+        areaStyle = list(
+          color = htmlwidgets::JS(paste0(
+            "new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+              { offset: 0, color: '", palette_global$body_color_secondary, "' },
+              { offset: 0.5, color: '", palette_global$body_bg, "' }
+            ])
+          "
+          ))
+        ),
+        lineStyle = list(color = palette_global$body_color_secondary, width = 0.5)
+      ),
+      splitLine = list(show = FALSE)
+    ) |>
+    echarts4r::e_tooltip(
+      backgroundColor = palette_global$body_tertiary_bg,
+      borderColor     = palette_global$body_tertiary_bg,
+      textStyle       = list(color = palette_global$body_color),
+      borderRadius    = 25
+    ) |>
+    echarts4r::e_legend(
+      textStyle = list(color = palette_global$body_color_secondary),
+      right = 0
+    ) |>
+    echarts4r::e_title(
+      text = "Deductions Breakdown",
+      textStyle = list(color = palette_global$body_color_secondary)
+    )
 }
