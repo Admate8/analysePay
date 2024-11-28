@@ -333,12 +333,26 @@ $lighter-accordions: (
 }
 
 
-/* Add the welcome section */
+/* Add the welcome & close section */
 .welcome-page-content {
   background-image: url( '../www/bg_prism.svg' );
   background-repeat: no-repeat;
   background-size: cover;
   margin-left: -12px;
+}
+.close-page-content {
+  background-image: url( '../www/bg_prism_rev.svg' );
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-left: -12px;
+}
+
+.image-me img{
+  object-fit: fit;
+  border-radius: 50%;
+  border: 2px solid $body-tertiary-bg;
+  width: 15rem;
+  height: 15rem;
 }
 
 .add-attribution{
@@ -370,6 +384,7 @@ $lighter-accordions: (
   border-radius: 25px;
 }
 
+
 /* Customise radio buttons */
 [id="select_calc_period"] {
    .btn {
@@ -377,5 +392,14 @@ $lighter-accordions: (
       color: $body-color !important;
       border: 0.5px solid $body-color-secondary !important;
     }
+}
+
+[id="cv_download_bttn"] {
+  background-color: $body_color_secondary !important;
+  color: $body_secondary_bg !important;
+  height: 100% !important;
+  padding-right: 8.5px !important;
+  padding-left: 8.5px !important;
+  border-radius: 5px !important;
 }
 

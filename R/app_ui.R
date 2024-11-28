@@ -156,8 +156,72 @@ app_ui <- function(request) {
 
         # Last page ----
         tags$div(
-          class = "section",
-          "Something"
+          class = "section close-page-content",
+
+          bslib::layout_columns(
+            class = "add-left-right-margins",
+            col_widths = c(6, 6),
+            tags$div(
+              class = "h-100 d-flex align-items-center",
+
+              tags$div(
+                tags$h1(tags$span("Hi", ), class = "display-1"),
+                tags$h1("Thanks for popping in! ", class = "display-6"),
+                tags$div(style = "margin-top: 10rem;"),
+                tags$p(
+                  "I created analysePay because, at the time, I couldn’t find any
+                tools that offered the functionality I needed while
+                navigating some potentially life-changing decisions.
+                I truly hope you found it insightful and engaging!
+                If you know of any fascinating data sources that could
+                be integrated into the app, or if you have ideas for improvement,
+                I’d love to hear from you! :)"
+                ),
+                br(), br(),
+                tags$span(
+                  class = "d-flex justify-content-center align-items-center",
+                  tags$a(
+                    href = "mailto:adrian9.wisnios@gmail.com",
+                    shiny::icon("square-envelope", style = "font-size: 3rem; padding-right: 10px;"),
+                    target = "_blank"
+                  ),
+                  tags$a(
+                    href = "https://www.linkedin.com/in/adrian-wisnios-022408215/",
+                    shiny::icon("linkedin", style = "font-size: 3rem; padding-right: 10px;"),
+                    target = "_blank"
+                  ),
+                  tags$a(
+                    href = "https://github.com/Admate8",
+                    icon("square-github", style = "font-size: 3rem; padding-right: 10px;"),
+                    target = "_blank"
+                  ),
+                  tags$a(
+                    href = "https://www.instagram.com/admate8/",
+                    icon("square-instagram", style = "font-size: 3rem; padding-right: 10px;"),
+                    target = "_blank"
+                  ),
+                  shinyWidgets::downloadBttn(
+                    outputId = "cv_download",
+                    label    = tags$strong("CV", style = "font-size: 1.31rem;"),
+                    icon     = NULL,
+                    style    = "simple",
+                    size     = "md"
+                  )
+                )
+              )
+            ),
+
+            tags$div(
+              tags$div(
+                class = "d-flex justify-content-center align-items-center image-me",
+                tags$img(src = "/www/me.jpg")
+              ),
+              tags$h1("About me", class = "display-4"),
+              tags$p("I'm Adrian, and I'm a Data Analyst specialising in the higher education sector in England. I create, maintain and improve the student loan borrower simulation models and assess the impact of policy and macroeconomic determinants on loan repayments."),
+              tags$p("I'm also an R enthusiast who is passionate about everything related to this versatile language. Ever since I was introduced to R during my undergraduate studies, I've been hooked! I love exploring its endless possibilities, from experimenting with innovative approaches to data processing and visualisation to effectively communicating insights to non-technical audiences."),
+              tags$p("Staying motivated and open-minded, I constantly seek opportunities for further personal development. I believe that positive change originates in firm and well-rounded character, and by improving yourself as a human being, you impact the broader community, which leads to meaningful experiences.")
+            )
+          )
         )
 
       ),

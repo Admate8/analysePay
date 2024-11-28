@@ -7,6 +7,13 @@
 app_server <- function(input, output, session) {
 
   # Page 1 ----
+  ## CV Downloader
+  output$cv_download <- downloadHandler(
+    filename = "CV Adrian Wisnios.pdf",
+    content = function(file){
+      file.copy(file.path(here::here(), "inst/extdata/CV.pdf"), file)
+    }
+  )
   ## Preserve inputs
   settings_from <- NULL
   settings_to   <- NULL
