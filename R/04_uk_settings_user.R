@@ -37,6 +37,7 @@ ukSettingsUserUI <- function(id) {
     ),
 
     bslib::accordion(
+      id       = shiny::NS(id, "accordion"),
       multiple = FALSE,
       width    = "100%",
       open     = FALSE,
@@ -227,7 +228,7 @@ ukSettingsUserUI <- function(id) {
             width   = "100%",
             format  = shinyWidgets::wNumbFormat(suffix = "%"),
             value   = 100 * analysePay::uk_settings$sl_plan2$rate
-          ),
+          ) |> bslib::tooltip("Something"),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_slp3_rate"),
             label   = "Plan 3",

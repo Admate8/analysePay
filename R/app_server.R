@@ -14,6 +14,22 @@ app_server <- function(input, output, session) {
       file.copy(file.path(here::here(), "inst/extdata/CV.pdf"), file)
     }
   )
+
+  ## Show the hint on opening the first accordion with settings
+  observeEvent(input$accordion_first_time_open, {
+    showNotification(
+      tags$div(
+        tags$div(
+          style = "text-align: center; padding-bottom: 10px;",
+          tags$h5("Hint!")
+        ),
+        "You can control the precision of the slider selections by using the keyboard arrows!"
+      ),
+      duration = 10,
+      type     = "default"
+    )
+  })
+
   ## Preserve inputs
   settings_from <- NULL
   settings_to   <- NULL
@@ -251,5 +267,4 @@ app_server <- function(input, output, session) {
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
-
 }

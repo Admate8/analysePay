@@ -38,6 +38,7 @@ plSettingsUserUI <- function(id) {
     ),
 
     bslib::accordion(
+      id       = shiny::NS(id, "accordion"),
       multiple = FALSE,
       width    = "100%",
       open     = FALSE,
