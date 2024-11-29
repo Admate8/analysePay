@@ -103,6 +103,7 @@ app_ui <- function(request) {
             tags$div(
               class = "h-100 d-flex align-items-center flex-wrap",
               tags$h2(tags$strong("Overview"), class = "display-6"),
+              br(),
               tags$h2("Earnings & Deductions by Deciles", class = "display-6")
             ),
             bslib::card(
@@ -138,6 +139,7 @@ app_ui <- function(request) {
               tags$div(
                 class = "h-100 d-flex align-items-center flex-wrap",
                 tags$h2(tags$strong("Overview"), class = "display-6"),
+                br(),
                 tags$h2("Interpolated Earnings", class = "display-6")
               ),
 

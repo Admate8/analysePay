@@ -222,23 +222,22 @@ app_server <- function(input, output, session) {
 
     #base::get(paste0(country_from, "_settings"))$decile_source
     tags$span(
-      bslib::popover(
-        trigger = list(shiny::icon("sourcetree", style = "font-size: 1rem;")),
-        tags$a(
-          shiny::HTML("Data Source:<br>Earnings by Deciles (Base)"),
-          target = "_blank",
-          href = get(paste0(country_from, "_settings"))$decile_source
-        )
-      ),
+      tags$a(
+        href = get(paste0(country_from, "_settings"))$decile_source,
+        target = "_blank",
+        shiny::icon("sourcetree", style = glue::glue("font-size: 1rem; color: { palette_global$body_color };"))
+      ) |>
+        bslib::tooltip("Base data source"),
+
       shiny::HTML("&nbsp&nbsp"),
-      bslib::popover(
-        trigger = list(shiny::icon("sourcetree", style = "font-size: 1rem;")),
-        tags$a(
-          shiny::HTML("Data Source:<br>Earnings by Deciles (Target)"),
-          target = "_blank",
-          href = get(paste0(country_to, "_settings"))$decile_source
-        )
-      ),
+
+      tags$a(
+        href = get(paste0(country_to, "_settings"))$decile_source,
+        target = "_blank",
+        shiny::icon("sourcetree", style = glue::glue("font-size: 1rem; color: { palette_global$body_color };"))
+      ) |>
+        bslib::tooltip("Target data source"),
+
       shiny::HTML("&nbsp&nbsp"),
       bslib::tooltip(
         trigger = list(shiny::icon("info-circle", style = "font-size: 1rem;")),

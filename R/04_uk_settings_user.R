@@ -30,7 +30,7 @@ ukSettingsUserUI <- function(id) {
       actionButton(
         inputId = shiny::NS(id, "restore_defaults_uk"),
         label   = NULL,
-        icon    = shiny::icon("wrench", style = "font-size: 1.5rem;"),
+        icon    = shiny::icon("rotate-right", style = "font-size: 1.5rem;"),
         width   = "26px"
       ) |>
         bslib::tooltip("Restore default settings", id = shiny::NS(id, "tt_uk_settings"))
@@ -48,15 +48,11 @@ ukSettingsUserUI <- function(id) {
         icon  = icon("piggy-bank", style = glue::glue("color: { palette_global$categories$pension_color }")),
 
         shinyWidgets::materialSwitch(
-          label     = label_with_popover(
-            "Alpha pension scheme?",
-            "<a href='https://www.civilservicepensionscheme.org.uk' target='_blank'>Alpha Scheme</a>"
-
-          ),
+          label     = "Alpha pension scheme?",
           inputId   = shiny::NS(id, "select_extra_settings_uk"),
           value     = TRUE,
           width     = "100%"
-        ),
+        ) |> div_with_icon(link = analysePay::uk_settings$pension$source_alpha),
 
         shiny::conditionalPanel(
           condition = "input.select_extra_settings_uk == 0",
@@ -79,10 +75,8 @@ ukSettingsUserUI <- function(id) {
           condition = "input.select_extra_settings_uk == 1",
           ns        = shiny::NS(id),
 
-          title_with_popover(
-            "Contribution Rates",
-            glue::glue("<a href={ analysePay::uk_settings$pension$source } target='_blank'>Find out more!</a>")
-          ), br(),
+          tags$h5("Contribution Rates") |> div_with_icon(link = analysePay::uk_settings$pension$source_alpha_rates),
+          br(),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_alpha_rates"),
             label   = NULL,
@@ -131,10 +125,7 @@ ukSettingsUserUI <- function(id) {
         value = "accordion-insurance",
         icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_global$categories$insurance_color }")),
 
-        title_with_popover(
-          "National Insurance", size = 4,
-          glue::glue("<a href={ analysePay::uk_settings$insurance$source } target='_blank'>Find out more!</a>")
-        ),
+        tags$h4("National Insurance") |> div_with_icon(link = analysePay::uk_settings$insurance$source),
         tags$h5("Contribution Rates"), br(),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_uk_ni_rates"),
@@ -174,10 +165,7 @@ ukSettingsUserUI <- function(id) {
         value = "accordion-tax",
         icon  = icon("money-bill-wave", style = glue::glue("color: { palette_global$categories$tax_color }")),
 
-        title_with_popover(
-          "Income Tax", size = 4,
-          glue::glue("<a href={ analysePay::uk_settings$tax$source } target='_blank'>Find out more!</a>")
-        ),
+        tags$h4("Income Tax") |> div_with_icon(link = analysePay::uk_settings$tax$source),
         tags$h5("Contribution Rates"), br(),
         shinyWidgets::noUiSliderInput(
           inputId = shiny::NS(id, "select_uk_tax_rates"),
@@ -228,10 +216,8 @@ ukSettingsUserUI <- function(id) {
 
         bslib::layout_columns(
           col_widths = c(12, 6, 6),
-          title_with_popover(
-            "Contribution Rates",
-            glue::glue("<a href={ analysePay::uk_settings$sl_plan2$source } target='_blank'>Find out more!</a>")
-          ),
+
+          tags$h5("Contribution Rates") |> div_with_icon(link = analysePay::uk_settings$sl_plan2$source),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_slp2_rate"),
             label   = "Plan 2",

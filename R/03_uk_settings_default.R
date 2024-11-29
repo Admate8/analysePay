@@ -13,16 +13,17 @@ uk_settings <- list(
     "maximumValue"            = 200000
   ),
   "pension" = list(
-    "rate"          = 4 / 100,
-    "source"        = "https://www.civilservicepensionscheme.org.uk/your-pension/managing-your-pension/contribution-rates/",
-    "alpha_scheme"  = TRUE,
-    "alpha_rate_1"  = 4.6 / 100,
-    "alpha_rate_2"  = 5.45 / 100,
-    "alpha_rate_3"  = 7.35 / 100,
-    "alpha_rate_4"  = 8.05 / 100,
-    "alpha_value_1" = 32000,
-    "alpha_value_2" = 56000,
-    "alpha_value_3" = 150000
+    "rate"               = 4 / 100,
+    "source_alpha"       = "https://www.civilservicepensionscheme.org.uk",
+    "source_alpha_rates" = "https://www.civilservicepensionscheme.org.uk/your-pension/managing-your-pension/contribution-rates/",
+    "alpha_scheme"       = TRUE,
+    "alpha_rate_1"       = 4.6 / 100,
+    "alpha_rate_2"       = 5.45 / 100,
+    "alpha_rate_3"       = 7.35 / 100,
+    "alpha_rate_4"       = 8.05 / 100,
+    "alpha_value_1"      = 32000,
+    "alpha_value_2"      = 56000,
+    "alpha_value_3"      = 150000
   ),
 
   "insurance" = list(

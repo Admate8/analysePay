@@ -6,6 +6,10 @@
   border-radius: 5px;
 }
 
+/* Force the label to span entire width */
+.shiny-input-container .control-label {
+   width: 100% !important;
+}
 
 
 /* Customise noUiSliders */

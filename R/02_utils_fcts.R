@@ -42,54 +42,35 @@ picker_options_with_flags <- function(flag_class, country) {
 }
 
 
-#' Add a Popover Icon to a Text
+#' Insert Div with Icon and Link
 #'
-#' @param title Ttile.
-#' @param message Popover message.
-#' @param size Either 4 and 5 - text size.
-#' @param icon Icon to include after the label.
+#' @param ... Any UI element.
+#' @param link Link to the website.
+#' @param icon_size Icon size.
+#' @param tt_text Text in tooltip.
 #'
-#' @noRd
-title_with_popover <- function(title, message, size = 5, icon = "info-circle") {
-  stopifnot(size %in% c(4, 5))
-  if (size == 4) {
-    tags$span(
-      tags$h4(
-        title,
-        bslib::popover(
-          trigger = shiny::icon(icon),
-          shiny::HTML(message)
-        )
-      )
-    )
-  } else {
-    tags$span(
-      tags$h5(
-        title,
-        bslib::popover(
-          trigger = shiny::icon(icon),
-          shiny::HTML(message)
-        )
-      )
-    )
-  }
-}
-
-
-#' Add a Popover to Item's Label
-#'
-#' @param label Label name.
-#' @param message Popover message.
-#' @param icon Icon to include after the label.
-#'
-#' @noRd
-label_with_popover <- function(label, message, icon = "info-circle") {
-  bslib::popover(
-    trigger = list(
-      label,
-      shiny::icon(icon)
+#' @return Div.
+#' @export
+div_with_icon <- function(..., link, icon_size = "1rem", tt_text = "Find out more!") {
+  tags$div(
+    class = "w-100",
+    style = "display: flex; justify-content: space-between;",
+    tags$div(
+      class = "left-text",
+      ...
     ),
-    shiny::HTML(message)
+    tags$div(
+      class = "right-text",
+      tags$a(
+        href = link,
+        target = "_blank",
+        shiny::icon(
+          "info-circle",
+          style = glue::glue("font-size: { icon_size }; color: { palette_global$body_color };")
+        )
+      ) |>
+        bslib::tooltip(tt_text)
+    )
   )
 }
 
