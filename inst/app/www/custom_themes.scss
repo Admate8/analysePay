@@ -11,6 +11,24 @@
    width: 100% !important;
 }
 
+/* Customise switch buttons */
+.bootstrap-switch.bootstrap-switch-focused {
+  border: 0.5px solid $body-color-secondary !important;
+  box-shadow: none !important;
+  color: $body-color !important;
+}
+.bootstrap-switch {
+  border: 0.5px solid $body-color-secondary !important;
+  box-shadow: none !important;
+  color: $body-color !important;
+}
+
+/* Make sure the labels are 100% to add icons */
+.form-group label {
+  display: block;
+  width: 100%;
+}
+
 /* Customise notification panel */
 [id="shiny-notification-panel"] {
   width: 12rem !important;

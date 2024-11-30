@@ -23,7 +23,8 @@ app_server <- function(input, output, session) {
           style = "text-align: center; padding-bottom: 10px;",
           tags$h5("Hint!")
         ),
-        "You can control the precision of the slider selections by using the keyboard arrows!"
+        "You can control the precision of the slider selections by using the
+        arrow keys on your keyboard!"
       ),
       duration = 10,
       type     = "default"

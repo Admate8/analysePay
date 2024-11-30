@@ -20,7 +20,7 @@ pl_settings <- list(
     ),
     # Pracownicze Plany Kapitalowe (PPK)
     "ppk" = list(
-      "source" = "https://www.mojeppk.pl",
+      "source" = "https://www.mojeppk.pl/informacje-ogolne.html",
       "rate"   = 2 / 100,
       "rate_employer" = 1.5 / 100
     )
@@ -54,7 +54,8 @@ pl_settings <- list(
     ),
     "liniowy"      = list(
       "source"   = "https://www.biznes.gov.pl/pl/portal/00253",
-      "rate"     = 19 / 100
+      "rate"     = 19 / 100,
+      "social_deductions_base" = 4694.4
     )
   ),
 

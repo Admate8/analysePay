@@ -27,14 +27,33 @@ plSettingsUserUI <- function(id) {
 
   tags$div(
     tags$div(
-      style   = glue::glue("text-align-last: right;"),
-      actionButton(
-        inputId = shiny::NS(id, "restore_defaults_pl"),
-        label   = NULL,
-        icon    = shiny::icon("rotate-right", style = "font-size: 1.5rem;"),
-        width   = "26px"
-      ) |>
-        bslib::tooltip("Restore default settings", id = shiny::NS(id, "tt_pl_settings"))
+      style = "display: flex; justify-content: space-between;",
+      tags$div(
+        class = "left-text",
+        tags$span(
+          shinyWidgets::switchInput(
+            inputId = shiny::NS(id, "select_pl_tax_system"),
+            size      = "mini",
+            value     = TRUE,
+            onLabel   = "Step Tax",
+            offStatus = "primary",
+            offLabel  = "Linear Tax",
+            inline    = TRUE
+          ),
+          uiOutput(shiny::NS(id, "pl_tax_switch"), inline = TRUE, style = "padding-left: 10px")
+        )
+      ),
+
+      tags$div(
+        class = "right-text",
+        actionButton(
+          inputId = shiny::NS(id, "restore_defaults_pl"),
+          label   = NULL,
+          icon    = shiny::icon("rotate-right", style = "font-size: 1.5rem;"),
+          width   = "26px"
+        ) |>
+          bslib::tooltip("Restore default settings", id = shiny::NS(id, "tt_pl_settings"))
+      )
     ),
 
     bslib::accordion(
@@ -130,15 +149,8 @@ plSettingsUserUI <- function(id) {
         value = "accordion-tax",
         icon  = icon("money-bill-wave", style = glue::glue("color: { palette_global$categories$tax_color }")),
 
-        shinyWidgets::materialSwitch(
-          label     = "Step tax?",
-          inputId   = shiny::NS(id, "select_extra_settings_pl"),
-          value     = TRUE,
-          width     = "100%"
-        ) |> div_with_icon(link = analysePay::pl_settings$tax$stopniowy$source),
-
         shiny::conditionalPanel(
-          condition = "input.select_extra_settings_pl == 0",
+          condition = "input.select_pl_tax_system == 0",
           ns        = shiny::NS(id),
 
           tags$h5("Contribution Rate"),
@@ -155,7 +167,7 @@ plSettingsUserUI <- function(id) {
         ),
 
         shiny::conditionalPanel(
-          condition = "input.select_extra_settings_pl == 1",
+          condition = "input.select_pl_tax_system == 1",
           ns        = shiny::NS(id),
 
           tags$h5("Contribution Rate"), br(),
@@ -228,12 +240,12 @@ plSettingsUserUI <- function(id) {
           tags$h5("Repayment Thresholds"),
           pl_autonumericInput(
             inputId = shiny::NS(id, "select_pl_slp2_value"),
-            label   = "Plan 2" |> div_with_icon(link = analysePay::pl_settings$sl_plan2$source),
+            label   = div_with_icon("Plan 2", link = analysePay::pl_settings$sl_plan2$source),
             value   = analysePay::pl_settings$sl_plan2$value
           ),
           pl_autonumericInput(
             inputId = shiny::NS(id, "select_pl_slp3_value"),
-            label   = "Plan 3" |> div_with_icon(link = analysePay::pl_settings$sl_plan3$source),
+            label   = div_with_icon("Plan 3", link = analysePay::pl_settings$sl_plan3$source),
             value   = analysePay::pl_settings$sl_plan3$value
           )
         )
@@ -245,6 +257,39 @@ plSettingsUserUI <- function(id) {
 
 plSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
+
+    output$pl_tax_switch <- renderUI({
+      if (input$select_pl_tax_system == TRUE) {
+        tags$a(
+          href = analysePay::pl_settings$tax$stopniowy$source,
+          target = "_blank",
+          shiny::icon(
+            "info-circle",
+            style = glue::glue("font-size: 1rem; color: { palette_global$body_color };")
+          )
+        ) |> bslib::tooltip("What is it?", id = "tt_pl_tax")
+      } else {
+        tags$a(
+          href = analysePay::pl_settings$tax$liniowy$source,
+          target = "_blank",
+          shiny::icon(
+            "info-circle",
+            style = glue::glue("font-size: 1rem; color: { palette_global$body_color };")
+          )
+        ) |> bslib::tooltip(
+          shiny::HTML(glue::glue(
+            "The minimum base for social deductions in financial year 2024/25 is <br>
+            { scales::comma(
+              analysePay::pl_settings$tax$liniowy$social_deductions_base,
+              suffix = \"z\U0142\", decimal.mark = \",\", big.mark = \" \", accuracy = 0.01
+            ) } per month. <br><br>Click to find out more!
+            "
+          ))
+        )
+      }
+    })
+
+
 
     # Validate the inputs ----
     iv <- shinyvalidate::InputValidator$new()
@@ -275,7 +320,7 @@ plSettingsUserServer <- function(id) {
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_zdrowotna_rate", value = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate)
 
       ## Tax ----
-      shinyWidgets::updateMaterialSwitch(session, "select_extra_settings_pl", value = TRUE)
+      shinyWidgets::updateMaterialSwitch(session, "select_pl_tax_system", value = TRUE)
       shinyWidgets::updateNoUiSliderInput(session, "select_pl_tax_rate", value = 100 * analysePay::pl_settings$tax$liniowy$rate)
       shinyWidgets::updateNoUiSliderInput(session, "select_pl_tax_rates", value = 100 * c(
         analysePay::pl_settings$tax$stopniowy$rate_1,
@@ -312,7 +357,7 @@ plSettingsUserServer <- function(id) {
         ),
 
         "tax" = list(
-          "standard_tax" = input$select_extra_settings_pl,
+          "standard_tax" = input$select_pl_tax_system,
           "liniowy"      = list("rate" = input$select_pl_tax_rate / 100),
           "stopniowy"    = list(
             "rate_1"     = input$select_pl_tax_rates[[1]] / 100,
