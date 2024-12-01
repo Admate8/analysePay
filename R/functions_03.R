@@ -398,7 +398,7 @@ plot_radar_perc <- function(annual_earnings, df) {
     list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
     list(name = "Income\nTax",          max = 25,  color = palette_global$categories$tax_color),
     list(name = "Insurance\nVoluntary", max = 5 ,  color = palette_global$categories$insurance_color_vol),
-    list(name = "Insurance\nMandatory", max = 10,  color = palette_global$categories$insurance_color),
+    list(name = "Insurance\nMandatory", max = 15,  color = palette_global$categories$insurance_color),
     list(name = "Pension\nVoluntary",   max = 10,  color = palette_global$categories$pension_color_vol),
     list(name = "Pension\nMandatory",   max = 15,  color = palette_global$categories$pension_color)
   )
