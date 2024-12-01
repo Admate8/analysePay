@@ -23,11 +23,12 @@
   color: $body-color !important;
 }
 
-/* Make sure the labels are 100% to add icons */
-.form-group label {
-  display: block;
-  width: 100%;
+/* Force labels to be 100% to add info icons at the end */
+label[for$="select_pl_slp2_value"],
+label[for$="select_pl_slp3_value"] {
+    width: 100%;
 }
+
 
 /* Customise notification panel */
 [id="shiny-notification-panel"] {
@@ -97,7 +98,8 @@
     }
   }
 }
-[id$="select_sk_emerytalna_rate"] {
+[id$="select_sk_emerytalna_rate"],
+[id$="select_sk_emerytalna_rate_linear"] {
   background: $pension-color !important;
   border-radius: 4px !important;
   border: 2px solid $pension-color !important;
@@ -156,7 +158,11 @@
   }
 }
 [id$="select_sk_rentowa_rate"],
-[id$="select_sk_zdrowotna_rate"] {
+[id$="select_sk_rentowa_rate_linear"],
+[id$="select_sk_zdrowotna_rate"],
+[id$="select_sk_zdrowotna_rate_linear"],
+[id$="select_sk_wypadkowa_rate_linear"],
+[id$="select_sk_fpfs_rate_linear"] {
   background: $insurance-color !important;
   border-radius: 4px !important;
   border: 2px solid $insurance-color !important;
@@ -166,7 +172,8 @@
     background: $insurance-color !important;
   }
 }
-[id$="select_sk_chorobowa_rate"] {
+[id$="select_sk_chorobowa_rate"],
+[id$="select_sk_chorobowa_rate_linear"] {
   background: $insurance-color-vol !important;
   border-radius: 4px !important;
   border: 2px solid $insurance-color-vol !important;

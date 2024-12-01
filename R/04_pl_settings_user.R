@@ -68,38 +68,59 @@ plSettingsUserUI <- function(id) {
         value = "accordion-pension",
         icon  = icon("piggy-bank", style = glue::glue("color: { palette_global$categories$pension_color }")),
 
-        bslib::layout_columns(
-          col_widths = c(12, 12, 6, 6),
-          tags$h5("Contribution Rates"),
+        shiny::conditionalPanel(
+          condition = "input.select_pl_tax_system == 1",
+          ns        = shiny::NS(id),
+
+          bslib::layout_columns(
+            col_widths = c(12, 12, 6, 6),
+            tags$h5("Contribution Rates"),
+            shinyWidgets::noUiSliderInput(
+              inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
+              label   = "State Pension" |> div_with_icon(link = analysePay::pl_settings$pension$sk_emerytalna$source),
+              min     = 0,
+              max     = 15,
+              step    = 0.01,
+              width   = "100%",
+              format  = shinyWidgets::wNumbFormat(suffix = "%"),
+              value   = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate
+            ),
+            shinyWidgets::noUiSliderInput(
+              inputId = shiny::NS(id, "select_sk_ppk_rate"),
+              label   = "PPK Pension" |> div_with_icon(link = analysePay::pl_settings$pension$ppk$source),
+              min     = 0,
+              max     = 4,
+              step    = 0.01,
+              width   = "100%",
+              format  = shinyWidgets::wNumbFormat(suffix = "%"),
+              value   = 100 * analysePay::pl_settings$pension$ppk$rate
+            ),
+            shinyWidgets::noUiSliderInput(
+              inputId = shiny::NS(id, "select_sk_ppk_emp_rate"),
+              label   = "PPK Employer" |> div_with_icon(link = analysePay::pl_settings$pension$ppk$source),
+              min     = 0,
+              max     = 5,
+              step    = 0.01,
+              width   = "100%",
+              format  = shinyWidgets::wNumbFormat(suffix = "%"),
+              value   = 100 * analysePay::pl_settings$pension$ppk$rate_employer
+            )
+          )
+        ),
+        shiny::conditionalPanel(
+          condition = "input.select_pl_tax_system == 0",
+          ns        = shiny::NS(id),
+
+          tags$h5("Contribution Rate"),
           shinyWidgets::noUiSliderInput(
-            inputId = shiny::NS(id, "select_sk_emerytalna_rate"),
+            inputId = shiny::NS(id, "select_sk_emerytalna_rate_linear"),
             label   = "State Pension" |> div_with_icon(link = analysePay::pl_settings$pension$sk_emerytalna$source),
-            min     = 0,
-            max     = 15,
+            min     = 15,
+            max     = 25,
             step    = 0.01,
             width   = "100%",
             format  = shinyWidgets::wNumbFormat(suffix = "%"),
-            value   = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate
-          ),
-          shinyWidgets::noUiSliderInput(
-            inputId = shiny::NS(id, "select_sk_ppk_rate"),
-            label   = "PPK Pension" |> div_with_icon(link = analysePay::pl_settings$pension$ppk$source),
-            min     = 0,
-            max     = 4,
-            step    = 0.01,
-            width   = "100%",
-            format  = shinyWidgets::wNumbFormat(suffix = "%"),
-            value   = 100 * analysePay::pl_settings$pension$ppk$rate
-          ),
-          shinyWidgets::noUiSliderInput(
-            inputId = shiny::NS(id, "select_sk_ppk_emp_rate"),
-            label   = "PPK Employer" |> div_with_icon(link = analysePay::pl_settings$pension$ppk$source),
-            min     = 0,
-            max     = 5,
-            step    = 0.01,
-            width   = "100%",
-            format  = shinyWidgets::wNumbFormat(suffix = "%"),
-            value   = 100 * analysePay::pl_settings$pension$ppk$rate_employer
+            value   = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate_linear
           )
         )
       ),
@@ -110,36 +131,97 @@ plSettingsUserUI <- function(id) {
         value = "accordion-insurance",
         icon  = icon("house-chimney-crack", style = glue::glue("color: { palette_global$categories$insurance_color }")),
 
-        tags$h5("Contribution Rates") |> div_with_icon(link = analysePay::pl_settings$insurance$sk_rentowa$source),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_sk_rentowa_rate"),
-          label   = "Social Insurance (Rentowa)",
-          min     = 0,
-          max     = 5,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate
+        shiny::conditionalPanel(
+          condition = "input.select_pl_tax_system == 1",
+          ns        = shiny::NS(id),
+
+          tags$h5("Contribution Rates") |> div_with_icon(link = analysePay::pl_settings$insurance$sk_rentowa$source),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_rentowa_rate"),
+            label   = "Social Insurance (Rentowa)",
+            min     = 0,
+            max     = 5,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
+            label   = "Illness Insurance (Chorobowa)",
+            min     = 0,
+            max     = 5,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
+            label   = "Health Insurance (Zdrowotna)",
+            min     = 0,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate
+          )
         ),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_sk_chorobowa_rate"),
-          label   = "Illness Insurance (Chorobowa)",
-          min     = 0,
-          max     = 5,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate
-        ),
-        shinyWidgets::noUiSliderInput(
-          inputId = shiny::NS(id, "select_sk_zdrowotna_rate"),
-          label   = "Health Insurance (Zdrowotna)",
-          min     = 0,
-          max     = 15,
-          step    = 0.01,
-          width   = "100%",
-          format  = shinyWidgets::wNumbFormat(suffix = "%"),
-          value   = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate
+        shiny::conditionalPanel(
+          condition = "input.select_pl_tax_system == 0",
+          ns        = shiny::NS(id),
+
+          tags$h5("Contribution Rates") |> div_with_icon(link = analysePay::pl_settings$insurance$sk_rentowa$source),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_rentowa_rate_linear"),
+            label   = "Social Insurance (Rentowa)",
+            min     = 5,
+            max     = 15,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate_linear
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_chorobowa_rate_linear"),
+            label   = "Illness Insurance (Chorobowa)",
+            min     = 0,
+            max     = 5,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate_linear
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_zdrowotna_rate_linear"),
+            label   = "Health Insurance (Zdrowotna)",
+            min     = 0,
+            max     = 10,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate_linear
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_wypadkowa_rate_linear"),
+            label   = "Accident Insurance (Wypadkowa)" |> div_with_icon(link = analysePay::pl_settings$insurance$sk_wypadkowa$source),
+            min     = 0.67,
+            max     = 3.33,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_wypadkowa$rate
+          ),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_sk_fpfs_rate_linear"),
+            label   = "FP, FS and FG\U015AP" |> div_with_icon(link = analysePay::pl_settings$insurance$sk_fpfs$source),
+            min     = 2,
+            max     = 3,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$insurance$sk_fpfs$rate
+          )
         )
       ),
 
@@ -148,23 +230,6 @@ plSettingsUserUI <- function(id) {
         title = tags$strong("Income Tax"),
         value = "accordion-tax",
         icon  = icon("money-bill-wave", style = glue::glue("color: { palette_global$categories$tax_color }")),
-
-        shiny::conditionalPanel(
-          condition = "input.select_pl_tax_system == 0",
-          ns        = shiny::NS(id),
-
-          tags$h5("Contribution Rate"),
-          shinyWidgets::noUiSliderInput(
-            inputId = shiny::NS(id, "select_pl_tax_rate"),
-            label   = NULL,
-            min     = 0,
-            max     = 35,
-            step    = 0.01,
-            width   = "100%",
-            format  = shinyWidgets::wNumbFormat(suffix = "%"),
-            value   = 100 * analysePay::pl_settings$tax$liniowy$rate
-          )
-        ),
 
         shiny::conditionalPanel(
           condition = "input.select_pl_tax_system == 1",
@@ -199,6 +264,23 @@ plSettingsUserUI <- function(id) {
               label   = "Upper",
               value   = analysePay::pl_settings$tax$stopniowy$value_2
             )
+          )
+        ),
+
+        shiny::conditionalPanel(
+          condition = "input.select_pl_tax_system == 0",
+          ns        = shiny::NS(id),
+
+          tags$h5("Contribution Rate"),
+          shinyWidgets::noUiSliderInput(
+            inputId = shiny::NS(id, "select_pl_tax_rate"),
+            label   = NULL,
+            min     = 0,
+            max     = 35,
+            step    = 0.01,
+            width   = "100%",
+            format  = shinyWidgets::wNumbFormat(suffix = "%"),
+            value   = 100 * analysePay::pl_settings$tax$liniowy$rate
           )
         )
       ),
@@ -240,12 +322,12 @@ plSettingsUserUI <- function(id) {
           tags$h5("Repayment Thresholds"),
           pl_autonumericInput(
             inputId = shiny::NS(id, "select_pl_slp2_value"),
-            label   = div_with_icon("Plan 2", link = analysePay::pl_settings$sl_plan2$source),
+            label   = div_with_icon("Plan 2", link = analysePay::pl_settings$sl_plan2$source, flex = "block"),
             value   = analysePay::pl_settings$sl_plan2$value
           ),
           pl_autonumericInput(
             inputId = shiny::NS(id, "select_pl_slp3_value"),
-            label   = div_with_icon("Plan 3", link = analysePay::pl_settings$sl_plan3$source),
+            label   = div_with_icon("Plan 3", link = analysePay::pl_settings$sl_plan3$source, flex = "block"),
             value   = analysePay::pl_settings$sl_plan3$value
           )
         )
@@ -258,6 +340,7 @@ plSettingsUserUI <- function(id) {
 plSettingsUserServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
+    # Links on tax system ----
     output$pl_tax_switch <- renderUI({
       if (input$select_pl_tax_system == TRUE) {
         tags$a(
@@ -290,7 +373,6 @@ plSettingsUserServer <- function(id) {
     })
 
 
-
     # Validate the inputs ----
     iv <- shinyvalidate::InputValidator$new()
 
@@ -312,12 +394,18 @@ plSettingsUserServer <- function(id) {
     observeEvent(input$restore_defaults_pl, {
       ## Pension ----
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_emerytalna_rate", value = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_emerytalna_rate_linear", value = 100 * analysePay::pl_settings$pension$sk_emerytalna$rate_linear)
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_ppk_rate", value = 100 * analysePay::pl_settings$pension$ppk$rate)
 
       ## Insurance ----
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_rentowa_rate", value = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_rentowa_rate_linear", value = 100 * analysePay::pl_settings$insurance$sk_rentowa$rate_linear)
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_chorobowa_rate", value = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_chorobowa_rate_linear", value = 100 * analysePay::pl_settings$insurance$sk_chorobowa$rate_linear)
       shinyWidgets::updateNoUiSliderInput(session, "select_sk_zdrowotna_rate", value = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_zdrowotna_rate_linear", value = 100 * analysePay::pl_settings$insurance$sk_zdrowotna$rate_linear)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_wypadkowa_rate_linear", value = 100 * analysePay::pl_settings$insurance$sk_wypadkowa$rate)
+      shinyWidgets::updateNoUiSliderInput(session, "select_sk_fpfs_rate_linear", value = 100 * analysePay::pl_settings$insurance$sk_fpfs$rate)
 
       ## Tax ----
       shinyWidgets::updateMaterialSwitch(session, "select_pl_tax_system", value = TRUE)
@@ -343,7 +431,10 @@ plSettingsUserServer <- function(id) {
       "settings" = reactive({list(
         "pension" = list(
           "alpha_scheme"  = TRUE, # NOT IN USE FOR PL
-          "sk_emerytalna" = list("rate" = input$select_sk_emerytalna_rate / 100),
+          "sk_emerytalna" = list(
+            "rate"        = input$select_sk_emerytalna_rate / 100,
+            "rate_linear" = input$select_sk_emerytalna_rate_linear / 100
+          ),
           "ppk"           = list(
             "rate"          = input$select_sk_ppk_rate / 100,
             "rate_employer" = input$select_sk_ppk_emp_rate / 100
@@ -351,9 +442,20 @@ plSettingsUserServer <- function(id) {
         ),
 
         "insurance" = list(
-          "sk_rentowa"   = list("rate" = input$select_sk_rentowa_rate / 100),
-          "sk_chorobowa" = list("rate" = input$select_sk_chorobowa_rate / 100),
-          "sk_zdrowotna" = list("rate" = input$select_sk_zdrowotna_rate / 100)
+          "sk_rentowa"   = list(
+            "rate"        = input$select_sk_rentowa_rate / 100,
+            "rate_linear" = input$select_sk_rentowa_rate_linear / 100
+          ),
+          "sk_chorobowa" = list(
+            "rate"        = input$select_sk_chorobowa_rate / 100,
+            "rate_linear" = input$select_sk_chorobowa_rate_linear / 100
+          ),
+          "sk_zdrowotna" = list(
+            "rate"        = input$select_sk_zdrowotna_rate / 100,
+            "rate_linear" = input$select_sk_zdrowotna_rate_linear / 100
+          ),
+          "sk_wypadkowa" = list("rate" = input$select_sk_wypadkowa_rate_linear / 100),
+          "sk_fpfs"      = list("rate" = input$select_sk_fpfs_rate_linear / 100)
         ),
 
         "tax" = list(

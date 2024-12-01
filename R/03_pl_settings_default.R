@@ -15,8 +15,9 @@ pl_settings <- list(
   "pension" = list(
     "alpha_scheme"  = TRUE, # NOT IN USE, but must exist to repeat big chunks of the code in the server
     "sk_emerytalna" = list(
-      "source" = "https://www.biznes.gov.pl/pl/portal/00274",
-      "rate"   = 9.76 / 100
+      "source"      = "https://www.biznes.gov.pl/pl/portal/00274",
+      "rate"        = 9.76 / 100,
+      "rate_linear" = 19.52 / 100
     ),
     # Pracownicze Plany Kapitalowe (PPK)
     "ppk" = list(
@@ -28,17 +29,28 @@ pl_settings <- list(
 
   "insurance" = list(
     "sk_rentowa" = list(
-      "source" = "https://www.biznes.gov.pl/pl/portal/00274",
-      "rate"   = 1.5 / 100
+      "source"      = "https://www.biznes.gov.pl/pl/portal/00274",
+      "rate"        = 1.5 / 100,
+      "rate_linear" = 8 / 100
     ),
     # Dobrowolna skladka chorobowa
     "sk_chorobowa" = list(
-      "source" = "https://www.biznes.gov.pl/pl/portal/00274",
-      "rate"   = 2.45 / 100
+      "source"      = "https://www.biznes.gov.pl/pl/portal/00274",
+      "rate"        = 2.45 / 100,
+      "rate_linear" = 2.45 / 100
     ),
     "sk_zdrowotna" = list(
-      "source" = "https://www.biznes.gov.pl/pl/portal/00274",
-      "rate"   = 9 / 100
+      "source"      = "https://www.biznes.gov.pl/pl/portal/00274",
+      "rate"        = 9 / 100,
+      "rate_linear" = 4.9 / 100
+    ),
+    "sk_wypadkowa" = list(
+      "source" = "https://www.zus.pl/-/wysokość-stóp-procentowych-składki-na-ubezpieczenie-wypadkowe-na-okres-od-1-kwietnia-2024-r.-do-31-marca-2025-r.?redirect=%2Fo-zus%2Faktualnosci",
+      "rate"   = 1.67 / 100
+    ),
+    "sk_fpfs" = list(
+      "source" = "https://www.zus.pl/firmy/rozliczenia-z-zus/skladki-na-ubezpieczenia/fp-fs-i-fgsp",
+      "rate"   = 2.45 / 100
     )
   ),
 
@@ -88,7 +100,7 @@ pl_settings <- list(
   ),
   "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html"
 )
-#usethis::use_data(pl_settings, overwrite = TRUE)
+usethis::use_data(pl_settings, overwrite = TRUE)
 
 
 #' Calculate PL Deductions Breakdown Given Gross Annual Earnings
