@@ -15,6 +15,7 @@ usethis::use_package("reactablefmtr", min_version = TRUE)
 usethis::use_package("shinycssloaders", min_version = TRUE)
 usethis::use_package("stringr", min_version = TRUE)
 usethis::use_package("here", min_version = TRUE)
+usethis::use_package("openxlsx", min_version = TRUE)
 usethis::use_tidy_description()
 
 # golem::add_js_file("full_page_actions")
