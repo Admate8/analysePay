@@ -6,6 +6,11 @@
   border-radius: 5px;
 }
 
+/* Move the left horizontal navigation arrow to the edge */
+.fp-prev{
+  margin-left: -24px !important;
+}
+
 /* Force the label to span entire width */
 .shiny-input-container .control-label {
    width: 100% !important;

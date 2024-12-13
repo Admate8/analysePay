@@ -94,72 +94,71 @@ app_ui <- function(request) {
         # Page 2 ----
         tags$div(
           class = "section",
-
-          br(),
-          bslib::layout_columns(
-            col_widths = c(6, 6, 12),
-            class = "add-left-right-margins",
-
-            tags$div(
-              class = "h-100 d-flex align-items-center flex-wrap",
-              tags$h2(tags$strong("Overview"), class = "display-6"),
-              br(),
-              tags$h2("Earnings & Deductions by Deciles", class = "display-6")
-            ),
-            bslib::card(
-              uiOutput("ui_categories_table"),
-              class = "custom-card"
-            ),
-            echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "27.5rem") |> custom_spinner()
-          )
-        ),
-
-        # Page 3 ----
-        tags$div(
-          class = "section",
-
-          bslib::layout_columns(
-            col_widths = c(8, 4),
-            class = "add-left-right-margins",
-
-            tags$div(
-              style = "position: relative;",
-              echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
-
-              tags$div(
-                style = "position: absolute; left: 0; top: 0; z-index: 20;",
-                uiOutput("ui_earnings_sources")
-              )
-            ),
-
-
-
+          ## Slide 1 ----
+          tags$div(
+            class = "slide",
+            br(),
             bslib::layout_columns(
-              col_widths = c(12, 12, 12),
+              col_widths = c(6, 6, 12),
+              class = "add-left-right-margins",
+
               tags$div(
                 class = "h-100 d-flex align-items-center flex-wrap",
                 tags$h2(tags$strong("Overview"), class = "display-6"),
                 br(),
-                tags$h2("Interpolated Earnings", class = "display-6")
+                tags$h2("Earnings & Deductions by Deciles", class = "display-6")
               ),
+              bslib::card(
+                uiOutput("ui_categories_table"),
+                class = "custom-card"
+              ),
+              echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "27.5rem") |> custom_spinner()
+            )
+          ),
+          ## Slide 2 ----
+          tags$div(
+            class = "slide",
+            bslib::layout_columns(
+              col_widths = c(8, 4),
+              class = "add-left-right-margins",
+
+              tags$div(
+                style = "position: relative;",
+                echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
+
+                tags$div(
+                  style = "position: absolute; left: 0; top: 0; z-index: 20;",
+                  uiOutput("ui_earnings_sources")
+                )
+              ),
+
+
 
               bslib::layout_columns(
-                col_widths = c(6, 6),
-                class = "h-100 p-4 d-flex align-items-center custom-card",
-
-                shinyWidgets::radioGroupButtons(
-                  inputId    = "select_calc_period",
-                  label      = "Show earnings by...",
-                  choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
-                  selected   = "year",
-                  individual = TRUE,
-                  size       = "sm",
-                  justified  = TRUE
+                col_widths = c(12, 12, 12),
+                tags$div(
+                  class = "h-100 d-flex align-items-center flex-wrap",
+                  tags$h2("Interpolated Earnings", class = "display-6")
                 ),
-                uiOutput("ui_provide_annual_earnings")
-              ),
 
-              echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
+                bslib::layout_columns(
+                  col_widths = c(6, 6),
+                  class = "h-100 p-4 d-flex align-items-center custom-card",
+
+                  shinyWidgets::radioGroupButtons(
+                    inputId    = "select_calc_period",
+                    label      = "Show earnings by...",
+                    choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
+                    selected   = "year",
+                    individual = TRUE,
+                    size       = "sm",
+                    justified  = TRUE
+                  ),
+                  uiOutput("ui_provide_annual_earnings")
+                ),
+
+                echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
+              )
             )
           )
         ),

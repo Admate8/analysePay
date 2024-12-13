@@ -365,7 +365,7 @@ plSettingsUserServer <- function(id) {
             { scales::comma(
               analysePay::pl_settings$tax$liniowy$social_deductions_base,
               suffix = \"z\U0142\", decimal.mark = \",\", big.mark = \" \", accuracy = 0.01
-            ) } per month. <br><br>Click to find out more!
+            ) }. <br><br>Click to find out more!
             "
           ))
         )

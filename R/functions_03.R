@@ -291,8 +291,8 @@ plot_int_earnings_decile_dist <- function(df, period) {
       selectorButtonGap = 20,
       # This will generate a warning, but can be replaced with a list of actual series
       selected          = stats::setNames(
-        rep(FALSE, length(setdiff(set_of_names, c("Earnings", "Actual Earnings")))),
-        setdiff(set_of_names, c("Earnings", "Actual Earnings"))
+        rep(FALSE, length(setdiff(set_of_names, c("Earnings", "Actual Earnings", "Net Income")))),
+        setdiff(set_of_names, c("Earnings", "Actual Earnings", "Net Income"))
       ),
       selector          = list(
         list(type = "all", title = "Select All"),
