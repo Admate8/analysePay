@@ -23,10 +23,29 @@ app_server <- function(input, output, session) {
           style = "text-align: center; padding-bottom: 10px;",
           tags$h5("Hint!")
         ),
+        tags$p(class = "text-center",
         "You can control the precision of the slider selections by using the
         arrow keys on your keyboard!"
+        )
       ),
       duration = 10,
+      type     = "default"
+    )
+  })
+
+  ## Show the hint on opening the student loan accordeon panel for the first time
+  observeEvent(input$sl_accordion_opened, {
+    showNotification(
+      tags$div(
+        tags$div(
+          style = "text-align: center; padding-bottom: 10px;",
+          tags$h5("Hint!")
+        ),
+        tags$p(class = "text-center",
+        "If you don't have to repay any Student Loans, set their contribution
+        rates to zero!")
+      ),
+      duration = 5,
       type     = "default"
     )
   })
@@ -78,6 +97,7 @@ app_server <- function(input, output, session) {
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
 
+
   ### Commit settings button
   observe({
     if (all(iv_from$is_valid(), iv_to$is_valid())) {
@@ -99,6 +119,7 @@ app_server <- function(input, output, session) {
   })
 
   # Page 2 ----
+  ## Slide 1 ----
   ## Render the categories table
   df_categories <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -175,7 +196,7 @@ app_server <- function(input, output, session) {
 
   output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
 
-  # Page 3 ----
+  ## Slide 2 ----
   ## Render reactive ui (country-dependent) to get user's annual earnings
   output$ui_provide_annual_earnings <- renderUI({
 

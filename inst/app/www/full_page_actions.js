@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     scrollHorizontally: true
   });
 
-  // Prevent the user from scrolling before the Analyse button is clicked
+  // Prevent the user from scrolling before the "Analyse!" button is clicked
   fullpage_api.setAllowScrolling(false, 'down');
   fullpage_api.setKeyboardScrolling(false, 'down');
 
@@ -29,19 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
     fullpage_api.moveTo(1);
   });
 
-
-  /*
+  // Render a hint when the accordion-sl is open for the first time
+  var accordionSlOpenedFirst = false;
+  // Get the value of the currently open panel
   $(document).on('show.bs.collapse', '#1-accordion, #2-accordion', function(e) {
-    Shiny.setInputValue('accordion_opened', e.currentTarget.id);
-  }); */
+    var panelValue = $(e.target).closest('.accordion-item').attr('data-value');
 
-/* Make sure that the first accordion is closed upon initialisation */
+    if (panelValue === "accordion-sl" && !accordionSlOpenedFirst) {
+        accordionSlOpenedFirst = true;
+        Shiny.setInputValue('sl_accordion_opened', true);
+    }
+  });
+
+  // Make sure that the first accordion is closed upon initialisation
   $(document).on('shiny:sessioninitialized', function() {
     $('#1-accordion').collapse('hide');
   });
 });
 
-/* Send the input if the first accordion is expanded - happens only once each session */
+//Send the input if the first accordion is expanded - happens only once each session
 (function() {
   var openedAccordions = {};
   var initialLoadComplete = false;

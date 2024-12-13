@@ -37,21 +37,22 @@ label[for$="select_pl_slp3_value"] {
 
 /* Customise notification panel */
 [id="shiny-notification-panel"] {
-  width: 12rem !important;
-  background-color: $body-tertiary-bg !important;
+  width: 15rem !important;
+  background-color: transparent !important;
   color: $body-color !important;
-  margin: 3px !important;
-  border-radius: 25px !important;
-  border: 2px solid $body-tertiary-bg !important;
-  box-shadow: 0 0 20px $body-tertiary-bg !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
 
   .shiny-notification {
     background-color: $body-tertiary-bg !important;
     color: $body-color !important;
-    padding: 0 !important;
-    margin: 0.9rem !important;
+    padding: 0.5rem !important;
+    margin: 5px !important;
+    border: 1px solid $body-secondary-bg !important;
     font-size: 0.9rem !important;
-    box-shadow: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 0 20px $body-tertiary-bg !important;
   }
 }
 
