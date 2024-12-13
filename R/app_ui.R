@@ -36,7 +36,16 @@ app_ui <- function(request) {
               ),
               br(),
               tags$h3("That's where analysePay steps in!"),
-              tags$p(class = "text-justify", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes...")
+              tags$p(class = "text-justify", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes..."),
+              br(),
+              bslib::layout_columns(
+                col_widths = c(-2, 8, -2),
+                actionButton(
+                  inputId = "commit_input_data",
+                  label   = textOutput("commit_button_text"),
+                  style   = "font-size: 1.5rem;"
+                )
+              )
             ),
 
             bslib::layout_columns(
@@ -78,16 +87,6 @@ app_ui <- function(request) {
                 class = "h-100 d-flex align-items-center",
                 tags$span(class = "add-attribution", "Background by SVGBackgrounds.com")
               )
-
-          ),
-          br(),
-          bslib::layout_columns(
-            col_widths = c(-4, 4, -4),
-            actionButton(
-              inputId = "commit_input_data",
-              label   = textOutput("commit_button_text"),
-              style   = "font-size: 1.5rem;"
-            )
           )
         ),
 

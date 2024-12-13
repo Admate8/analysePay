@@ -1,8 +1,18 @@
 
 document.addEventListener('DOMContentLoaded', function() {
+
   new fullpage('#fullpage', {
     autoScrolling: true,
     scrollHorizontally: true
+  });
+
+  // Prevent the user from scrolling before the Analyse button is clicked
+  fullpage_api.setAllowScrolling(false, 'down');
+  fullpage_api.setKeyboardScrolling(false, 'down');
+
+  $(document).on('click', '#commit_input_data', function() {
+    fullpage_api.setAllowScrolling(true);
+    fullpage_api.setKeyboardScrolling(true);
   });
 
   // Observe the buttons to navigate the pages
