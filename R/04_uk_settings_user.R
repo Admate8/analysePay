@@ -228,7 +228,7 @@ ukSettingsUserUI <- function(id) {
             width   = "100%",
             format  = shinyWidgets::wNumbFormat(suffix = "%"),
             value   = 100 * analysePay::uk_settings$sl_plan2$rate
-          ) |> bslib::tooltip("Something"),
+          ),
           shinyWidgets::noUiSliderInput(
             inputId = shiny::NS(id, "select_uk_slp3_rate"),
             label   = "Plan 3",
@@ -369,6 +369,7 @@ ukSettingsUserServer <- function(id) {
       shinyWidgets::updateAutonumericInput(session, "select_uk_slp2_value", value = analysePay::uk_settings$sl_plan2$value)
       shinyWidgets::updateAutonumericInput(session, "select_uk_slp3_value", value = analysePay::uk_settings$sl_plan3$value)
     })
+
 
     # Return reactives ----
     list(

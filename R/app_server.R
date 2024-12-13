@@ -17,20 +17,22 @@ app_server <- function(input, output, session) {
 
   ## Show the hint on opening the first accordion with settings
   observeEvent(input$accordion_first_time_open, {
-    showNotification(
-      tags$div(
+    if (input$accordion_first_time_open) {
+      showNotification(
         tags$div(
-          style = "text-align: center; padding-bottom: 10px;",
-          tags$h5("Hint!")
-        ),
-        tags$p(class = "text-center",
-        "You can control the precision of the slider selections by using the
+          tags$div(
+            style = "text-align: center; padding-bottom: 10px;",
+            tags$h5("Hint!")
+          ),
+          tags$p(class = "text-center",
+                 "You can control the precision of the slider selections by using the
         arrow keys on your keyboard!"
-        )
-      ),
-      duration = 10,
-      type     = "default"
-    )
+          )
+        ),
+        duration = 10,
+        type     = "default"
+      )
+    }
   })
 
   ## Show the hint on opening the student loan accordeon panel for the first time
@@ -45,7 +47,7 @@ app_server <- function(input, output, session) {
         "If you don't have to repay any Student Loans, set their contribution
         rates to zero!")
       ),
-      duration = 5,
+      duration = 7,
       type     = "default"
     )
   })

@@ -41,10 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Make sure that the first accordion is closed upon initialisation
-  $(document).on('shiny:sessioninitialized', function() {
-    $('#1-accordion').collapse('hide');
-  });
 });
 
 //Send the input if the first accordion is expanded - happens only once each session
@@ -60,13 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000); // Small delay to ensure all initial renders are complete
   });
 
-  $(document).on('shown.bs.collapse', '#1-accordion', function(e) {
+  $(document).on('shown.bs.collapse', '[id$="-accordion"]', function(e) {
     var accordionId = e.currentTarget.id;
 
     // Only process if initial load is complete and this is a new open
     if (initialLoadComplete && !openedAccordions[accordionId]) {
       openedAccordions[accordionId] = true;
-      Shiny.setInputValue('accordion_first_time_open', accordionId);
+      Shiny.setInputValue('accordion_first_time_open', true);
     }
   });
 })();
