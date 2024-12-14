@@ -1,10 +1,10 @@
 
-#' Plot Earnings by Decile Deductions Breakdown
+#' Plot Earnings by Percentile Deductions Breakdown
 #'
 #' @param df Data returned by \code{get_df_earnings_dist()$df_main}
 #'
 #' @noRd
-plot_earnings_decile_dist <- function(df) {
+plot_earnings_percentile_dist <- function(df) {
 
   country_from <- purrr::discard(unique(df$country_from), is.na)
   country_to   <- purrr::discard(unique(df$country_to), is.na)

@@ -7,7 +7,7 @@ earningsCardUI <- function(id) {
 #' @param id NS ID.
 #' @param earnings Value.
 #' @param df df_main() - reactive.
-earningsCardServer <- function(id, earnings, period, df) {
+earningsCardServer <- function(id, selected_percentile, period, df) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -20,9 +20,6 @@ earningsCardServer <- function(id, earnings, period, df) {
         country_from_name <- base::get(paste0(country_from, "_settings"))$global$full_name
         country_to_name   <- base::get(paste0(country_to, "_settings"))$global$full_name
 
-        decile_point_from <- map_deciles(earnings, df)$point_from
-        decile_point_to   <- map_deciles(earnings, df)$point_to
-
         bslib::layout_columns(
           col_widths = c(5, 2, 5),
 
@@ -33,18 +30,21 @@ earningsCardServer <- function(id, earnings, period, df) {
               padding = "5px",
 
               shiny::HTML(paste0(
-                prep_display_currency(decile_point_from[2], country_from, period),
+                df |>
+                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::pull(earnings_from) |>
+                  prep_display_currency(country_from, period),
                 " gross per ", period, br(),
 
                 "of which", br(),
 
                 df |>
-                  dplyr::filter(deciles == decile_point_from[1]) |>
+                  dplyr::filter(deciles == selected_percentile) |>
                   dplyr::pull(net_income_from) |>
                   prep_display_currency(country_from, period),
                 " net (",
                 round(100 * df |>
-                        dplyr::filter(deciles == decile_point_from[1]) |>
+                        dplyr::filter(deciles == selected_percentile) |>
                         dplyr::pull(net_income_perc_from), 2), "%)"
               ))
             )
@@ -53,7 +53,7 @@ earningsCardServer <- function(id, earnings, period, df) {
           tags$div(
             class = "h-100 d-flex flex-wrap align-items-center justify-content-center",
             tags$div(
-              tags$div(paste0(decile_point_from[1], "th decile"), style = "font-size: 0.5rem;"),
+              tags$div(paste0(selected_percentile, "th percentile"), style = "font-size: 0.5rem;"),
               shiny::icon("arrow-right-long", style = "font-size: 2rem; padding-left: 5px;")
             )
           ),
@@ -65,18 +65,21 @@ earningsCardServer <- function(id, earnings, period, df) {
               padding = "5px",
 
               shiny::HTML(paste0(
-                prep_display_currency(decile_point_to[2], country_to, period),
+                df |>
+                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::pull(earnings_to) |>
+                  prep_display_currency(country_to, period),
                 " gross per ", period, br(),
 
                 "of which", br(),
 
                 df |>
-                  dplyr::filter(deciles == decile_point_to[1]) |>
+                  dplyr::filter(deciles == selected_percentile) |>
                   dplyr::pull(net_income_to) |>
                   prep_display_currency(country_to, period),
                 " net (",
                 round(100 * df |>
-                        dplyr::filter(deciles == decile_point_to[1]) |>
+                        dplyr::filter(deciles == selected_percentile) |>
                         dplyr::pull(net_income_perc_to), 2), "%)"
               ))
             )

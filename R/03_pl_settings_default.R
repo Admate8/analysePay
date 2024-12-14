@@ -83,8 +83,8 @@ pl_settings <- list(
     "value"  = round(12600 / 0.190581, 2)
   ),
 
-  # The range must be 10 - 95! and names must be of the form 'decile'th
-  # to stay consistent in the code. Note that id the deciles change, so must the
+  # The range must be 10 - 95! and names must be of the form 'percentile'th
+  # to stay consistent in the code. Note that id the percentiles change, so must the
   # reference in the server in `04_pl_settings_user.R`!
   "earning_deciles" = list(
     "10th"   = 12 * 4242,

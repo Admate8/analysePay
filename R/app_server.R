@@ -102,7 +102,7 @@ app_server <- function(input, output, session) {
 
   ## Validate remaining inputs ----
   iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
-  iv_provide_decile          <- shinyvalidate::InputValidator$new()
+  iv_provide_percentile      <- shinyvalidate::InputValidator$new()
   observeEvent(settings_from(), {
     req(settings_from())
 
@@ -130,16 +130,16 @@ app_server <- function(input, output, session) {
     )
     iv_provide_annual_earnings$enable()
 
-    ## Validate the decile input
-    iv_provide_decile$add_rule(
-      "provide_decile",
+    ## Validate the percentile input
+    iv_provide_percentile$add_rule(
+      "provide_percentile",
       function(value) {
         if (is.null(value)) "Provide a value..."
         else if (value > 95) "Must be \U2264 95!"
         else if (value < 10) "Must be \U2265 10!"
       }
     )
-    iv_provide_decile$enable()
+    iv_provide_percentile$enable()
   })
 
   ## Restore default settings ----
@@ -156,14 +156,14 @@ app_server <- function(input, output, session) {
       )
     )
     shinyWidgets::updateRadioGroupButtons(inputId = "select_calc_period", selected = "year")
-    shinyWidgets::updateAutonumericInput(inputId = "provide_decile", value = 50)
-    shinyWidgets::updateSwitchInput(inputId = "select_decile_or_earnings", value = TRUE)
+    shinyWidgets::updateAutonumericInput(inputId = "provide_percentile", value = 50)
+    shinyWidgets::updateSwitchInput(inputId = "select_percentile_or_earnings", value = TRUE)
   })
 
 
   ## Commit settings button ----
   observe({
-    if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid(), iv_provide_decile$is_valid())) {
+    if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid(), iv_provide_percentile$is_valid())) {
       shinyjs::enable("commit_input_data")
       output$commit_button_text <- renderText({"Analyse!"})
     } else {
@@ -181,33 +181,44 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
+  ## Unify earnings/percentile selection ----
+  selected_percentile <- reactiveVal(50)
+  observeEvent(c(
+    input$select_percentile_or_earnings,
+    input$provide_percentile,
+    input$provide_annual_earnings
+  ), {
+    if (input$select_percentile_or_earnings) selected_percentile(input$provide_percentile)
+    else selected_percentile(map_percentiles(input$provide_annual_earnings, df_main())$point_from[1])
+  })
+
+
   # Page 2 ----
   ## Slide 1 NEW ----
   observeEvent(c(
-    input$provide_annual_earnings,
+    selected_percentile(),
     input$select_calc_period,
     df_main()
   ), {
-    req(input$provide_annual_earnings)
+    req(selected_percentile())
     req(input$select_calc_period)
     req(df_main())
 
-    earningsCardServer("1", input$provide_annual_earnings, input$select_calc_period, df_main())
-    decile_point <- map_deciles(input$provide_annual_earnings, df_main())$point_from
+    earningsCardServer("1", selected_percentile(), input$select_calc_period, df_main())
 
     output$ui_earnings_cards <- renderUI({
       htmltools::tagList(
         tags$p(HTML(paste0(
-          "Approximately ", tags$strong(paste0(decile_point[1], "%")), " of the working population in ",
+          "Approximately ", tags$strong(paste0(selected_percentile(), "%")), " of the working population in ",
           tags$strong(settings_from()$global$full_name), " earns ",
-          tags$strong(prep_display_currency(decile_point[2], settings_from()$global$short_cut, "year")),
-          " annually. Based on your settings selection, that translates to..."
-        ))) |>
-          div_with_icon(
-            link = NULL, tt_text = "As not all earnings deciles are published,
-            the annual earnings you provided were mapped onto an approximated decile,
-            giving slightly different earnings. Click to find out more!"
+          tags$strong(
+            df_main() |>
+              dplyr::filter(deciles == selected_percentile()) |>
+              dplyr::pull(earnings_from) |>
+              prep_display_currency(settings_from()$global$short_cut, "year")
           ),
+          " annually. Based on your settings selection, that translates to..."
+        ))),
 
         earningsCardUI("1")
       )
@@ -291,7 +302,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+  output$plot_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_earnings_percentile_dist(df_main())})
 
   ## Slide 2 ----
   ## Render reactive ui (country-dependent) to get user's annual earnings
@@ -307,7 +318,7 @@ app_server <- function(input, output, session) {
   # })
 
   ## Render the interpolated distribution with nominal deductions breakdown plot
-  output$plot_int_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_decile_dist(df_main(), input$select_calc_period)})
+  output$plot_int_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_percentile_dist(df_main(), input$select_calc_period)})
 
   ## Update the plot with mark lines
   observeEvent(c(input$provide_annual_earnings, input$select_calc_period), {
@@ -322,8 +333,8 @@ app_server <- function(input, output, session) {
         input$provide_annual_earnings
       ))
 
-    proxy_int_earnings_decile_dist(
-      plot            = echarts4r::echarts4rProxy("plot_int_earnings_decile_dist", data = NULL),
+    proxy_int_earnings_percentile_dist(
+      plot            = echarts4r::echarts4rProxy("plot_int_earnings_percentile_dist", data = NULL),
       annual_earnings = pass_earnings,
       df              = df_main(),
       period          = input$select_calc_period
@@ -338,7 +349,7 @@ app_server <- function(input, output, session) {
   })
 
 
-  ## Render deciles & earnings sources
+  ## Render percentile & earnings sources
   output$ui_earnings_sources <- renderUI({
 
     country_from <- purrr::discard(unique(df_main()$country_from), is.na)
@@ -365,7 +376,7 @@ app_server <- function(input, output, session) {
       shiny::HTML("&nbsp&nbsp"),
       bslib::tooltip(
         trigger = list(shiny::icon("info-circle", style = "font-size: 1rem;")),
-        "As the continuous distribution of the earnings by deciles is not
+        "As the continuous distribution of the earnings by percentile is not
         published, the unavailable data has been interpolated by fitting a
         spline. The scatter series in the plot below represents the actual
         data from the sources."

@@ -101,19 +101,21 @@ app_ui <- function(request) {
 
                   tags$div(
                     shinyWidgets::switchInput(
-                      inputId   = "select_decile_or_earnings",
+                      inputId   = "select_percentile_or_earnings",
                       size      = "mini",
                       value     = TRUE,
-                      onLabel   = "Decile",
+                      onLabel   = "Percentile",
                       offStatus = "primary",
                       offLabel  = "Earnings",
                       inline    = TRUE
                     ),
                     conditionalPanel(
-                      condition = "input.select_decile_or_earnings == 1",
+                      condition = "input.select_percentile_or_earnings == 1",
                       shinyWidgets::autonumericInput(
-                        inputId                 = "provide_decile",
-                        label                   = "Base earnings decile",
+                        inputId                 = "provide_percentile",
+                        label                   = "Base earning percentile\U2800" |>
+                          div_with_icon(link = NULL, tt_text = "If your earnings are in the nth percentile,
+                                        n% of the working population earns less than or the same amount as you."),
                         value                   = 50,
                         currencySymbol          = "th",
                         currencySymbolPlacement = "s",
@@ -122,12 +124,12 @@ app_ui <- function(request) {
                       )
                     ),
                     conditionalPanel(
-                      condition = "input.select_decile_or_earnings == 0",
+                      condition = "input.select_percentile_or_earnings == 0",
                       shinyWidgets::autonumericInput(
                         inputId                 = "provide_annual_earnings",
                         label                   = "Base annual earnings\U2800" |>
-                          div_with_icon(link = NULL, tt_text = "As not all earnings deciles are published,
-                            the annual earnings you provide will be mapped onto an approximated decile,
+                          div_with_icon(link = NULL, tt_text = "As not all earning percentiles are published,
+                            the annual earnings you provide will be mapped onto an approximated percentile,
                             giving slightly different earnings."),
                         value                   = 34632,
                         currencySymbol          = "\U00A3",
@@ -195,13 +197,13 @@ app_ui <- function(request) {
                 class = "h-100 d-flex align-items-center flex-wrap",
                 tags$h2(tags$strong("Overview"), class = "display-6"),
                 br(),
-                tags$h2("Earnings & Deductions by Deciles", class = "display-6")
+                tags$h2("Earnings & Deductions by Percentiles", class = "display-6")
               ),
               bslib::card(
                 uiOutput("ui_categories_table"),
                 class = "custom-card"
               ),
-              echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "27.5rem") |> custom_spinner()
+              echarts4r::echarts4rOutput("plot_earnings_percentile_dist", height = "27.5rem") |> custom_spinner()
             )
           ),
           ## Slide 2 ----
@@ -213,7 +215,7 @@ app_ui <- function(request) {
 
               tags$div(
                 style = "position: relative;",
-                echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
+                echarts4r::echarts4rOutput("plot_int_earnings_percentile_dist", height = "48rem") |> custom_spinner(),
 
                 tags$div(
                   style = "position: absolute; left: 0; top: 0; z-index: 20;",

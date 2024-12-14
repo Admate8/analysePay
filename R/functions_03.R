@@ -1,21 +1,21 @@
-#' Return Corresponding Decile Value from the Target Distribution
+#' Return Corresponding Percentile Value from the Target Distribution
 #'
-#' Because we interpolated decile values, and deciles are a sequence from 10 to 95
-#' by 0.1, it is not guaranteed that a custom earnings will have its decile. This
+#' Because we interpolated decile values, and percentiles are a sequence from 10 to 95
+#' by 1, it is not guaranteed that a custom earnings will have its percentile. This
 #' function checks this and return the point the closest to the supplied value.
-#' For example, if 25000 does not have it's decile (but say, 25024 and 24900
-#' are the 10.2th and 10th decile receptively), the function will return a point
-#' c(10.2, 25024) because 25024 is closer to 25000 than 24900.
+#' For example, if 25000 does not have it's percentile (but say, 25024 and 24900
+#' are the 10th and 11th percentile receptively), the function will return a point
+#' c(10, 25024) because 25024 is closer to 25000 than 24900.
 #'
 #' @param annual_earnings Annual earnings in the "country from" (base) currency.
 #' @param df Data returned by \code{get_df_earnings_dist()$df_main}.
 #'
-#' @return Two points - one with the closest value and decile from the base
-#' distribution and the other corresponding decile with its value from the
+#' @return Two points - one with the closest value and percentile from the base
+#' distribution and the other corresponding percentile with its value from the
 #' target distribution.
 #'
 #' @noRd
-map_deciles <- function(annual_earnings, df) {
+map_percentiles <- function(annual_earnings, df) {
 
   country_from <- purrr::discard(unique(df$country_from), is.na)
   country_to   <- purrr::discard(unique(df$country_to), is.na)
@@ -27,25 +27,25 @@ map_deciles <- function(annual_earnings, df) {
   # Find the closest value
   closest_index <- which.min(abs(dist_from - annual_earnings))
 
-  corresponding_decile     <- df$deciles[closest_index]
+  corresponding_percentile <- df$deciles[closest_index]
   corresponding_value_from <- df$earnings_from[closest_index]
   corresponding_value_to   <- df$earnings_to[closest_index]
 
   # Return as points
   return(list(
-    "point_from" = c(corresponding_decile, corresponding_value_from),
-    "point_to"   = c(corresponding_decile, corresponding_value_to)
+    "point_from" = c(corresponding_percentile, corresponding_value_from),
+    "point_to"   = c(corresponding_percentile, corresponding_value_to)
   ))
 }
 
 
-#' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Deciles
+#' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Percentiles
 #'
 #' @param df Data returned by \code{get_df_earnings_dist()$df_main}
 #' @param period Either "year", "month" or "week" to scale the values
 #'
 #' @noRd
-plot_int_earnings_decile_dist <- function(df, period) {
+plot_int_earnings_percentile_dist <- function(df, period) {
   stopifnot(period %in% c("year", "month", "week"))
 
   # Define global settings ----
@@ -229,7 +229,7 @@ plot_int_earnings_decile_dist <- function(df, period) {
       axisPointer     = list(
         label = list(formatter = htmlwidgets::JS(
           "function(params) {
-          return 'Decile ' + parseFloat(params.value).toFixed(1) + 'th';
+          return 'Percentile ' + parseFloat(params.value).toFixed(1) + 'th';
         }"
         ))
       ),
@@ -303,7 +303,7 @@ plot_int_earnings_decile_dist <- function(df, period) {
 
 
 
-proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
+proxy_int_earnings_percentile_dist <- function(plot, annual_earnings, df, period) {
 
   # Define global settings ----
   country_from <- purrr::discard(unique(df$country_from), is.na)
@@ -311,7 +311,7 @@ proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
 
 
   # Define points ----
-  points       <- map_deciles(annual_earnings, df)
+  points       <- map_percentiles(annual_earnings, df)
   scale_factor <- ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
   ## Scale the y-coordinates of the points
   points$point_from[2] <- points$point_from[2] / scale_factor
@@ -368,13 +368,13 @@ proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
 
 plot_radar_perc <- function(annual_earnings, df) {
 
-  country_from  <- purrr::discard(unique(df$country_from), is.na)
-  country_to    <- purrr::discard(unique(df$country_to), is.na)
-  points_decile <- map_deciles(annual_earnings, df)$point_from[1]
+  country_from      <- purrr::discard(unique(df$country_from), is.na)
+  country_to        <- purrr::discard(unique(df$country_to), is.na)
+  points_percentile <- map_percentiles(annual_earnings, df)$point_from[1]
 
   # Prepare the data for the Radar chart
   df_plot <- df |>
-    dplyr::filter(deciles == points_decile) |> # Filter for a single decile
+    dplyr::filter(deciles == points_percentile) |> # Filter for a single percentile
     dplyr::select(dplyr::contains("perc")) |>
     tidyr::pivot_longer(cols = dplyr::everything()) |>
     dplyr::mutate(
