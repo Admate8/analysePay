@@ -90,10 +90,10 @@ plot_earnings_percentile_dist <- function(df) {
       # Show only available deciles from the sources
       dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
       dplyr::mutate(
-        deciles = paste0(as.factor(deciles), "th"),
-        dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
+        percentile = paste0(as.factor(percentile), "th"),
+        dplyr::across(dplyr::contains("perc") & !dplyr::contains("percentile"), ~ round(.x * 100, 2))
       ) |>
-      echarts4r::e_chart(x = deciles),
+      echarts4r::e_chart(x = percentile),
 
     # Apply the function with various settings from the lists
     .f = ~ draw_echart_bar_serie(

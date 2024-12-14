@@ -213,7 +213,7 @@ app_server <- function(input, output, session) {
           tags$strong(settings_from()$global$full_name), " earns ",
           tags$strong(
             df_main() |>
-              dplyr::filter(deciles == selected_percentile()) |>
+              dplyr::filter(percentile == selected_percentile()) |>
               dplyr::pull(earnings_from) |>
               prep_display_currency(settings_from()$global$short_cut, "year")
           ),

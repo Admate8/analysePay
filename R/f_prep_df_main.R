@@ -45,7 +45,7 @@ fit_earnings_dist <- function(available_deciles) {
 
   # Return clean data
   data.frame(
-    deciles             = spline_values$x,
+    percentile          = spline_values$x,
     actual_values       = actual_values,
     interpolated_values = spline_values$y
   )
@@ -85,7 +85,7 @@ get_df_earnings_dist <- function(
   df_earnings_dist <- dplyr::left_join(
     earnings_dist_from,
     earnings_dist_to,
-    by     = "deciles",
+    by     = "percentile",
     suffix = c("_from", "_to")
   )
 
@@ -132,24 +132,24 @@ get_df_earnings_dist <- function(
   df <- dplyr::left_join(
 
     df_earnings_dist |>
-      dplyr::select(deciles, actuals = actual_values_from) |>
+      dplyr::select(percentile, actuals = actual_values_from) |>
       cbind(df_fit_deduction_from$df_deductions) |>
       dplyr::mutate(actuals = ifelse(is.na(actuals), 0, 1)) |>
-      dplyr::rename_with(~ paste0(., "_from"), -deciles) |>
+      dplyr::rename_with(~ paste0(., "_from"), -percentile) |>
       dplyr::mutate(country_from = country_from),
 
     df_earnings_dist |>
-      dplyr::select(deciles, actuals = actual_values_to) |>
+      dplyr::select(percentile, actuals = actual_values_to) |>
       cbind(df_fit_deduction_to$df_deductions) |>
       dplyr::mutate(actuals = ifelse(is.na(actuals), 0, 1)) |>
-      dplyr::rename_with(~ paste0(., "_to"), -deciles) |>
+      dplyr::rename_with(~ paste0(., "_to"), -percentile) |>
       dplyr::mutate(country_to = country_to),
 
-    by = "deciles"
+    by = "percentile"
   ) |>
-    # Fill in remaining deciles
-    tibble::add_row(deciles = seq(0, min(df_earnings_dist$deciles) - 1, by = 1), .before = 1) |>
-    tibble::add_row(deciles = seq(max(df_earnings_dist$deciles) + 1, 100, by = 1)) |>
+    # Fill in remaining percentile
+    tibble::add_row(percentile = seq(0, min(df_earnings_dist$percentile) - 1, by = 1), .before = 1) |>
+    tibble::add_row(percentile = seq(max(df_earnings_dist$percentile) + 1, 100, by = 1)) |>
     tidyr::replace_na(list(actuals_from = 0L, actuals_to = 0L))
 
   return(list(

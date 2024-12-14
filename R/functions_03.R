@@ -27,7 +27,7 @@ map_percentiles <- function(annual_earnings, df) {
   # Find the closest value
   closest_index <- which.min(abs(dist_from - annual_earnings))
 
-  corresponding_percentile <- df$deciles[closest_index]
+  corresponding_percentile <- df$percentile[closest_index]
   corresponding_value_from <- df$earnings_from[closest_index]
   corresponding_value_to   <- df$earnings_to[closest_index]
 
@@ -154,7 +154,7 @@ plot_int_earnings_percentile_dist <- function(df, period) {
   scale_factor <- ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
   df <- df |>
     dplyr::mutate(dplyr::across(
-      -c(dplyr::contains("actuals"), dplyr::contains("perc"), dplyr::contains("country"), "deciles"),
+      -c(dplyr::contains("actuals"), dplyr::contains("perc"), dplyr::contains("country"), "percentile"),
       function(x) x / scale_factor
     ))
 
@@ -164,11 +164,11 @@ plot_int_earnings_percentile_dist <- function(df, period) {
     # Start with an initialized chart
     .init = df |>
       dplyr::mutate(
-        deciles = paste0(as.factor(deciles), "th"),
+        percentile = paste0(as.factor(percentile), "th"),
         actual_earnings_from = ifelse(actuals_from == 0, NA, earnings_from),
         actual_earnings_to   = ifelse(actuals_to == 0, NA, earnings_to)
       ) |>
-      echarts4r::e_chart(x = deciles),
+      echarts4r::e_chart(x = percentile),
 
     # Apply the function with various settings from the lists
     .f = ~ draw_echart_area_serie(
@@ -374,7 +374,7 @@ plot_radar_perc <- function(annual_earnings, df) {
 
   # Prepare the data for the Radar chart
   df_plot <- df |>
-    dplyr::filter(deciles == points_percentile) |> # Filter for a single percentile
+    dplyr::filter(percentile == points_percentile) |> # Filter for a single percentile
     dplyr::select(dplyr::contains("perc")) |>
     tidyr::pivot_longer(cols = dplyr::everything()) |>
     dplyr::mutate(

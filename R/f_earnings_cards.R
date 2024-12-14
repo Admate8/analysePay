@@ -31,7 +31,7 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
 
               shiny::HTML(paste0(
                 df |>
-                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::filter(percentile == selected_percentile) |>
                   dplyr::pull(earnings_from) |>
                   prep_display_currency(country_from, period),
                 " gross per ", period, br(),
@@ -39,12 +39,12 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
                 "of which", br(),
 
                 df |>
-                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::filter(percentile == selected_percentile) |>
                   dplyr::pull(net_income_from) |>
                   prep_display_currency(country_from, period),
                 " net (",
                 round(100 * df |>
-                        dplyr::filter(deciles == selected_percentile) |>
+                        dplyr::filter(percentile == selected_percentile) |>
                         dplyr::pull(net_income_perc_from), 2), "%)"
               ))
             )
@@ -66,7 +66,7 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
 
               shiny::HTML(paste0(
                 df |>
-                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::filter(percentile == selected_percentile) |>
                   dplyr::pull(earnings_to) |>
                   prep_display_currency(country_to, period),
                 " gross per ", period, br(),
@@ -74,12 +74,12 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
                 "of which", br(),
 
                 df |>
-                  dplyr::filter(deciles == selected_percentile) |>
+                  dplyr::filter(percentile == selected_percentile) |>
                   dplyr::pull(net_income_to) |>
                   prep_display_currency(country_to, period),
                 " net (",
                 round(100 * df |>
-                        dplyr::filter(deciles == selected_percentile) |>
+                        dplyr::filter(percentile == selected_percentile) |>
                         dplyr::pull(net_income_perc_to), 2), "%)"
               ))
             )
