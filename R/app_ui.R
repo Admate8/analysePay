@@ -83,31 +83,43 @@ app_ui <- function(request) {
               ),
               uiOutput("ui_settings"),
 
-              bslib::layout_columns(
-                col_widths = c(6, 6),
-                class = "h-100 p-4 d-flex align-items-center custom-card",
-
-                shinyWidgets::autonumericInput(
-                  inputId                 = "provide_annual_earnings",
-                  label                   = "Base annual earnings",
-                  value                   = 34632,
-                  currencySymbol          = "\U00A3",
-                  currencySymbolPlacement = "p",
-                  decimalCharacter        = ".",
-                  digitGroupSeparator     = ",",
-                  style                   = "text-align: center; width: 100%;"
-                ),
-                #uiOutput("ui_provide_annual_earnings"),
+              tags$div(
+                style = "position: relative;",
                 tags$div(
-                  style = "display: flex; justify-content: center;",
-                  shinyWidgets::radioGroupButtons(
-                    inputId    = "select_calc_period",
-                    label      = "Show results by",
-                    choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
-                    selected   = "year",
-                    individual = TRUE,
-                    size       = "sm",
-                    justified  = TRUE
+                  style = "position: absolute; right: 0; top: 0; margin-top: 10px; margin-right: 10px;",
+                  actionButton(
+                    inputId = "restore_defaults_earnings",
+                    label   = NULL,
+                    icon    = shiny::icon("rotate-right", style = "font-size: 1.2rem;"),
+                    width   = "26px"
+                  ) |>
+                    bslib::tooltip("Restore default settings")
+                ),
+                bslib::layout_columns(
+                  col_widths = c(6, 6),
+                  class = "h-100 p-3 d-flex align-items-center custom-card",
+
+                  shinyWidgets::autonumericInput(
+                    inputId                 = "provide_annual_earnings",
+                    label                   = "Base annual earnings",
+                    value                   = 34632,
+                    currencySymbol          = "\U00A3",
+                    currencySymbolPlacement = "p",
+                    decimalCharacter        = ".",
+                    digitGroupSeparator     = ",",
+                    style                   = "text-align: center; width: 100%;"
+                  ),
+                  tags$div(
+                    style = "display: flex; justify-content: center;",
+                    shinyWidgets::radioGroupButtons(
+                      inputId    = "select_calc_period",
+                      label      = "Show results by",
+                      choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
+                      selected   = "year",
+                      individual = TRUE,
+                      size       = "sm",
+                      justified  = TRUE
+                    )
                   )
                 )
               )
@@ -122,6 +134,21 @@ app_ui <- function(request) {
         # Page 2 ----
         tags$div(
           class = "section",
+
+          ## Slide 1 NEW ----
+          tags$div(
+            class = "slide",
+            bslib::layout_columns(
+              class = "add-left-right-margins",
+              col_widths = c(5, 7),
+              tags$div(
+                tags$h2("Earnings & Deductions", class = "display-6"),
+                br(),
+                uiOutput("info_settings")
+              )
+            )
+          ),
+
           ## Slide 1 ----
           tags$div(
             class = "slide",
@@ -168,22 +195,6 @@ app_ui <- function(request) {
                   class = "h-100 d-flex align-items-center flex-wrap",
                   tags$h2("Interpolated Earnings", class = "display-6")
                 ),
-
-                # bslib::layout_columns(
-                #   col_widths = c(6, 6),
-                #   class = "h-100 p-4 d-flex align-items-center custom-card",
-                #
-                #   shinyWidgets::radioGroupButtons(
-                #     inputId    = "select_calc_period",
-                #     label      = "Show earnings by...",
-                #     choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
-                #     selected   = "year",
-                #     individual = TRUE,
-                #     size       = "sm",
-                #     justified  = TRUE
-                #   ),
-                #   uiOutput("ui_provide_annual_earnings")
-                # ),
 
                 echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
               )

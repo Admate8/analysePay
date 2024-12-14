@@ -346,18 +346,21 @@ $lighter-accordions: (
 
 /* Customise restore settings buttons */
 [id$="restore_defaults_uk"],
-[id$="restore_defaults_pl"] {
+[id$="restore_defaults_pl"],
+[id="restore_defaults_earnings"] {
   padding: 0;
   border-color: transparent !important;
   color: $body-color-secondary;
 }
 [id$="restore_defaults_uk"]:hover,
-[id$="restore_defaults_pl"]:hover {
+[id$="restore_defaults_pl"]:hover,
+[id="restore_defaults_earnings"]:hover {
   background-color: transparent;
   border-color: transparent;
 }
 [id$="restore_defaults_uk"]:active,
-[id$="restore_defaults_pl"]:active {
+[id$="restore_defaults_pl"]:active,
+[id="restore_defaults_earnings"]:active {
   background-color: transparent !important;
   border-color: transparent !important;
 }

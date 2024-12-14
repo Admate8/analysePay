@@ -6,7 +6,6 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # Page 1 ----
   ## CV Downloader
   output$cv_download <- downloadHandler(
     filename = "CV Adrian Wisnios.pdf",
@@ -15,7 +14,9 @@ app_server <- function(input, output, session) {
     }
   )
 
-  ## Show the hint on opening the first accordion with settings
+  # Page 1 ----
+  ## Hints ----
+  ## Show the hint on opening accordion with settings
   observeEvent(input$accordion_first_time_open, {
     if (input$accordion_first_time_open) {
       showNotification(
@@ -52,7 +53,8 @@ app_server <- function(input, output, session) {
     )
   })
 
-  ## Preserve inputs
+  ## User inputs ----
+  ### Preserve vars
   settings_from <- NULL
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
@@ -62,7 +64,7 @@ app_server <- function(input, output, session) {
   ns_from <- reactiveVal("1")
   ns_to   <- reactiveVal("1")
 
-  ## Update country_from and country_to settings depending on the user's selection
+  ### Update country_from and country_to settings depending on the user's selection
   observeEvent(c(input$select_country_from, input$select_country_to), {
 
     # If country_from == country_to we need to make sure both setting options
@@ -73,7 +75,7 @@ app_server <- function(input, output, session) {
       ns_to("2")
     }
 
-    ### Update the UI
+    ### Update the UI accordeons and settings
     ui_settings_from_name <- paste0(input$select_country_from, "SettingsUserUI")
     ui_settings_to_name   <- paste0(input$select_country_to, "SettingsUserUI")
 
@@ -91,16 +93,14 @@ app_server <- function(input, output, session) {
     server_settings_from_name <- paste0(input$select_country_from, "SettingsUserServer")
     server_settings_to_name   <- paste0(input$select_country_to, "SettingsUserServer")
 
-    ### Define the following variables as global
     settings_from <<- base::get(server_settings_from_name)(ns_from())$settings
     settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
 
     iv_from <<- base::get(server_settings_from_name)(ns_from())$iv
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
-
   })
 
-
+  ## Validate remaining inputs ----
   iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
   observeEvent(settings_from(), {
     req(settings_from())
@@ -130,8 +130,27 @@ app_server <- function(input, output, session) {
     iv_provide_annual_earnings$enable()
   })
 
+  ## Restore default settings ----
+  observeEvent(input$restore_defaults_earnings, {
+    shinyWidgets::updateAutonumericInput(
+      session = session,
+      inputId = "provide_annual_earnings",
+      value   = settings_from()$earning_deciles$`50th`,
+      options = list(
+        currencySymbol          = settings_from()$global$currencySymbol,
+        currencySymbolPlacement = settings_from()$global$currencySymbolPlacement,
+        decimalCharacter        = settings_from()$global$decimalCharacter,
+        digitGroupSeparator     = settings_from()$global$digitGroupSeparator
+      )
+    )
+    shinyWidgets::updateRadioGroupButtons(
+      inputId = "select_calc_period",
+      selected = "year"
+    )
+  })
 
-  ### Commit settings button
+
+  ## Commit settings button ----
   observe({
     if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid())) {
       shinyjs::enable("commit_input_data")
@@ -142,7 +161,7 @@ app_server <- function(input, output, session) {
     }
   })
 
-  ## Set the main data
+  ## Set up the main data ----
   # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -152,6 +171,38 @@ app_server <- function(input, output, session) {
   })
 
   # Page 2 ----
+  ## Slide 1 NEW ----
+  observeEvent(c(input$provide_annual_earnings, input$select_calc_period, input$select_country_from), {
+    req(input$provide_annual_earnings)
+    req(input$select_calc_period)
+    req(input$select_country_from)
+
+    full_name         <- settings_from()$global$full_name
+    suffix_or_preffix <- settings_from()$global$currencySymbolPlacement
+    currency_symbol   <- settings_from()$global$currencySymbol
+    big_mark          <- settings_from()$global$digitGroupSeparator
+    decimal_mark      <- settings_from()$global$decimalCharacter
+
+    display_prefix    <- ifelse(suffix_or_preffix == "p", currency_symbol, "")
+    display_suffix    <- ifelse(suffix_or_preffix == "s", paste0(" ", currency_symbol), "")
+
+    display_earnigns <- scales::comma(
+      input$provide_annual_earnings,
+      accuracy     = 0.01,
+      prefix       = display_prefix,
+      suffix       = display_suffix,
+      big.mark     = big_mark,
+      decimal.mark = decimal_mark
+    )
+
+    output$info_settings <- renderUI(HTML(paste0(
+      "Showing results by ", tags$strong(input$select_calc_period),
+      ", for ", tags$strong(full_name), " as the base country
+      with ", tags$strong(display_earnigns), " annual earnings."
+    )))
+  })
+
+
   ## Slide 1 ----
   ## Render the categories table
   df_categories <- eventReactive(input$commit_input_data, {

@@ -26,7 +26,7 @@ ukSettingsUserUI <- function(id) {
 
   tags$div(
     tags$div(
-      style   = glue::glue("text-align-last: right;"),
+      style   = "text-align-last: right;",
       actionButton(
         inputId = shiny::NS(id, "restore_defaults_uk"),
         label   = NULL,
