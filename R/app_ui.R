@@ -97,17 +97,46 @@ app_ui <- function(request) {
                 ),
                 bslib::layout_columns(
                   col_widths = c(6, 6),
-                  class = "h-100 p-3 d-flex align-items-center custom-card",
+                  class = "h-100 d-flex align-items-center custom-card",
 
-                  shinyWidgets::autonumericInput(
-                    inputId                 = "provide_annual_earnings",
-                    label                   = "Base annual earnings",
-                    value                   = 34632,
-                    currencySymbol          = "\U00A3",
-                    currencySymbolPlacement = "p",
-                    decimalCharacter        = ".",
-                    digitGroupSeparator     = ",",
-                    style                   = "text-align: center; width: 100%;"
+                  tags$div(
+                    shinyWidgets::switchInput(
+                      inputId   = "select_decile_or_earnings",
+                      size      = "mini",
+                      value     = TRUE,
+                      onLabel   = "Decile",
+                      offStatus = "primary",
+                      offLabel  = "Earnings",
+                      inline    = TRUE
+                    ),
+                    conditionalPanel(
+                      condition = "input.select_decile_or_earnings == 1",
+                      shinyWidgets::autonumericInput(
+                        inputId                 = "provide_decile",
+                        label                   = "Base earnings decile",
+                        value                   = 50,
+                        currencySymbol          = "th",
+                        currencySymbolPlacement = "s",
+                        decimalPlaces           = 0,
+                        style                   = "text-align: center; width: 100%;"
+                      )
+                    ),
+                    conditionalPanel(
+                      condition = "input.select_decile_or_earnings == 0",
+                      shinyWidgets::autonumericInput(
+                        inputId                 = "provide_annual_earnings",
+                        label                   = "Base annual earnings\U2800" |>
+                          div_with_icon(link = NULL, tt_text = "As not all earnings deciles are published,
+                            the annual earnings you provide will be mapped onto an approximated decile,
+                            giving slightly different earnings."),
+                        value                   = 34632,
+                        currencySymbol          = "\U00A3",
+                        currencySymbolPlacement = "p",
+                        decimalCharacter        = ".",
+                        digitGroupSeparator     = ",",
+                        style                   = "text-align: center; width: 100%;"
+                      )
+                    )
                   ),
                   tags$div(
                     style = "display: flex; justify-content: center;",
@@ -144,9 +173,14 @@ app_ui <- function(request) {
               tags$div(
                 tags$h2("Earnings & Deductions", class = "display-6"),
                 br(),
-                uiOutput("info_settings")
+                uiOutput("ui_earnings_cards")
               )
             )
+          ),
+
+          tags$div(
+            class = "slide",
+            "METHODOLOGY"
           ),
 
           ## Slide 1 ----

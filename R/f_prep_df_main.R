@@ -24,7 +24,7 @@ fit_earnings_dist <- function(available_deciles) {
   percentiles            <- seq(
     as.numeric(min(names(earning_deciles))),
     as.numeric(max(names(earning_deciles))),
-    by = 0.1
+    by = 1
   )
 
   # Create a vector of interpolated values using spline method
@@ -148,8 +148,8 @@ get_df_earnings_dist <- function(
     by = "deciles"
   ) |>
     # Fill in remaining deciles
-    tibble::add_row(deciles = seq(0, min(df_earnings_dist$deciles) - 0.1, by = 0.1), .before = 1) |>
-    tibble::add_row(deciles = seq(max(df_earnings_dist$deciles) + 0.1, 100, by = 0.1)) |>
+    tibble::add_row(deciles = seq(0, min(df_earnings_dist$deciles) - 1, by = 1), .before = 1) |>
+    tibble::add_row(deciles = seq(max(df_earnings_dist$deciles) + 1, 100, by = 1)) |>
     tidyr::replace_na(list(actuals_from = 0L, actuals_to = 0L))
 
   return(list(

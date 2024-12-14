@@ -85,3 +85,39 @@ custom_reactable_theme <- function() {
     borderColor     = palette_global$body_secondary_bg
   )
 }
+
+
+#' Prepare Display Currency
+#'
+#' @param value Value to prepare.
+#' @param country Either "uk" or "pl" (for now).
+#' @param period Either "year", "month" or "week" to scale the value.
+#'
+#' @return Value formatted in the country standard way (as a string).
+prep_display_currency <- function(value, country, period) {
+  stopifnot(
+    country %in% c("uk", "pl"),
+    is.numeric(value), period %in% c("year", "month", "week")
+  )
+
+  value    <- value / ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
+  settings <- base::get(paste0(country, "_settings"))
+
+  full_name         <- settings$global$full_name
+  suffix_or_preffix <- settings$global$currencySymbolPlacement
+  currency_symbol   <- settings$global$currencySymbol
+  big_mark          <- settings$global$digitGroupSeparator
+  decimal_mark      <- settings$global$decimalCharacter
+
+  display_prefix    <- ifelse(suffix_or_preffix == "p", currency_symbol, "")
+  display_suffix    <- ifelse(suffix_or_preffix == "s", paste0(" ", currency_symbol), "")
+
+  scales::comma(
+    value,
+    accuracy     = 0.01,
+    prefix       = display_prefix,
+    suffix       = display_suffix,
+    big.mark     = big_mark,
+    decimal.mark = decimal_mark
+  )
+}

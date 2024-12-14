@@ -102,6 +102,7 @@ app_server <- function(input, output, session) {
 
   ## Validate remaining inputs ----
   iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
+  iv_provide_decile          <- shinyvalidate::InputValidator$new()
   observeEvent(settings_from(), {
     req(settings_from())
 
@@ -128,6 +129,17 @@ app_server <- function(input, output, session) {
       }
     )
     iv_provide_annual_earnings$enable()
+
+    ## Validate the decile input
+    iv_provide_decile$add_rule(
+      "provide_decile",
+      function(value) {
+        if (is.null(value)) "Provide a value..."
+        else if (value > 95) "Must be \U2264 95!"
+        else if (value < 10) "Must be \U2265 10!"
+      }
+    )
+    iv_provide_decile$enable()
   })
 
   ## Restore default settings ----
@@ -143,16 +155,15 @@ app_server <- function(input, output, session) {
         digitGroupSeparator     = settings_from()$global$digitGroupSeparator
       )
     )
-    shinyWidgets::updateRadioGroupButtons(
-      inputId = "select_calc_period",
-      selected = "year"
-    )
+    shinyWidgets::updateRadioGroupButtons(inputId = "select_calc_period", selected = "year")
+    shinyWidgets::updateAutonumericInput(inputId = "provide_decile", value = 50)
+    shinyWidgets::updateSwitchInput(inputId = "select_decile_or_earnings", value = TRUE)
   })
 
 
   ## Commit settings button ----
   observe({
-    if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid())) {
+    if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid(), iv_provide_decile$is_valid())) {
       shinyjs::enable("commit_input_data")
       output$commit_button_text <- renderText({"Analyse!"})
     } else {
@@ -172,34 +183,36 @@ app_server <- function(input, output, session) {
 
   # Page 2 ----
   ## Slide 1 NEW ----
-  observeEvent(c(input$provide_annual_earnings, input$select_calc_period, input$select_country_from), {
+  observeEvent(c(
+    input$provide_annual_earnings,
+    input$select_calc_period,
+    df_main()
+  ), {
     req(input$provide_annual_earnings)
     req(input$select_calc_period)
-    req(input$select_country_from)
+    req(df_main())
 
-    full_name         <- settings_from()$global$full_name
-    suffix_or_preffix <- settings_from()$global$currencySymbolPlacement
-    currency_symbol   <- settings_from()$global$currencySymbol
-    big_mark          <- settings_from()$global$digitGroupSeparator
-    decimal_mark      <- settings_from()$global$decimalCharacter
+    earningsCardServer("1", input$provide_annual_earnings, input$select_calc_period, df_main())
+    decile_point <- map_deciles(input$provide_annual_earnings, df_main())$point_from
 
-    display_prefix    <- ifelse(suffix_or_preffix == "p", currency_symbol, "")
-    display_suffix    <- ifelse(suffix_or_preffix == "s", paste0(" ", currency_symbol), "")
+    output$ui_earnings_cards <- renderUI({
+      htmltools::tagList(
+        tags$p(HTML(paste0(
+          "Approximately ", tags$strong(paste0(decile_point[1], "%")), " of the working population in ",
+          tags$strong(settings_from()$global$full_name), " earns ",
+          tags$strong(prep_display_currency(decile_point[2], settings_from()$global$short_cut, "year")),
+          " annually. Based on your settings selection, that translates to..."
+        ))) |>
+          div_with_icon(
+            link = NULL, tt_text = "As not all earnings deciles are published,
+            the annual earnings you provided were mapped onto an approximated decile,
+            giving slightly different earnings. Click to find out more!"
+          ),
 
-    display_earnigns <- scales::comma(
-      input$provide_annual_earnings,
-      accuracy     = 0.01,
-      prefix       = display_prefix,
-      suffix       = display_suffix,
-      big.mark     = big_mark,
-      decimal.mark = decimal_mark
-    )
+        earningsCardUI("1")
+      )
 
-    output$info_settings <- renderUI(HTML(paste0(
-      "Showing results by ", tags$strong(input$select_calc_period),
-      ", for ", tags$strong(full_name), " as the base country
-      with ", tags$strong(display_earnigns), " annual earnings."
-    )))
+    })
   })
 
 
