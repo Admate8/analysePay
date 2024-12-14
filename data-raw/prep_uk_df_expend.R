@@ -36,9 +36,9 @@ uk_ppd <- uk_df_expend_raw |>
   dplyr::slice(-1) |>
   dplyr::mutate(
     weighted_val = as.numeric(x3) / as.numeric(x2),
-    decile       = c(paste0(seq(10, 100, 10), "th"), "average")
+    deciles      = c(seq(10, 100, 10), "average")
   ) |>
-  dplyr::select(link = x1, decile, weighted_val)
+  dplyr::select(link = x1, deciles, weighted_val)
 
 # Clean the data
 uk_df_expend <- uk_df_expend_raw |>
@@ -65,16 +65,17 @@ uk_df_expend <- uk_df_expend |>
 
 # Compute the change in expenditure in respect to the total average
 uk_df_expend <- dplyr::left_join(
-  uk_df_expend |> dplyr::filter(decile != "average"),
-  uk_df_expend |> dplyr::filter(decile == "average") |> dplyr::select(-decile),
+  uk_df_expend |> dplyr::filter(deciles != "average"),
+  uk_df_expend |> dplyr::filter(deciles == "average") |> dplyr::select(-deciles),
   by     = "expenditure",
   suffix = c("", "_avg")
 ) |>
   dplyr::mutate(perc_of_avg = value / value_avg) |>
-  dplyr::group_by(decile) |>
+  dplyr::group_by(deciles) |>
   dplyr::mutate(decile_perc = value / sum(value)) |>
   dplyr::ungroup() |>
-  dplyr::select(decile, expenditure, value, value_avg, decile_perc, perc_of_avg)
+  dplyr::mutate(deciles = as.integer(deciles)) |>
+  dplyr::select(deciles, expenditure, value, value_avg, decile_perc, perc_of_avg)
 
 
 # Save the data

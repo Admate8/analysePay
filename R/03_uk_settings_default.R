@@ -76,7 +76,8 @@ uk_settings <- list(
     "90th"   = 66669,
     "95th"   = 80000
   ),
-  "decile_source" = "https://www.statista.com/statistics/416102/average-annual-gross-pay-percentiles-united-kingdom/"
+  "decile_source" = "https://www.statista.com/statistics/416102/average-annual-gross-pay-percentiles-united-kingdom/",
+  "expend_source" = "https://www.ons.gov.uk/peoplepopulationandcommunity/personalandhouseholdfinances/expenditure/datasets/familyspendingworkbook2expenditurebyincome"
 )
 #usethis::use_data(uk_settings, overwrite = TRUE)
 

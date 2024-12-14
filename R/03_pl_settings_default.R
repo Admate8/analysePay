@@ -98,7 +98,8 @@ pl_settings <- list(
     "90th"   = 12 * 13012.14,
     "95th"   = 12 * 17500 # Estimated (not in the source)
   ),
-  "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html"
+  "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html",
+  "expend_source" = "https://stat.gov.pl/obszary-tematyczne/warunki-zycia/dochody-wydatki-i-warunki-zycia-ludnosci/sytuacja-gospodarstw-domowych-w-2023-r-w-swietle-badania-budzetow-gospodarstw-domowych,3,23.html"
 )
 #usethis::use_data(pl_settings, overwrite = TRUE)
 

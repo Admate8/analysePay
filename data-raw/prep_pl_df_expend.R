@@ -40,7 +40,7 @@ other_perc <- 1 - sum(pl_df_expend_perc)
 # Compile the data
 # uk_df_expend comes from `prep_uk_df_expend.R`
 pl_df_expend <- uk_df_expend |>
-  dplyr::select(decile, expenditure, perc_of_avg) |>
+  dplyr::select(deciles, expenditure, perc_of_avg) |>
   dplyr::left_join(
     tibble::tibble(
       expenditure = unique(uk_df_expend$expenditure),
@@ -49,10 +49,10 @@ pl_df_expend <- uk_df_expend |>
     by = "expenditure"
   ) |>
   dplyr::mutate(value = perc_of_avg * value_avg) |>
-  dplyr::group_by(decile) |>
+  dplyr::group_by(deciles) |>
   dplyr::mutate(decile_perc = value / sum(value)) |>
   dplyr::ungroup() |>
-  dplyr::select(decile, expenditure, value, value_avg, decile_perc, perc_of_avg)
+  dplyr::select(deciles, expenditure, value, value_avg, decile_perc, perc_of_avg)
 
 
 # Save the data
