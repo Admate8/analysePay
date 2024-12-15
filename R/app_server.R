@@ -240,14 +240,14 @@ app_server <- function(input, output, session) {
     )$df_cat_table |>
       # Join in the colours from the global options
       cbind(col = c(
+        palette_global$categories$net_color,
         palette_global$categories$pension_color,
         palette_global$categories$pension_color_vol,
         palette_global$categories$insurance_color,
         palette_global$categories$insurance_color_vol,
         palette_global$categories$tax_color,
         palette_global$categories$sl_plan2_color,
-        palette_global$categories$sl_plan3_color,
-        palette_global$categories$net_color
+        palette_global$categories$sl_plan3_color
       ))
   }, ignoreNULL = FALSE)
 

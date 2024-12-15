@@ -226,14 +226,14 @@ calc_uk_deductions <- function(
   # We only need this for a legend-table, so everything should display ready
   df_deductions_split <- tibble::tribble(
     ~split,                  ~categories,
+    "Net Income",            "Net Income",
     "Pension - Mandatory",   "",
     "Pension - Voluntary",   "Pension*",
     "Insurance - Mandatory", "National Insurance",
     "Insurance - Voluntary", "",
     "Income Tax",            "Income Tax",
     "Student Loan Plan 2",   "Student Loan Plan 2",
-    "Student Loan Plan 3",   "Student Loan Plan 3",
-    "Net Income",            "Net Income"
+    "Student Loan Plan 3",   "Student Loan Plan 3"
   )
 
   return(list(

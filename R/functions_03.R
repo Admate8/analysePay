@@ -1,43 +1,3 @@
-#' Return Corresponding Percentile Value from the Target Distribution
-#'
-#' Because we interpolated decile values, and percentiles are a sequence from 10 to 95
-#' by 1, it is not guaranteed that a custom earnings will have its percentile. This
-#' function checks this and return the point the closest to the supplied value.
-#' For example, if 25000 does not have it's percentile (but say, 25024 and 24900
-#' are the 10th and 11th percentile receptively), the function will return a point
-#' c(10, 25024) because 25024 is closer to 25000 than 24900.
-#'
-#' @param annual_earnings Annual earnings in the "country from" (base) currency.
-#' @param df Data returned by \code{get_df_earnings_dist()$df_main}.
-#'
-#' @return Two points - one with the closest value and percentile from the base
-#' distribution and the other corresponding percentile with its value from the
-#' target distribution.
-#'
-#' @noRd
-map_percentiles <- function(annual_earnings, df) {
-
-  country_from <- purrr::discard(unique(df$country_from), is.na)
-  country_to   <- purrr::discard(unique(df$country_to), is.na)
-
-  # Get the base and target distributions
-  dist_from <- df$earnings_from
-  dist_to   <- df$earnings_to
-
-  # Find the closest value
-  closest_index <- which.min(abs(dist_from - annual_earnings))
-
-  corresponding_percentile <- df$percentile[closest_index]
-  corresponding_value_from <- df$earnings_from[closest_index]
-  corresponding_value_to   <- df$earnings_to[closest_index]
-
-  # Return as points
-  return(list(
-    "point_from" = c(corresponding_percentile, corresponding_value_from),
-    "point_to"   = c(corresponding_percentile, corresponding_value_to)
-  ))
-}
-
 
 #' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Percentiles
 #'
@@ -375,6 +335,7 @@ plot_radar_perc <- function(selected_percentile, df) {
   df_plot <- df |>
     dplyr::filter(percentile == selected_percentile) |> # Filter for a single percentile
     dplyr::select(dplyr::contains("perc")) |>
+    dplyr::select(-percentile) |>
     tidyr::pivot_longer(cols = dplyr::everything()) |>
     dplyr::mutate(
       value       = ifelse(is.na(value), 0L, value),
@@ -387,19 +348,22 @@ plot_radar_perc <- function(selected_percentile, df) {
       names_from  = "destination",
       values_from = "value"
     ) |>
-    #cbind("max" = c(15, 10, 10, 5, 25, 10, 10, 100)) |>
-    dplyr::arrange(dplyr::desc(dplyr::row_number()))
+    dplyr::arrange(factor(name, levels = c(
+      "Net Income", "Pension Mandatory", "Pension Voluntary",
+      "Insurance Mandatory", "Insurance Voluntary", "Income Tax",
+      "Student Loan Plan 2", "Student Loan Plan 3"
+    )))
 
   # Define the radar chart options with different max values for each axis
   radar_options <- list(
     list(name = "Net\nIncome",           max = 100, color = palette_global$categories$net_color),
-    list(name = "Student\nLoan\nPlan 3", max = 10,  color = palette_global$categories$sl_plan3_color),
-    list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
-    list(name = "Income\nTax",           max = 25,  color = palette_global$categories$tax_color),
-    list(name = "Insurance\nVoluntary",  max = 5 ,  color = palette_global$categories$insurance_color_vol),
-    list(name = "Insurance\nMandatory",  max = 15,  color = palette_global$categories$insurance_color),
+    list(name = "Pension\nMandatory",    max = 15,  color = palette_global$categories$pension_color),
     list(name = "Pension\nVoluntary",    max = 10,  color = palette_global$categories$pension_color_vol),
-    list(name = "Pension\nMandatory",    max = 15,  color = palette_global$categories$pension_color)
+    list(name = "Insurance\nMandatory",  max = 15,  color = palette_global$categories$insurance_color),
+    list(name = "Insurance\nVoluntary",  max = 5 ,  color = palette_global$categories$insurance_color_vol),
+    list(name = "Income\nTax",           max = 25,  color = palette_global$categories$tax_color),
+    list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
+    list(name = "Student\nLoan\nPlan 3", max = 10,  color = palette_global$categories$sl_plan3_color)
   )
 
   # Create radar chart

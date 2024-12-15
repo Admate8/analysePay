@@ -50,26 +50,26 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
   # Define a set of objects for the echart ----
   set_of_series <- paste0(c(
     "net_income_perc_",
-    "student_loan_plan_3_perc_",
-    "student_loan_plan_2_perc_",
-    "income_tax_perc_",
-    "insurance_voluntary_perc_",
-    "insurance_mandatory_perc_",
+    "pension_mandatory_perc_",
     "pension_voluntary_perc_",
-    "pension_mandatory_perc_"
+    "insurance_mandatory_perc_",
+    "insurance_voluntary_perc_",
+    "income_tax_perc_",
+    "student_loan_plan_2_perc_",
+    "student_loan_plan_3_perc_"
   ), c(rep("from", 8), rep("to", 8)))
   set_of_names <- unname(sapply(set_of_series, function(x) stringr::str_to_title(gsub("_", " ", gsub("_perc|_from|_to", "", x)))))
 
   # Must match the order above
   set_of_colors <- rep(c(
     palette_global$categories$net_color,
-    palette_global$categories$sl_plan3_color,
-    palette_global$categories$sl_plan2_color,
-    palette_global$categories$tax_color,
-    palette_global$categories$insurance_color_vol,
-    palette_global$categories$insurance_color,
+    palette_global$categories$pension_color,
     palette_global$categories$pension_color_vol,
-    palette_global$categories$pension_color
+    palette_global$categories$insurance_color,
+    palette_global$categories$insurance_color_vol,
+    palette_global$categories$tax_color,
+    palette_global$categories$sl_plan2_color,
+    palette_global$categories$sl_plan3_color
   ), 2)
 
   set_of_stacks    <- c(rep("0", 8), rep("1", 8))
