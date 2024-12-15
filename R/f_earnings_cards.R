@@ -54,7 +54,7 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
             class = "h-100 d-flex flex-wrap align-items-center justify-content-center",
             tags$div(
               tags$div(paste0(selected_percentile, "th percentile"), style = "font-size: 0.5rem;"),
-              shiny::icon("arrow-right-long", style = "font-size: 2rem; padding-left: 5px;")
+              shiny::icon("arrow-right-long", style = "font-size: 2rem; padding-left: 10px;")
             )
           ),
 

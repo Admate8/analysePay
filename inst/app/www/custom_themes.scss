@@ -11,6 +11,19 @@
   margin-left: -24px !important;
 }
 
+/* left and right slider arrows */
+.fp-controlArrow.fp-next,
+.fp-controlArrow.fp-prev {
+  border: none;
+  width: 3.125rem;
+  height: 6.5rem;
+  font-size: 2rem;
+  color: $body-color-secondary;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Force the label to span entire width */
 .shiny-input-container .control-label {
@@ -371,13 +384,23 @@ $lighter-accordions: (
   border-radius: 25px;
   background-color: $body-secondary-bg;
   border-color: $body-color-secondary;
-  box-shadow: 0 0 10px $body-color-secondary;
-  transition: box-shadow 0.3s ease-in-out;
   color: $body-color-secondary;
+  animation: pulsate-shadow 1.5s infinite;
 }
-[id$="commit_input_data"]:hover {
+[id="commit_input_data"]:hover {
   background-color: $body-tertiary-bg;
   color: $body-color;
+}
+[id="commit_input_data"]:disabled {
+  background-color: transparent;
+  color: $body-color-secondary;
+  animation: none !important;
+}
+
+@keyframes pulsate-shadow {
+  0% {box-shadow: 0 0 5px $body-color-secondary;}
+  50% {box-shadow: 0 0 20px $body-color-secondary;}
+  100% {box-shadow: 0 0 5px $body-color-secondary;}
 }
 
 
