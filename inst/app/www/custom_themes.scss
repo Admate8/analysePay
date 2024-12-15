@@ -490,3 +490,31 @@ $lighter-accordions: (
     text-align: justify;
 }
 
+/* Customise Bas/Target cards */
+.custom-card-base {
+  border-radius: 25px;
+  background-color: $body-tertiary-bg;
+  box-shadow: 0 0 10px rgba($base_color, 0.6), 0 0 15px rgba($base_color, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+  border: 1px solid rgba($base_color, 0.5);
+
+  .card-header {
+    color: $body-bg;
+    background: linear-gradient(to bottom, rgba($base_color, 0.8), $body-tertiary-bg);
+    border-bottom-color: $body-tertiary-bg;
+  }
+}
+
+.custom-card-target {
+  border-radius: 25px;
+  background-color: $body-tertiary-bg;
+  box-shadow: 0 0 10px rgba($target_color, 0.6), 0 0 15px rgba($target_color, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+  border: 1px solid rgba($target_color, 0.5);
+
+  .card-header {
+    color: $body-bg;
+    background: linear-gradient(to bottom, rgba($target_color, 0.8), $body-tertiary-bg);
+    border-bottom-color: $body-tertiary-bg;
+  }
+}

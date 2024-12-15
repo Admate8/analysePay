@@ -16,7 +16,9 @@ palette_global <- list(
     "tax_color"           = "#E63946",
     "sl_plan2_color"      = "#9B4DCA",
     "sl_plan3_color"      = "#C774CF",
-    "net_color"           = "#2D936C"
+    "net_color"           = "#2D936C",
+    "base_color"          = "#FFD166",
+    "target_color"        = "#468189"
   )
 )
 
@@ -46,5 +48,7 @@ app_theme <- bslib::bs_theme(
     "tax-color"           = palette_global$categories$tax_color,
     "sl-plan2-color"      = palette_global$categories$sl_plan2_color,
     "sl-plan3-color"      = palette_global$categories$sl_plan3_color,
+    "base-color"          = palette_global$categories$base_color,
+    "target-color"        = palette_global$categories$target_color,
     .where = "declarations"
   )
