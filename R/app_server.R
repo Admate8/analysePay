@@ -273,12 +273,21 @@ app_server <- function(input, output, session) {
       )
   })
 
-  ### Deduction radar ----
-  observeEvent(c(selected_percentile(), df_main()), {
+
+  observeEvent(c(selected_percentile(), df_main(), input$select_calc_period), {
     req(df_main())
     req(selected_percentile())
+    req(input$select_calc_period)
+
+    ### Deduction radar ----
     output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(selected_percentile(), df_main())})
+
+    ### Earnings by percentiles plot ----
+    output$plot_earnings_by_percentiles <- echarts4r::renderEcharts4r({plot_earnings_by_percentiles(selected_percentile(), df_main(), input$select_calc_period)})
   })
+
+
+
 
   ## Slide 1 ----
   output$plot_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_earnings_percentile_dist(df_main())})

@@ -195,7 +195,8 @@ app_ui <- function(request) {
                     )
                   )
                 )
-              )
+              ),
+              echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "50rem") |> custom_spinner()
             )
           ),
 
