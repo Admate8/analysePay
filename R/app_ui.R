@@ -175,7 +175,25 @@ app_ui <- function(request) {
               tags$div(
                 tags$h2("Earnings & Deductions", class = "display-6"),
                 br(),
-                uiOutput("ui_earnings_cards")
+                uiOutput("ui_earnings_cards"),
+                bslib::navset_tab(
+                  bslib::nav_panel(
+                    title = "Deductions"
+                  ),
+                  bslib::nav_panel(
+                    title = "Components",
+                    br(),
+                    tags$div(
+                      style = "position: relative;",
+                      tags$div(
+                        style = "position: absolute; left: 0; top: 0; z-index: 20;",
+                        shiny::icon("asterisk", style = "font-size: 1rem;") |>
+                          bslib::tooltip("Deducted before the Income Tax")
+                      ),
+                      reactable::reactableOutput("table_components")
+                    )
+                  )
+                )
               )
             )
           ),
@@ -200,7 +218,7 @@ app_ui <- function(request) {
                 tags$h2("Earnings & Deductions by Percentiles", class = "display-6")
               ),
               bslib::card(
-                uiOutput("ui_categories_table"),
+                #uiOutput("ui_categories_table"),
                 class = "custom-card"
               ),
               echarts4r::echarts4rOutput("plot_earnings_percentile_dist", height = "27.5rem") |> custom_spinner()

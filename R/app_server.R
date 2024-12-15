@@ -195,6 +195,7 @@ app_server <- function(input, output, session) {
 
   # Page 2 ----
   ## Slide 1 NEW ----
+  ### Base/Target cards ----
   observeEvent(c(
     selected_percentile(),
     input$select_calc_period,
@@ -205,7 +206,6 @@ app_server <- function(input, output, session) {
     req(df_main())
 
     earningsCardServer("1", selected_percentile(), input$select_calc_period, df_main())
-
     output$ui_earnings_cards <- renderUI({
       htmltools::tagList(
         tags$p(HTML(paste0(
@@ -219,22 +219,18 @@ app_server <- function(input, output, session) {
           ),
           " annually. Based on your settings selection, that translates to..."
         ))),
-
         earningsCardUI("1")
       )
-
     })
   })
 
-
-  ## Slide 1 ----
-  ## Render the categories table
+  ### Deduction components table ----
   df_categories <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
       settings_from = settings_from(),
       settings_to   = settings_to()
     )$df_cat_table |>
-      ### Join in the colours from the global options
+      # Join in the colours from the global options
       cbind(col = c(
         palette_global$categories$pension_color,
         palette_global$categories$pension_color_vol,
@@ -247,8 +243,7 @@ app_server <- function(input, output, session) {
       ))
   }, ignoreNULL = FALSE)
 
-
-  output$table_categories <- reactable::renderReactable({
+  output$table_components <- reactable::renderReactable({
     df_categories() |>
       reactable::reactable(
         sortable      = FALSE,
@@ -278,45 +273,11 @@ app_server <- function(input, output, session) {
       )
   })
 
-  output$ui_categories_table <- renderUI({
-    tags$div(
-      style = "position: relative;",
-      reactable::reactableOutput("table_categories") |> custom_spinner(),
-      tags$div(
-        style = "position: absolute; left: 0; top: 0; z-index: 20;",
-        tags$span(
-          shiny::icon("asterisk", style = "font-size: 1rem;") |>
-            bslib::tooltip("Deducted before the Income Tax"),
-          shiny::HTML("&nbsp&nbsp"),
-          shiny::icon("percentage", style = "font-size: 1rem;") |>
-            bslib::tooltip(shiny::HTML(
-              "<b>Bracket Percentages</b><br><br>
-                  Sometimes, deductions consist of multiple country-specific,
-                  smaller deductions. In such cases, a percentage split is
-                  displayed next to each, indicating its contribution to the
-                  total deduction. That enables you to recover their original
-                  values."
-            ))
-        )
-      )
-    )
-  })
 
+  ## Slide 1 ----
   output$plot_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_earnings_percentile_dist(df_main())})
 
   ## Slide 2 ----
-  ## Render reactive ui (country-dependent) to get user's annual earnings
-  # output$ui_provide_annual_earnings <- renderUI({
-  #
-  #   country_from <- purrr::discard(unique(df_main()$country_from), is.na)
-  #
-  #   base::get(paste0(country_from, "_autonumericInput"))(
-  #     inputId = "provide_annual_earnings",
-  #     label   = "Set annual earnings",
-  #     value   = base::get(paste0(country_from, "_settings"))$earning_deciles$`50th`
-  #   )
-  # })
-
   ## Render the interpolated distribution with nominal deductions breakdown plot
   output$plot_int_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_percentile_dist(df_main(), input$select_calc_period)})
 

@@ -35,7 +35,8 @@ app_theme <- bslib::bs_theme(
   "accordion-border-radius"     = "25px",
   "tooltip-border-radius"       = "25px",
   "tooltip-color"               = palette_global$body_color,
-  "popover-bg"                  = palette_global$body_secondary_bg
+  "popover-bg"                  = palette_global$body_secondary_bg,
+  "nav-tabs-link-active-color"  = palette_global$body_color
 ) |>
   bslib::bs_add_rules(sass::sass_file("inst/app/www/custom_themes.scss")) |>
   bslib::bs_add_variables(

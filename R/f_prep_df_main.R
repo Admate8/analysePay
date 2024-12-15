@@ -115,10 +115,11 @@ get_df_earnings_dist <- function(
     df_fit_deduction_to$df_deductions_split,
     by = "split"
   )
+
   if (country_from == country_to) {
     names(df_categories)[2:3] <- c(
-      paste(settings_from$global$full_name, "(1)"),
-      paste(settings_to$global$full_name, "(2)")
+      paste(settings_from$global$full_name, "(Base)"),
+      paste(settings_to$global$full_name, "(Target)")
     )
   } else {
     names(df_categories)[2:3] <- c(
