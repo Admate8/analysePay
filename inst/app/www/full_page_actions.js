@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', function() {
     fullpage_api.setKeyboardScrolling(true);
   });
 
+  // Fix the slide navigation buttons
+  $(document).on('click', '.fp-controlArrow.fp-prev', function() {
+    fullpage_api.moveSlideLeft();
+  });
+    $(document).on('click', '.fp-controlArrow.fp-next', function() {
+    fullpage_api.moveSlideRight();
+  });
+
   // Observe the buttons to navigate the pages
   $(document).on('click', '#commit_input_data', function() {
     fullpage_api.moveSectionDown();
