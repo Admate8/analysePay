@@ -9,15 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Prevent the user from scrolling down when on the first page until the button is clicked
     afterLoad: function(origin, destination, direction) {
+
       // Check if the user is on the first page
       if (destination.index === 0 && !isButtonClicked) {
         // Prevent scrolling down
         fullpage_api.setAllowScrolling(false, 'down');
         fullpage_api.setKeyboardScrolling(false, 'down');
+        // Disable the navigation down button
+        $('#move_down').prop('disabled', true);
       } else {
         // Allow scrolling in all directions otherwise
         fullpage_api.setAllowScrolling(true);
         fullpage_api.setKeyboardScrolling(true);
+        $('#move_down').prop('disabled', false);
       }
     },
 

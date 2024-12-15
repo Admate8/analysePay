@@ -455,6 +455,7 @@ $lighter-accordions: (
 .add-left-right-margins {
   margin-left: calc(100% / 24);
   margin-right: calc(100% / 24);
+  margin-top: 24px;
 }
 
 .custom-card {
@@ -518,3 +519,4 @@ $lighter-accordions: (
     border-bottom-color: $body-tertiary-bg;
   }
 }
+
