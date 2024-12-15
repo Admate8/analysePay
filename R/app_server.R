@@ -160,6 +160,14 @@ app_server <- function(input, output, session) {
     shinyWidgets::updateSwitchInput(inputId = "select_percentile_or_earnings", value = TRUE)
   })
 
+  ## Update percentile suffix ----
+  observeEvent(input$provide_percentile, {
+    shinyWidgets::updateAutonumericInput(
+      inputId = "provide_percentile",
+      options = list(currencySymbol = update_percentile_suffix(input$provide_percentile))
+    )
+  })
+
 
   ## Commit settings button ----
   observe({

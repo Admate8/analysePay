@@ -101,6 +101,7 @@ custom_reactable_theme <- function() {
 #' @param period Either "year", "month" or "week" to scale the value.
 #'
 #' @return Value formatted in the country standard way (as a string).
+#' @noRd
 prep_display_currency <- function(value, country, period) {
   stopifnot(
     country %in% c("uk", "pl"),
@@ -127,4 +128,21 @@ prep_display_currency <- function(value, country, period) {
     big.mark     = big_mark,
     decimal.mark = decimal_mark
   )
+}
+
+
+#' Display Nice Percentile Suffix
+#'
+#' @param value Numeric.
+#'
+#' @noRd
+update_percentile_suffix <- function(value) {
+  stopifnot(is.numeric(value))
+
+  if (value %in% seq(21, 91, 10)) suffix <- "st"
+  else if (value %in% seq(22, 92, 10)) suffix <- "nd"
+  else if (value %in% seq(23, 93, 10)) suffix <- "rd"
+  else suffix <- "th"
+
+  return(suffix)
 }
