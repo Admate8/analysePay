@@ -36,7 +36,7 @@ app_ui <- function(request) {
               ),
               br(),
               tags$h3("That's where analysePay steps in!"),
-              tags$p(class = "text-justify", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes..."),
+              tags$p(class = "text-justify", style = "margin-bottom: 5px;", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes..."),
               br(),
               bslib::layout_columns(
                 col_widths = c(-2, 8, -2),
@@ -166,7 +166,7 @@ app_ui <- function(request) {
         tags$div(
           class = "section",
 
-          ## Slide 1 NEW ----
+          ## Slide 1 ----
           tags$div(
             class = "slide",
             bslib::layout_columns(
@@ -179,7 +179,7 @@ app_ui <- function(request) {
                 bslib::navset_tab(
                   bslib::nav_panel(
                     title = "Deductions",
-                    echarts4r::echarts4rOutput("plot_radar_perc", height = "28rem") |> custom_spinner()
+                    echarts4r::echarts4rOutput("plot_radar_perc", height = "26rem") |> custom_spinner()
                   ),
                   bslib::nav_panel(
                     title = "Components",
@@ -195,67 +195,16 @@ app_ui <- function(request) {
                     )
                   )
                 )
-              ),
-              echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "50rem") |> custom_spinner()
+              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+              echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
             )
           ),
 
           tags$div(
             class = "slide",
             "METHODOLOGY"
-          ),
-
-          ## Slide 1 ----
-          tags$div(
-            class = "slide",
-            br(),
-            bslib::layout_columns(
-              col_widths = c(6, 6, 12),
-              class = "add-left-right-margins",
-
-              tags$div(
-                class = "h-100 d-flex align-items-center flex-wrap",
-                tags$h2(tags$strong("Overview"), class = "display-6"),
-                br(),
-                tags$h2("Earnings & Deductions by Percentiles", class = "display-6")
-              ),
-              bslib::card(
-                #uiOutput("ui_categories_table"),
-                class = "custom-card"
-              ),
-              echarts4r::echarts4rOutput("plot_earnings_percentile_dist", height = "27.5rem") |> custom_spinner()
-            )
-          ),
-          ## Slide 2 ----
-          tags$div(
-            class = "slide",
-            bslib::layout_columns(
-              col_widths = c(8, 4),
-              class = "add-left-right-margins",
-
-              tags$div(
-                style = "position: relative;",
-                echarts4r::echarts4rOutput("plot_int_earnings_percentile_dist", height = "48rem") |> custom_spinner(),
-
-                tags$div(
-                  style = "position: absolute; left: 0; top: 0; z-index: 20;",
-                  uiOutput("ui_earnings_sources")
-                )
-              ),
-
-
-
-              bslib::layout_columns(
-                col_widths = c(12, 12, 12),
-                tags$div(
-                  class = "h-100 d-flex align-items-center flex-wrap",
-                  tags$h2("Interpolated Earnings", class = "display-6")
-                )
-
-
-              )
-            )
           )
+
         ),
 
         # Last page ----
