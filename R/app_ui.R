@@ -178,7 +178,8 @@ app_ui <- function(request) {
                 uiOutput("ui_earnings_cards"),
                 bslib::navset_tab(
                   bslib::nav_panel(
-                    title = "Deductions"
+                    title = "Deductions",
+                    echarts4r::echarts4rOutput("plot_radar_perc", height = "28rem") |> custom_spinner()
                   ),
                   bslib::nav_panel(
                     title = "Components",
@@ -190,7 +191,7 @@ app_ui <- function(request) {
                         shiny::icon("asterisk", style = "font-size: 1rem;") |>
                           bslib::tooltip("Deducted before the Income Tax")
                       ),
-                      reactable::reactableOutput("table_components")
+                      reactable::reactableOutput("table_components") |> custom_spinner()
                     )
                   )
                 )
@@ -248,9 +249,9 @@ app_ui <- function(request) {
                 tags$div(
                   class = "h-100 d-flex align-items-center flex-wrap",
                   tags$h2("Interpolated Earnings", class = "display-6")
-                ),
+                )
 
-                echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
+
               )
             )
           )

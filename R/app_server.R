@@ -273,6 +273,12 @@ app_server <- function(input, output, session) {
       )
   })
 
+  ### Deduction radar ----
+  observeEvent(c(selected_percentile(), df_main()), {
+    req(df_main())
+    req(selected_percentile())
+    output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(selected_percentile(), df_main())})
+  })
 
   ## Slide 1 ----
   output$plot_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_earnings_percentile_dist(df_main())})
@@ -302,12 +308,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(c(input$provide_annual_earnings, df_main()), {
-    req(df_main())
-    req(input$provide_annual_earnings)
-    ## Render the radar plot showing percentage deduction comparison
-    output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(input$provide_annual_earnings, df_main())})
-  })
+
 
 
   ## Render percentile & earnings sources

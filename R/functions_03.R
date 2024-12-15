@@ -366,15 +366,14 @@ proxy_int_earnings_percentile_dist <- function(plot, annual_earnings, df, period
 }
 
 
-plot_radar_perc <- function(annual_earnings, df) {
+plot_radar_perc <- function(selected_percentile, df) {
 
-  country_from      <- purrr::discard(unique(df$country_from), is.na)
-  country_to        <- purrr::discard(unique(df$country_to), is.na)
-  points_percentile <- map_percentiles(annual_earnings, df)$point_from[1]
+  country_from <- purrr::discard(unique(df$country_from), is.na)
+  country_to   <- purrr::discard(unique(df$country_to), is.na)
 
   # Prepare the data for the Radar chart
   df_plot <- df |>
-    dplyr::filter(percentile == points_percentile) |> # Filter for a single percentile
+    dplyr::filter(percentile == selected_percentile) |> # Filter for a single percentile
     dplyr::select(dplyr::contains("perc")) |>
     tidyr::pivot_longer(cols = dplyr::everything()) |>
     dplyr::mutate(
@@ -393,14 +392,14 @@ plot_radar_perc <- function(annual_earnings, df) {
 
   # Define the radar chart options with different max values for each axis
   radar_options <- list(
-    list(name = "Net\nIncome",          max = 100, color = palette_global$categories$net_color),
+    list(name = "Net\nIncome",           max = 100, color = palette_global$categories$net_color),
     list(name = "Student\nLoan\nPlan 3", max = 10,  color = palette_global$categories$sl_plan3_color),
     list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
-    list(name = "Income\nTax",          max = 25,  color = palette_global$categories$tax_color),
-    list(name = "Insurance\nVoluntary", max = 5 ,  color = palette_global$categories$insurance_color_vol),
-    list(name = "Insurance\nMandatory", max = 15,  color = palette_global$categories$insurance_color),
-    list(name = "Pension\nVoluntary",   max = 10,  color = palette_global$categories$pension_color_vol),
-    list(name = "Pension\nMandatory",   max = 15,  color = palette_global$categories$pension_color)
+    list(name = "Income\nTax",           max = 25,  color = palette_global$categories$tax_color),
+    list(name = "Insurance\nVoluntary",  max = 5 ,  color = palette_global$categories$insurance_color_vol),
+    list(name = "Insurance\nMandatory",  max = 15,  color = palette_global$categories$insurance_color),
+    list(name = "Pension\nVoluntary",    max = 10,  color = palette_global$categories$pension_color_vol),
+    list(name = "Pension\nMandatory",    max = 15,  color = palette_global$categories$pension_color)
   )
 
   # Create radar chart
@@ -408,17 +407,21 @@ plot_radar_perc <- function(annual_earnings, df) {
     echarts4r::e_charts(name) |>
     echarts4r::e_radar(
       from,
-      name      = "Base (%)",
-      areaStyle = list(opacity = 0.2),
-      lineStyle = list(width = 0.5),
-      symbol    = "diamond"
+      name       = "Base (%)",
+      areaStyle  = list(opacity = 0.6),
+      lineStyle  = list(width = 0.5),
+      symbol     = "circle",
+      symbolSize = 7
     ) |>
     echarts4r::e_radar(to, name = "Target (%)", areaStyle = list()) |>
-    echarts4r::e_color(color = c("#FCEC52", "#F44174")) |>
+    echarts4r::e_color(color = c(
+      palette_global$categories$base_color,
+      palette_global$categories$target_color
+    )) |>
     echarts4r::e_radar_opts(
       indicator = radar_options,
-      nameGap   = 20,
-      radius    = "62%",
+      nameGap   = 25,
+      radius    = "60%",
       axisName  = list(
         backgroundColor = palette_global$body_tertiary_bg,
         padding         = 10,
@@ -452,14 +455,8 @@ plot_radar_perc <- function(annual_earnings, df) {
       backgroundColor = palette_global$body_tertiary_bg,
       borderColor     = palette_global$body_tertiary_bg,
       textStyle       = list(color = palette_global$body_color),
-      borderRadius    = 25
+      borderRadius    = 25,
+      padding         = 15
     ) |>
-    echarts4r::e_legend(
-      textStyle = list(color = palette_global$body_color_secondary),
-      right = 0
-    ) |>
-    echarts4r::e_title(
-      text = "Deductions Breakdown",
-      textStyle = list(color = palette_global$body_color_secondary)
-    )
+    echarts4r::e_legend(show = FALSE)
 }
