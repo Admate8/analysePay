@@ -198,7 +198,16 @@ app_ui <- function(request) {
                   )
                 )
               ) |> tags$div(class = "h-100 d-flex align-items-center"),
-              echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "40rem") |> custom_spinner()
+
+              bslib::layout_columns(
+                col_widths = 12,
+                class = "h-100 w-100 d-flex align-items-center",
+                tags$div(
+                  echarts4r::echarts4rOutput("plot_all_deductions", height = "10rem") |> custom_spinner(),
+                  echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "35rem") |> custom_spinner()
+                )
+
+              )
             )
           ),
 

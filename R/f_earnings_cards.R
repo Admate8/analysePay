@@ -5,8 +5,10 @@ earningsCardUI <- function(id) {
 #' Create Server Module for the Card
 #'
 #' @param id NS ID.
-#' @param earnings Value.
+#' @param selected_percentile selected_percentile() reactive.
+#' @param period Either "year", "month" or "week".
 #' @param df df_main() - reactive.
+#' @noRd
 earningsCardServer <- function(id, selected_percentile, period, df) {
   moduleServer(
     id,

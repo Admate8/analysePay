@@ -297,7 +297,8 @@ app_server <- function(input, output, session) {
     ### Earnings by percentiles plot ----
     output$plot_earnings_by_percentiles <- echarts4r::renderEcharts4r({plot_earnings_by_percentiles(selected_percentile(), df_main(), input$select_calc_period)})
 
-    ### Deductions breakdown ----
+    ### Deduction plots ----
+    output$plot_all_deductions       <- echarts4r::renderEcharts4r({plot_all_deductions(selected_percentile(), df_main())})
     output$plot_deductions_breakdown <- echarts4r::renderEcharts4r({plot_deductions_breakdown(selected_percentile(), df_main())})
   })
 
