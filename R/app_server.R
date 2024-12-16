@@ -6,7 +6,6 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # Page 1 ----
   ## CV Downloader
   output$cv_download <- downloadHandler(
     filename = "CV Adrian Wisnios.pdf",
@@ -15,7 +14,9 @@ app_server <- function(input, output, session) {
     }
   )
 
-  ## Show the hint on opening the first accordion with settings
+  # Page 1 ----
+  ## Hints ----
+  ## Show the hint on opening accordion with settings
   observeEvent(input$accordion_first_time_open, {
     if (input$accordion_first_time_open) {
       showNotification(
@@ -52,7 +53,8 @@ app_server <- function(input, output, session) {
     )
   })
 
-  ## Preserve inputs
+  ## User inputs ----
+  ### Preserve vars
   settings_from <- NULL
   settings_to   <- NULL
   makeReactiveBinding("settings_from")
@@ -62,7 +64,7 @@ app_server <- function(input, output, session) {
   ns_from <- reactiveVal("1")
   ns_to   <- reactiveVal("1")
 
-  ## Update country_from and country_to settings depending on the user's selection
+  ### Update country_from and country_to settings depending on the user's selection
   observeEvent(c(input$select_country_from, input$select_country_to), {
 
     # If country_from == country_to we need to make sure both setting options
@@ -73,7 +75,7 @@ app_server <- function(input, output, session) {
       ns_to("2")
     }
 
-    ### Update the UI
+    ### Update the UI accordeons and settings
     ui_settings_from_name <- paste0(input$select_country_from, "SettingsUserUI")
     ui_settings_to_name   <- paste0(input$select_country_to, "SettingsUserUI")
 
@@ -91,7 +93,6 @@ app_server <- function(input, output, session) {
     server_settings_from_name <- paste0(input$select_country_from, "SettingsUserServer")
     server_settings_to_name   <- paste0(input$select_country_to, "SettingsUserServer")
 
-    ### Define the following variables as global
     settings_from <<- base::get(server_settings_from_name)(ns_from())$settings
     settings_to   <<- base::get(server_settings_to_name)(ns_to())$settings
 
@@ -99,10 +100,78 @@ app_server <- function(input, output, session) {
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
 
+  ## Validate remaining inputs ----
+  iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
+  iv_provide_percentile      <- shinyvalidate::InputValidator$new()
+  observeEvent(settings_from(), {
+    req(settings_from())
 
-  ### Commit settings button
+    ## Update the numerical input with the base currency formatting
+    shinyWidgets::updateAutonumericInput(
+      session = session,
+      inputId = "provide_annual_earnings",
+      value   = settings_from()$earning_deciles$`50th`,
+      options = list(
+        currencySymbol          = settings_from()$global$currencySymbol,
+        currencySymbolPlacement = settings_from()$global$currencySymbolPlacement,
+        decimalCharacter        = settings_from()$global$decimalCharacter,
+        digitGroupSeparator     = settings_from()$global$digitGroupSeparator
+      )
+    )
+
+    ## Validate the annual earnings input
+    iv_provide_annual_earnings$add_rule(
+      "provide_annual_earnings",
+      function(value) {
+        if (is.null(value)) "Supply annual earnings..."
+        else if (value > settings_from()$earning_deciles$`95th`) "Try a smaller value..."
+        else if (value < settings_from()$earning_deciles$`10th`) "Try a bigger value..."
+      }
+    )
+    iv_provide_annual_earnings$enable()
+
+    ## Validate the percentile input
+    iv_provide_percentile$add_rule(
+      "provide_percentile",
+      function(value) {
+        if (is.null(value)) "Provide a value..."
+        else if (value > 95) "Must be \U2264 95!"
+        else if (value < 10) "Must be \U2265 10!"
+      }
+    )
+    iv_provide_percentile$enable()
+  })
+
+  ## Restore default settings ----
+  observeEvent(input$restore_defaults_earnings, {
+    shinyWidgets::updateAutonumericInput(
+      session = session,
+      inputId = "provide_annual_earnings",
+      value   = settings_from()$earning_deciles$`50th`,
+      options = list(
+        currencySymbol          = settings_from()$global$currencySymbol,
+        currencySymbolPlacement = settings_from()$global$currencySymbolPlacement,
+        decimalCharacter        = settings_from()$global$decimalCharacter,
+        digitGroupSeparator     = settings_from()$global$digitGroupSeparator
+      )
+    )
+    shinyWidgets::updateRadioGroupButtons(inputId = "select_calc_period", selected = "year")
+    shinyWidgets::updateAutonumericInput(inputId = "provide_percentile", value = 50)
+    shinyWidgets::updateSwitchInput(inputId = "select_percentile_or_earnings", value = TRUE)
+  })
+
+  ## Update percentile suffix ----
+  observeEvent(input$provide_percentile, {
+    shinyWidgets::updateAutonumericInput(
+      inputId = "provide_percentile",
+      options = list(currencySymbol = update_percentile_suffix(input$provide_percentile))
+    )
+  })
+
+
+  ## Commit settings button ----
   observe({
-    if (all(iv_from$is_valid(), iv_to$is_valid())) {
+    if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid(), iv_provide_percentile$is_valid())) {
       shinyjs::enable("commit_input_data")
       output$commit_button_text <- renderText({"Analyse!"})
     } else {
@@ -111,7 +180,7 @@ app_server <- function(input, output, session) {
     }
   })
 
-  ## Set the main data
+  ## Set up the main data ----
   # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -120,15 +189,62 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
+  ## Unify earnings/percentile selection ----
+  selected_percentile <- reactiveVal(50)
+  observeEvent(c(
+    input$select_percentile_or_earnings,
+    input$provide_percentile,
+    input$provide_annual_earnings
+  ), {
+    if (input$select_percentile_or_earnings) selected_percentile(input$provide_percentile)
+    else selected_percentile(map_percentiles(input$provide_annual_earnings, df_main())$point_from[1])
+  })
+
+
   # Page 2 ----
   ## Slide 1 ----
-  ## Render the categories table
+  ### Base/Target cards ----
+  observeEvent(c(
+    selected_percentile(),
+    input$select_calc_period,
+    df_main()
+  ), {
+    req(selected_percentile())
+    req(input$select_calc_period)
+    req(df_main())
+
+    earningsCardServer("1", selected_percentile(), input$select_calc_period, df_main())
+    output$ui_earnings_cards <- renderUI({
+      htmltools::tagList(
+        tags$p(HTML(paste0(
+          "Approximately ", tags$strong(paste0(selected_percentile(), "%")), " of the working population in ",
+          tags$strong(
+            style = paste0("color: ", palette_global$categories$base_color, ";"),
+            settings_from()$global$full_name
+          ), " earns ",
+          tags$strong(
+            df_main() |>
+              dplyr::filter(percentile == selected_percentile()) |>
+              dplyr::pull(earnings_from) |>
+              prep_display_currency(settings_from()$global$short_cut, "year")
+          ),
+          " annually. Based on your settings selection, that translates to..."
+        ))),
+        br(),
+        earningsCardUI("1")
+      )
+    })
+  })
+
+  ### Deduction components table ----
   df_categories <- eventReactive(input$commit_input_data, {
+    req(input$commit_input_data)
+
     get_df_earnings_dist(
       settings_from = settings_from(),
       settings_to   = settings_to()
     )$df_cat_table |>
-      ### Join in the colours from the global options
+      # Join in the colours from the global options - currently not in use
       cbind(col = c(
         palette_global$categories$pension_color,
         palette_global$categories$pension_color_vol,
@@ -136,13 +252,11 @@ app_server <- function(input, output, session) {
         palette_global$categories$insurance_color_vol,
         palette_global$categories$tax_color,
         palette_global$categories$sl_plan2_color,
-        palette_global$categories$sl_plan3_color,
-        palette_global$categories$net_color
+        palette_global$categories$sl_plan3_color
       ))
   }, ignoreNULL = FALSE)
 
-
-  output$table_categories <- reactable::renderReactable({
+  output$table_components <- reactable::renderReactable({
     df_categories() |>
       reactable::reactable(
         sortable      = FALSE,
@@ -157,13 +271,15 @@ app_server <- function(input, output, session) {
         columns       = list(
           split = reactable::colDef(
             name  = "",
-            cell  = reactablefmtr::pill_buttons(
-              data = df_categories(),
-              color_ref           = "col",
-              bold_text           = TRUE,
-              brighten_text_color = palette_global$body_color,
-              text_color          = palette_global$body_bg
-            ),
+            style = list(fontWeight = "bold", fontSize = "0.75rem"),
+            # Pills distort the page balance... but leave if I change my mind
+            # cell  = reactablefmtr::pill_buttons(
+            #   data = df_categories(),
+            #   color_ref           = "col",
+            #   bold_text           = TRUE,
+            #   brighten_text_color = palette_global$body_color,
+            #   text_color          = palette_global$body_bg
+            # ),
             width = 220
           ),
           col = reactable::colDef(show = FALSE)
@@ -172,47 +288,29 @@ app_server <- function(input, output, session) {
       )
   })
 
-  output$ui_categories_table <- renderUI({
-    tags$div(
-      style = "position: relative;",
-      reactable::reactableOutput("table_categories") |> custom_spinner(),
-      tags$div(
-        style = "position: absolute; left: 0; top: 0; z-index: 20;",
-        tags$span(
-          shiny::icon("asterisk", style = "font-size: 1rem;") |>
-            bslib::tooltip("Deducted before the Income Tax"),
-          shiny::HTML("&nbsp&nbsp"),
-          shiny::icon("percentage", style = "font-size: 1rem;") |>
-            bslib::tooltip(shiny::HTML(
-              "<b>Bracket Percentages</b><br><br>
-                  Sometimes, deductions consist of multiple country-specific,
-                  smaller deductions. In such cases, a percentage split is
-                  displayed next to each, indicating its contribution to the
-                  total deduction. That enables you to recover their original
-                  values."
-            ))
-        )
-      )
-    )
+
+  observeEvent(c(selected_percentile(), df_main(), input$select_calc_period), {
+    req(df_main())
+    req(selected_percentile())
+    req(input$select_calc_period)
+
+    ### Earnings by percentiles plot ----
+    output$plot_earnings_by_percentiles <- echarts4r::renderEcharts4r({plot_earnings_by_percentiles(selected_percentile(), df_main(), input$select_calc_period)})
+
+    ### Deduction plots ----
+    output$plot_all_deductions       <- echarts4r::renderEcharts4r({plot_all_deductions(selected_percentile(), df_main())})
+    output$plot_deductions_breakdown <- echarts4r::renderEcharts4r({plot_deductions_breakdown(selected_percentile(), df_main())})
   })
 
-  output$plot_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_earnings_decile_dist(df_main())})
+
+
+
+  ## Slide 1 ----
+  output$plot_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_earnings_percentile_dist(df_main())})
 
   ## Slide 2 ----
-  ## Render reactive ui (country-dependent) to get user's annual earnings
-  output$ui_provide_annual_earnings <- renderUI({
-
-    country_from <- purrr::discard(unique(df_main()$country_from), is.na)
-
-    base::get(paste0(country_from, "_autonumericInput"))(
-      inputId = "provide_annual_earnings",
-      label   = "Set annual earnings",
-      value   = base::get(paste0(country_from, "_settings"))$earning_deciles$`50th`
-    )
-  })
-
   ## Render the interpolated distribution with nominal deductions breakdown plot
-  output$plot_int_earnings_decile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_decile_dist(df_main(), input$select_calc_period)})
+  output$plot_int_earnings_percentile_dist <- echarts4r::renderEcharts4r({plot_int_earnings_percentile_dist(df_main(), input$select_calc_period)})
 
   ## Update the plot with mark lines
   observeEvent(c(input$provide_annual_earnings, input$select_calc_period), {
@@ -227,34 +325,18 @@ app_server <- function(input, output, session) {
         input$provide_annual_earnings
       ))
 
-    proxy_int_earnings_decile_dist(
-      plot            = echarts4r::echarts4rProxy("plot_int_earnings_decile_dist", data = NULL),
+    proxy_int_earnings_percentile_dist(
+      plot            = echarts4r::echarts4rProxy("plot_int_earnings_percentile_dist", data = NULL),
       annual_earnings = pass_earnings,
       df              = df_main(),
       period          = input$select_calc_period
     )
   })
 
-  observeEvent(c(input$provide_annual_earnings, df_main()), {
-    req(df_main())
-    req(input$provide_annual_earnings)
-    ## Render the radar plot showing percentage deduction comparison
-    output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(input$provide_annual_earnings, df_main())})
-  })
 
-  ## Validate the annual earnings input
-  iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
-  iv_provide_annual_earnings$add_rule(
-    "provide_annual_earnings",
-    function(value) {
-      if (is.null(value)) "Supply annual earnings..."
-      else if (value > max(df_main()$earnings_from, na.rm = TRUE)) "Try a smaller value..."
-      else if (value < min(df_main()$earnings_from, na.rm = TRUE)) "Try a bigger value..."
-    }
-  )
-  iv_provide_annual_earnings$enable()
 
-  ## Render deciles & earnings sources
+
+  ## Render percentile & earnings sources
   output$ui_earnings_sources <- renderUI({
 
     country_from <- purrr::discard(unique(df_main()$country_from), is.na)
@@ -281,7 +363,7 @@ app_server <- function(input, output, session) {
       shiny::HTML("&nbsp&nbsp"),
       bslib::tooltip(
         trigger = list(shiny::icon("info-circle", style = "font-size: 1rem;")),
-        "As the continuous distribution of the earnings by deciles is not
+        "As the continuous distribution of the earnings by percentile is not
         published, the unavailable data has been interpolated by fitting a
         spline. The scatter series in the plot below represents the actual
         data from the sources."

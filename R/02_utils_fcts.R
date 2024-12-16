@@ -82,6 +82,108 @@ custom_reactable_theme <- function() {
   reactable::reactableTheme(
     color           = palette_global$body_color,
     backgroundColor = palette_global$body_tertiary_bg,
-    borderColor     = palette_global$body_secondary_bg
+    borderColor     = palette_global$body_tertiary_bg,
+    rowStyle = list(
+      borderBottom = paste0("0.5px solid ", palette_global$body_bg)
+    ),
+    headerStyle = list(
+      borderBottom = paste0("2px solid ", palette_global$body_bg),
+      textAlign = "center"
+    )
   )
+}
+
+
+#' Prepare Display Currency
+#'
+#' @param value Value to prepare.
+#' @param country Either "uk" or "pl" (for now).
+#' @param period Either "year", "month" or "week" to scale the value.
+#'
+#' @return Value formatted in the country standard way (as a string).
+#' @noRd
+prep_display_currency <- function(value, country, period) {
+  stopifnot(
+    country %in% c("uk", "pl"),
+    is.numeric(value), period %in% c("year", "month", "week")
+  )
+
+  value    <- value / ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
+  settings <- base::get(paste0(country, "_settings"))
+
+  full_name         <- settings$global$full_name
+  suffix_or_preffix <- settings$global$currencySymbolPlacement
+  currency_symbol   <- settings$global$currencySymbol
+  big_mark          <- settings$global$digitGroupSeparator
+  decimal_mark      <- settings$global$decimalCharacter
+
+  display_prefix    <- ifelse(suffix_or_preffix == "p", currency_symbol, "")
+  display_suffix    <- ifelse(suffix_or_preffix == "s", paste0(" ", currency_symbol), "")
+
+  scales::comma(
+    value,
+    accuracy     = 0.01,
+    prefix       = display_prefix,
+    suffix       = display_suffix,
+    big.mark     = big_mark,
+    decimal.mark = decimal_mark
+  )
+}
+
+
+#' Display Nice Percentile Suffix
+#'
+#' @param value Numeric.
+#'
+#' @noRd
+update_percentile_suffix <- function(value) {
+  stopifnot(is.numeric(value))
+
+  if (value %in% seq(21, 91, 10)) suffix <- "st"
+  else if (value %in% seq(22, 92, 10)) suffix <- "nd"
+  else if (value %in% seq(23, 93, 10)) suffix <- "rd"
+  else suffix <- "th"
+
+  return(suffix)
+}
+
+
+#' Return Corresponding Percentile Value from the Target Distribution
+#'
+#' Because we interpolate decile values, and percentiles are a sequence from 10 to 95
+#' by 1, it is not guaranteed that a custom earnings will have its percentile. This
+#' function checks this and return the point closest to the supplied value.
+#' For example, if 25000 does not have it's percentile (but say, 25024 and 24900
+#' are the 10th and 11th percentile receptively), the function will return a point
+#' c(10, 25024) because 25024 is closer to 25000 than 24900.
+#'
+#' @param annual_earnings Annual earnings in the "country from" (base) currency.
+#' @param df Data returned by \code{get_df_earnings_dist()$df_main}.
+#'
+#' @return Two points - one with the closest value and percentile from the base
+#' distribution and the other corresponding percentile with its value from the
+#' target distribution.
+#'
+#' @noRd
+map_percentiles <- function(annual_earnings, df) {
+
+  country_from <- purrr::discard(unique(df$country_from), is.na)
+  country_to   <- purrr::discard(unique(df$country_to), is.na)
+
+  # Get the base and target distributions
+  dist_from <- df$earnings_from
+  dist_to   <- df$earnings_to
+
+  # Find the closest value
+  closest_index <- which.min(abs(dist_from - annual_earnings))
+
+  corresponding_percentile <- df$percentile[closest_index]
+  corresponding_value_from <- df$earnings_from[closest_index]
+  corresponding_value_to   <- df$earnings_to[closest_index]
+
+  # Return as points
+  return(list(
+    "point_from" = c(corresponding_percentile, corresponding_value_from),
+    "point_to"   = c(corresponding_percentile, corresponding_value_to)
+  ))
 }

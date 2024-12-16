@@ -26,7 +26,7 @@ ukSettingsUserUI <- function(id) {
 
   tags$div(
     tags$div(
-      style   = glue::glue("text-align-last: right;"),
+      style   = "text-align-last: right;",
       actionButton(
         inputId = shiny::NS(id, "restore_defaults_uk"),
         label   = NULL,
@@ -421,10 +421,14 @@ ukSettingsUserServer <- function(id) {
 
         # Global non-reactive values
         "global" = list(
-          "full_name" = uk_settings$global$full_name,
-          "short_cut" = uk_settings$global$short_cut,
-          "currency"  = uk_settings$global$currency,
-          "locale"    = uk_settings$global$locale
+          "full_name"               = uk_settings$global$full_name,
+          "short_cut"               = uk_settings$global$short_cut,
+          "currency"                = uk_settings$global$currency,
+          "locale"                  = uk_settings$global$locale,
+          "currencySymbol"          = uk_settings$global$currencySymbol,
+          "currencySymbolPlacement" = uk_settings$global$currencySymbolPlacement,
+          "decimalCharacter"        = uk_settings$global$decimalCharacter,
+          "digitGroupSeparator"     = uk_settings$global$digitGroupSeparator
         ),
         "earning_deciles" = list(
           "10th"   = uk_settings$earning_deciles$`10th`,

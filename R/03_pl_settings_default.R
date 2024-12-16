@@ -83,8 +83,8 @@ pl_settings <- list(
     "value"  = round(12600 / 0.190581, 2)
   ),
 
-  # The range must be 10 - 95! and names must be of the form 'decile'th
-  # to stay consistent in the code. Note that id the deciles change, so must the
+  # The range must be 10 - 95! and names must be of the form 'percentile'th
+  # to stay consistent in the code. Note that id the percentiles change, so must the
   # reference in the server in `04_pl_settings_user.R`!
   "earning_deciles" = list(
     "10th"   = 12 * 4242,
@@ -203,9 +203,6 @@ calc_pl_deductions <- function(
     insurance_deductions <- rentowa_deduction + chorobowa_deduction + zdrowotna_deduction
 
     ## Legend-table ----
-    # `insurance_mandatory` consist of two parts - find their percentage contribution
-    # they will be the same regardless of annual earnings. Add them to the data
-    rentowa_perc <- round(100 * rentowa_deduction[1] / (rentowa_deduction[1] + zdrowotna_deduction[1]), 2)
 
     # Each tax system has a different system, so this needs to be hard-coded
     # We only need this for a legend-table, so everything should be display-ready
@@ -213,12 +210,11 @@ calc_pl_deductions <- function(
       ~split,                  ~categories,
       "Pension - Mandatory",   "State Pension*",
       "Pension - Voluntary",   "PPK Pension",
-      "Insurance - Mandatory", paste0("State Insurance* (", rentowa_perc, "%) <br>Health Insurance (", 100 - rentowa_perc, "%)"),
+      "Insurance - Mandatory", "State Insurance*<br>Health Insurance",
       "Insurance - Voluntary", "Illness Insurance*",
       "Income Tax",            "Income Tax",
       "Student Loan Plan 2",   "Student Loan Plan 2",
-      "Student Loan Plan 3",   "Student Loan Plan 3",
-      "Net Income",            "Net Income"
+      "Student Loan Plan 3",   "Student Loan Plan 3"
     )
   }
 
@@ -258,8 +254,7 @@ calc_pl_deductions <- function(
       "Insurance - Voluntary", "Illness Insurance*",
       "Income Tax",            "Income Tax",
       "Student Loan Plan 2",   "Student Loan Plan 2",
-      "Student Loan Plan 3",   "Student Loan Plan 3",
-      "Net Income",            "Net Income"
+      "Student Loan Plan 3",   "Student Loan Plan 3"
     )
   }
 

@@ -1,51 +1,11 @@
-#' Return Corresponding Decile Value from the Target Distribution
-#'
-#' Because we interpolated decile values, and deciles are a sequence from 10 to 95
-#' by 0.1, it is not guaranteed that a custom earnings will have its decile. This
-#' function checks this and return the point the closest to the supplied value.
-#' For example, if 25000 does not have it's decile (but say, 25024 and 24900
-#' are the 10.2th and 10th decile receptively), the function will return a point
-#' c(10.2, 25024) because 25024 is closer to 25000 than 24900.
-#'
-#' @param annual_earnings Annual earnings in the "country from" (base) currency.
-#' @param df Data returned by \code{get_df_earnings_dist()$df_main}.
-#'
-#' @return Two points - one with the closest value and decile from the base
-#' distribution and the other corresponding decile with its value from the
-#' target distribution.
-#'
-#' @noRd
-map_deciles <- function(annual_earnings, df) {
 
-  country_from <- purrr::discard(unique(df$country_from), is.na)
-  country_to   <- purrr::discard(unique(df$country_to), is.na)
-
-  # Get the base and target distributions
-  dist_from <- df$earnings_from
-  dist_to   <- df$earnings_to
-
-  # Find the closest value
-  closest_index <- which.min(abs(dist_from - annual_earnings))
-
-  corresponding_decile     <- df$deciles[closest_index]
-  corresponding_value_from <- df$earnings_from[closest_index]
-  corresponding_value_to   <- df$earnings_to[closest_index]
-
-  # Return as points
-  return(list(
-    "point_from" = c(corresponding_decile, corresponding_value_from),
-    "point_to"   = c(corresponding_decile, corresponding_value_to)
-  ))
-}
-
-
-#' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Deciles
+#' Plot the Interpolated Earnings with Nominal Deductions Breakdown by Percentiles
 #'
 #' @param df Data returned by \code{get_df_earnings_dist()$df_main}
 #' @param period Either "year", "month" or "week" to scale the values
 #'
 #' @noRd
-plot_int_earnings_decile_dist <- function(df, period) {
+plot_int_earnings_percentile_dist <- function(df, period) {
   stopifnot(period %in% c("year", "month", "week"))
 
   # Define global settings ----
@@ -154,7 +114,7 @@ plot_int_earnings_decile_dist <- function(df, period) {
   scale_factor <- ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
   df <- df |>
     dplyr::mutate(dplyr::across(
-      -c(dplyr::contains("actuals"), dplyr::contains("perc"), dplyr::contains("country"), "deciles"),
+      -c(dplyr::contains("actuals"), dplyr::contains("perc"), dplyr::contains("country"), "percentile"),
       function(x) x / scale_factor
     ))
 
@@ -164,11 +124,11 @@ plot_int_earnings_decile_dist <- function(df, period) {
     # Start with an initialized chart
     .init = df |>
       dplyr::mutate(
-        deciles = paste0(as.factor(deciles), "th"),
+        percentile = paste0(as.factor(percentile), "th"),
         actual_earnings_from = ifelse(actuals_from == 0, NA, earnings_from),
         actual_earnings_to   = ifelse(actuals_to == 0, NA, earnings_to)
       ) |>
-      echarts4r::e_chart(x = deciles),
+      echarts4r::e_chart(x = percentile),
 
     # Apply the function with various settings from the lists
     .f = ~ draw_echart_area_serie(
@@ -229,7 +189,7 @@ plot_int_earnings_decile_dist <- function(df, period) {
       axisPointer     = list(
         label = list(formatter = htmlwidgets::JS(
           "function(params) {
-          return 'Decile ' + parseFloat(params.value).toFixed(1) + 'th';
+          return 'Percentile ' + parseFloat(params.value).toFixed(1) + 'th';
         }"
         ))
       ),
@@ -303,7 +263,7 @@ plot_int_earnings_decile_dist <- function(df, period) {
 
 
 
-proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
+proxy_int_earnings_percentile_dist <- function(plot, annual_earnings, df, period) {
 
   # Define global settings ----
   country_from <- purrr::discard(unique(df$country_from), is.na)
@@ -311,7 +271,7 @@ proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
 
 
   # Define points ----
-  points       <- map_deciles(annual_earnings, df)
+  points       <- map_percentiles(annual_earnings, df)
   scale_factor <- ifelse(period == "year", 1, ifelse(period == "month", 12, 52.1429))
   ## Scale the y-coordinates of the points
   points$point_from[2] <- points$point_from[2] / scale_factor
@@ -366,100 +326,4 @@ proxy_int_earnings_decile_dist <- function(plot, annual_earnings, df, period) {
 }
 
 
-plot_radar_perc <- function(annual_earnings, df) {
 
-  country_from  <- purrr::discard(unique(df$country_from), is.na)
-  country_to    <- purrr::discard(unique(df$country_to), is.na)
-  points_decile <- map_deciles(annual_earnings, df)$point_from[1]
-
-  # Prepare the data for the Radar chart
-  df_plot <- df |>
-    dplyr::filter(deciles == points_decile) |> # Filter for a single decile
-    dplyr::select(dplyr::contains("perc")) |>
-    tidyr::pivot_longer(cols = dplyr::everything()) |>
-    dplyr::mutate(
-      value       = ifelse(is.na(value), 0L, value),
-      destination = ifelse(grepl("_perc_from$", name), "from", "to"),
-      name        = stringr::str_replace_all(sub("_perc_(from|to)$", "", name), "_", " "),
-      name        = stringr::str_to_title(name),
-      value       = round(100 * value, 2)
-    ) |>
-    tidyr::pivot_wider(
-      names_from  = "destination",
-      values_from = "value"
-    ) |>
-    #cbind("max" = c(15, 10, 10, 5, 25, 10, 10, 100)) |>
-    dplyr::arrange(dplyr::desc(dplyr::row_number()))
-
-  # Define the radar chart options with different max values for each axis
-  radar_options <- list(
-    list(name = "Net\nIncome",          max = 100, color = palette_global$categories$net_color),
-    list(name = "Student\nLoan\nPlan 3", max = 10,  color = palette_global$categories$sl_plan3_color),
-    list(name = "Student\nLoan\nPlan 2", max = 10,  color = palette_global$categories$sl_plan2_color),
-    list(name = "Income\nTax",          max = 25,  color = palette_global$categories$tax_color),
-    list(name = "Insurance\nVoluntary", max = 5 ,  color = palette_global$categories$insurance_color_vol),
-    list(name = "Insurance\nMandatory", max = 15,  color = palette_global$categories$insurance_color),
-    list(name = "Pension\nVoluntary",   max = 10,  color = palette_global$categories$pension_color_vol),
-    list(name = "Pension\nMandatory",   max = 15,  color = palette_global$categories$pension_color)
-  )
-
-  # Create radar chart
-  df_plot |>
-    echarts4r::e_charts(name) |>
-    echarts4r::e_radar(
-      from,
-      name      = "Base (%)",
-      areaStyle = list(opacity = 0.2),
-      lineStyle = list(width = 0.5),
-      symbol    = "diamond"
-    ) |>
-    echarts4r::e_radar(to, name = "Target (%)", areaStyle = list()) |>
-    echarts4r::e_color(color = c("#FCEC52", "#F44174")) |>
-    echarts4r::e_radar_opts(
-      indicator = radar_options,
-      nameGap   = 20,
-      radius    = "62%",
-      axisName  = list(
-        backgroundColor = palette_global$body_tertiary_bg,
-        padding         = 10,
-        borderRadius    = 15,
-        fontSize        = 10,
-        fontWeight      = "bold"
-      ),
-      #axisTick = list(show = TRUE, color = palette_global$body_color_secondary, width = 0.5),
-      axisLabel = list(
-        show         = TRUE,
-        formatter    = "{value}%",
-        showMinLabel = FALSE,
-        fontSize     = "0.55rem"
-      ),
-      splitArea = list(
-        show = TRUE,
-        areaStyle = list(
-          color = htmlwidgets::JS(paste0(
-            "new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
-              { offset: 0, color: '", palette_global$body_color_secondary, "' },
-              { offset: 0.5, color: '", palette_global$body_bg, "' }
-            ])
-          "
-          ))
-        ),
-        lineStyle = list(color = palette_global$body_color_secondary, width = 0.5)
-      ),
-      splitLine = list(show = FALSE)
-    ) |>
-    echarts4r::e_tooltip(
-      backgroundColor = palette_global$body_tertiary_bg,
-      borderColor     = palette_global$body_tertiary_bg,
-      textStyle       = list(color = palette_global$body_color),
-      borderRadius    = 25
-    ) |>
-    echarts4r::e_legend(
-      textStyle = list(color = palette_global$body_color_secondary),
-      right = 0
-    ) |>
-    echarts4r::e_title(
-      text = "Deductions Breakdown",
-      textStyle = list(color = palette_global$body_color_secondary)
-    )
-}

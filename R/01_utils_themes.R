@@ -16,7 +16,9 @@ palette_global <- list(
     "tax_color"           = "#E63946",
     "sl_plan2_color"      = "#9B4DCA",
     "sl_plan3_color"      = "#C774CF",
-    "net_color"           = "#2D936C"
+    "net_color"           = "#2D936C",
+    "base_color"          = "#FFD166",
+    "target_color"        = "#468189"
   )
 )
 
@@ -33,7 +35,8 @@ app_theme <- bslib::bs_theme(
   "accordion-border-radius"     = "25px",
   "tooltip-border-radius"       = "25px",
   "tooltip-color"               = palette_global$body_color,
-  "popover-bg"                  = palette_global$body_secondary_bg
+  "popover-bg"                  = palette_global$body_secondary_bg,
+  "nav-tabs-link-active-color"  = palette_global$body_color
 ) |>
   bslib::bs_add_rules(sass::sass_file("inst/app/www/custom_themes.scss")) |>
   bslib::bs_add_variables(
@@ -46,5 +49,7 @@ app_theme <- bslib::bs_theme(
     "tax-color"           = palette_global$categories$tax_color,
     "sl-plan2-color"      = palette_global$categories$sl_plan2_color,
     "sl-plan3-color"      = palette_global$categories$sl_plan3_color,
+    "base-color"          = palette_global$categories$base_color,
+    "target-color"        = palette_global$categories$target_color,
     .where = "declarations"
   )

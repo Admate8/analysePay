@@ -1,10 +1,10 @@
 
-#' Plot Earnings by Decile Deductions Breakdown
+#' Plot Earnings by Percentile Deductions Breakdown
 #'
 #' @param df Data returned by \code{get_df_earnings_dist()$df_main}
 #'
 #' @noRd
-plot_earnings_decile_dist <- function(df) {
+plot_earnings_percentile_dist <- function(df) {
 
   country_from <- purrr::discard(unique(df$country_from), is.na)
   country_to   <- purrr::discard(unique(df$country_to), is.na)
@@ -90,10 +90,10 @@ plot_earnings_decile_dist <- function(df) {
       # Show only available deciles from the sources
       dplyr::filter(actuals_from == 1 & actuals_to == 1) |>
       dplyr::mutate(
-        deciles = paste0(as.factor(deciles), "th"),
-        dplyr::across(dplyr::contains("perc"), ~ round(.x * 100, 2))
+        percentile = paste0(as.factor(percentile), "th"),
+        dplyr::across(dplyr::contains("perc") & !dplyr::contains("percentile"), ~ round(.x * 100, 2))
       ) |>
-      echarts4r::e_chart(x = deciles),
+      echarts4r::e_chart(x = percentile),
 
     # Apply the function with various settings from the lists
     .f = ~ draw_echart_bar_serie(

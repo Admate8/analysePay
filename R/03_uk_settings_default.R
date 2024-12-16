@@ -59,8 +59,8 @@ uk_settings <- list(
     "value"  = 21000
   ),
 
-  # The range must be 10 - 95! and names must be of the form 'decile'th
-  # to stay consistent in the code. Note that id the deciles change, so must the
+  # The range must be 10 - 95! and names must be of the form 'percentile'th
+  # to stay consistent in the code. Note that id the percentile change, so must the
   # reference in the server in `04_uk_settings_user.R`!
   "earning_deciles" = list(
     "10th"   = 21000,
@@ -232,8 +232,7 @@ calc_uk_deductions <- function(
     "Insurance - Voluntary", "",
     "Income Tax",            "Income Tax",
     "Student Loan Plan 2",   "Student Loan Plan 2",
-    "Student Loan Plan 3",   "Student Loan Plan 3",
-    "Net Income",            "Net Income"
+    "Student Loan Plan 3",   "Student Loan Plan 3"
   )
 
   return(list(

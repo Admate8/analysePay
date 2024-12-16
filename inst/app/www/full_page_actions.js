@@ -1,18 +1,54 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
+  let isButtonClicked = false;
+
   new fullpage('#fullpage', {
     autoScrolling: true,
-    scrollHorizontally: true
+    scrollHorizontally: true,
+
+    // Prevent the user from scrolling down when on the first page until the button is clicked
+    afterLoad: function(origin, destination, direction) {
+
+      // Check if the user is on the first page
+      if (destination.index === 0 && !isButtonClicked) {
+        // Prevent scrolling down
+        fullpage_api.setAllowScrolling(false, 'down');
+        fullpage_api.setKeyboardScrolling(false, 'down');
+        // Disable the navigation down button
+        $('#move_down').prop('disabled', true);
+      } else {
+        // Allow scrolling in all directions otherwise
+        fullpage_api.setAllowScrolling(true);
+        fullpage_api.setKeyboardScrolling(true);
+        $('#move_down').prop('disabled', false);
+      }
+    },
+
+    afterRender: function () {
+      // arrow-left
+      const arrow_left = document.querySelector(".fp-controlArrow.fp-prev");
+      arrow_left.innerHTML = `<i class="fa-solid fa-caret-left"></i>`;
+      // arrow-right
+      const arrow_right = document.querySelector(".fp-controlArrow.fp-next");
+      arrow_right.innerHTML = `<i class="fa-solid fa-caret-right"></i>`;
+    }
   });
 
-  // Prevent the user from scrolling before the "Analyse!" button is clicked
-  fullpage_api.setAllowScrolling(false, 'down');
-  fullpage_api.setKeyboardScrolling(false, 'down');
-
   $(document).on('click', '#commit_input_data', function() {
+    isButtonClicked = false;
+
+    // Allow scrolling in all directions after the button is clicked
     fullpage_api.setAllowScrolling(true);
     fullpage_api.setKeyboardScrolling(true);
+  });
+
+  // Fix the slide navigation buttons
+  $(document).on('click', '.fp-controlArrow.fp-prev', function() {
+    fullpage_api.moveSlideLeft();
+  });
+    $(document).on('click', '.fp-controlArrow.fp-next', function() {
+    fullpage_api.moveSlideRight();
   });
 
   // Observe the buttons to navigate the pages

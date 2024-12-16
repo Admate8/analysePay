@@ -11,6 +11,20 @@
   margin-left: -24px !important;
 }
 
+/* left and right slider arrows */
+.fp-controlArrow.fp-next,
+.fp-controlArrow.fp-prev {
+  border: none;
+  width: 3.125rem;
+  height: 6.5rem;
+  font-size: 2rem;
+  color: $body-color-secondary;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Force the label to span entire width */
 .shiny-input-container .control-label {
    width: 100% !important;
@@ -307,6 +321,7 @@ label[for$="select_pl_slp3_value"] {
   border-radius: 25px;
   overflow: hidden;
   background-color: $body-tertiary-bg;
+  border-color: $body-tertiary-bg;
   transition: margin 0.3s ease;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -346,18 +361,21 @@ $lighter-accordions: (
 
 /* Customise restore settings buttons */
 [id$="restore_defaults_uk"],
-[id$="restore_defaults_pl"] {
+[id$="restore_defaults_pl"],
+[id="restore_defaults_earnings"] {
   padding: 0;
   border-color: transparent !important;
   color: $body-color-secondary;
 }
 [id$="restore_defaults_uk"]:hover,
-[id$="restore_defaults_pl"]:hover {
+[id$="restore_defaults_pl"]:hover,
+[id="restore_defaults_earnings"]:hover {
   background-color: transparent;
   border-color: transparent;
 }
 [id$="restore_defaults_uk"]:active,
-[id$="restore_defaults_pl"]:active {
+[id$="restore_defaults_pl"]:active,
+[id="restore_defaults_earnings"]:active {
   background-color: transparent !important;
   border-color: transparent !important;
 }
@@ -367,13 +385,23 @@ $lighter-accordions: (
   border-radius: 25px;
   background-color: $body-secondary-bg;
   border-color: $body-color-secondary;
-  box-shadow: 0 0 10px $body-color-secondary;
-  transition: box-shadow 0.3s ease-in-out;
   color: $body-color-secondary;
+  animation: pulsate-shadow 1.5s infinite;
 }
-[id$="commit_input_data"]:hover {
+[id="commit_input_data"]:hover {
   background-color: $body-tertiary-bg;
   color: $body-color;
+}
+[id="commit_input_data"]:disabled {
+  background-color: transparent;
+  color: $body-color-secondary;
+  animation: none !important;
+}
+
+@keyframes pulsate-shadow {
+  0% {box-shadow: 0 0 5px $body-color-secondary;}
+  50% {box-shadow: 0 0 20px $body-color-secondary;}
+  100% {box-shadow: 0 0 5px $body-color-secondary;}
 }
 
 
@@ -428,12 +456,18 @@ $lighter-accordions: (
 .add-left-right-margins {
   margin-left: calc(100% / 24);
   margin-right: calc(100% / 24);
+  margin-top: 24px;
 }
 
 .custom-card {
-  background-color: $body-tertiary-bg;
+  background-color: $body-secondary-bg;
   color: $body-color;
   border-radius: 25px;
+  text-align: center;
+  box-shadow: 0 0 2px $body-color-secondary;
+  transition: box-shadow 0.3s ease-in-out;
+  padding-left: 25px;
+  padding-right: 25px;
 }
 
 
@@ -456,5 +490,61 @@ $lighter-accordions: (
 }
 .text-justify {
     text-align: justify;
+}
+
+/* Customise Bas/Target cards */
+.custom-card-base {
+  border-radius: 25px;
+  background-color: $body-tertiary-bg;
+  box-shadow: 0 0 10px rgba($base_color, 0.6), 0 0 15px rgba($base_color, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+  border: 1px solid rgba($base_color, 0.5);
+
+  .card-header {
+    color: $body-bg;
+    background: linear-gradient(to bottom, rgba($base_color, 0.8), $body-tertiary-bg);
+    border-bottom-color: $body-tertiary-bg;
+  }
+}
+
+.custom-card-target {
+  border-radius: 25px;
+  background-color: $body-tertiary-bg;
+  box-shadow: 0 0 10px rgba($target_color, 0.6), 0 0 15px rgba($target_color, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+  border: 1px solid rgba($target_color, 0.5);
+
+  .card-header {
+    color: $body-bg;
+    background: linear-gradient(to bottom, rgba($target_color, 0.8), $body-tertiary-bg);
+    border-bottom-color: $body-tertiary-bg;
+  }
+}
+
+
+/* Create custom static legend styles */
+.legend-container {
+  display: inline-block;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: -5px;
+}
+.circle {
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.legend-published {
+  width: 8px;
+  height: 8px;
+  background-color: $body-color;
+}
+.legend-interpolated {
+  width: 5px;
+  height: 5px;
+  background-color: $body-color;
+  margin-right: 8px;
 }
 

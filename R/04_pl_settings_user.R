@@ -482,10 +482,14 @@ plSettingsUserServer <- function(id) {
 
         # Global non-reactive values
         "global" = list(
-          "full_name" = pl_settings$global$full_name,
-          "short_cut" = pl_settings$global$short_cut,
-          "currency"  = pl_settings$global$currency,
-          "locale"    = pl_settings$global$locale
+          "full_name"               = pl_settings$global$full_name,
+          "short_cut"               = pl_settings$global$short_cut,
+          "currency"                = pl_settings$global$currency,
+          "locale"                  = pl_settings$global$locale,
+          "currencySymbol"          = pl_settings$global$currencySymbol,
+          "currencySymbolPlacement" = pl_settings$global$currencySymbolPlacement,
+          "decimalCharacter"        = pl_settings$global$decimalCharacter,
+          "digitGroupSeparator"     = pl_settings$global$digitGroupSeparator
         ),
         "earning_deciles" = list(
           "10th"   = pl_settings$earning_deciles$`10th`,

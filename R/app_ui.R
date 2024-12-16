@@ -36,7 +36,7 @@ app_ui <- function(request) {
               ),
               br(),
               tags$h3("That's where analysePay steps in!"),
-              tags$p(class = "text-justify", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes..."),
+              tags$p(class = "text-justify", style = "margin-bottom: 5px;", "Play around with policy changes, compare earnings at home and abroad, and finally uncover just how much of your paycheck goes straight to taxes..."),
               br(),
               bslib::layout_columns(
                 col_widths = c(-2, 8, -2),
@@ -49,7 +49,7 @@ app_ui <- function(request) {
             ),
 
             bslib::layout_columns(
-              col_widths = c(6, 6, 12),
+              col_widths = c(6, 6, 12, -2, 8, -2),
               fillable = TRUE,
               bslib::layout_columns(
                 col_widths = c(-1, 10, -1),
@@ -81,7 +81,79 @@ app_ui <- function(request) {
                 ) |>
                   tags$div(style = "text-align: center;")
               ),
-              uiOutput("ui_settings")
+              uiOutput("ui_settings"),
+
+              tags$div(
+                style = "position: relative;",
+                tags$div(
+                  style = "position: absolute; right: 0; top: 0; margin-top: 10px; margin-right: 10px;",
+                  actionButton(
+                    inputId = "restore_defaults_earnings",
+                    label   = NULL,
+                    icon    = shiny::icon("rotate-right", style = "font-size: 1.2rem;"),
+                    width   = "26px"
+                  ) |>
+                    bslib::tooltip("Restore default settings")
+                ),
+                bslib::layout_columns(
+                  col_widths = c(6, 6),
+                  class = "h-100 d-flex align-items-center custom-card",
+
+                  tags$div(
+                    shinyWidgets::switchInput(
+                      inputId   = "select_percentile_or_earnings",
+                      size      = "mini",
+                      value     = TRUE,
+                      onLabel   = "Percentile",
+                      offStatus = "primary",
+                      offLabel  = "Earnings",
+                      inline    = TRUE
+                    ),
+                    conditionalPanel(
+                      condition = "input.select_percentile_or_earnings == 1",
+                      shinyWidgets::autonumericInput(
+                        inputId                 = "provide_percentile",
+                        label                   = "Earning percentile\U2800" |>
+                          div_with_icon(link = NULL, tt_text = "If your earnings are in the nth percentile,
+                                        n% of the working population earns less than or the same amount as you."),
+                        value                   = 50,
+                        currencySymbol          = "th",
+                        currencySymbolPlacement = "s",
+                        decimalPlaces           = 0,
+                        style                   = "text-align: center; width: 100%;"
+                      )
+                    ),
+                    conditionalPanel(
+                      condition = "input.select_percentile_or_earnings == 0",
+                      shinyWidgets::autonumericInput(
+                        inputId                 = "provide_annual_earnings",
+                        label                   = "Base annual earnings\U2800" |>
+                          div_with_icon(link = NULL, tt_text = "As not all earning percentiles are published,
+                            the annual earnings you provide will be mapped onto an approximated percentile,
+                            giving slightly different earnings."),
+                        value                   = 34632,
+                        currencySymbol          = "\U00A3",
+                        currencySymbolPlacement = "p",
+                        decimalCharacter        = ".",
+                        digitGroupSeparator     = ",",
+                        style                   = "text-align: center; width: 100%;"
+                      )
+                    )
+                  ),
+                  tags$div(
+                    style = "display: flex; justify-content: center;",
+                    shinyWidgets::radioGroupButtons(
+                      inputId    = "select_calc_period",
+                      label      = "Show results by",
+                      choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
+                      selected   = "year",
+                      individual = TRUE,
+                      size       = "sm",
+                      justified  = TRUE
+                    )
+                  )
+                )
+              )
             ) |>
               tags$div(
                 class = "h-100 d-flex align-items-center",
@@ -93,73 +165,96 @@ app_ui <- function(request) {
         # Page 2 ----
         tags$div(
           class = "section",
+
           ## Slide 1 ----
           tags$div(
             class = "slide",
-            br(),
             bslib::layout_columns(
-              col_widths = c(6, 6, 12),
               class = "add-left-right-margins",
-
+              col_widths = c(5, 7),
               tags$div(
-                class = "h-100 d-flex align-items-center flex-wrap",
-                tags$h2(tags$strong("Overview"), class = "display-6"),
+                tags$h2("Earnings & Deductions", class = "display-6"),
                 br(),
-                tags$h2("Earnings & Deductions by Deciles", class = "display-6")
-              ),
-              bslib::card(
-                uiOutput("ui_categories_table"),
-                class = "custom-card"
-              ),
-              echarts4r::echarts4rOutput("plot_earnings_decile_dist", height = "27.5rem") |> custom_spinner()
+                uiOutput("ui_earnings_cards"),
+                br(),
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Deduction Components\U2800" |> div_with_icon(
+                      link = NULL, tt_text = "Countries and their tax systems consist
+                      of various components, carefully grouped to allow for meaningful
+                      comparisons. Explore the elements included in each category here."
+                    ),
+                    value = "deduction_components",
+                    tags$div(
+                      style = "position: relative;",
+                      tags$div(
+                        style = "position: absolute; left: 0; top: 0; z-index: 20;",
+                        shiny::icon("asterisk", style = "font-size: 1rem;") |>
+                          bslib::tooltip("Deducted before the Income Tax")
+                      ),
+                      reactable::reactableOutput("table_components")
+                    )
+                  )
+                )
+              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+
+              bslib::layout_columns(
+                col_widths = 12,
+                class = "h-100 w-100 d-flex align-items-center",
+                tags$div(
+                  echarts4r::echarts4rOutput("plot_all_deductions", height = "10rem") |> custom_spinner(),
+                  echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "35rem") |> custom_spinner()
+                )
+
+              )
             )
           ),
+
           ## Slide 2 ----
           tags$div(
             class = "slide",
             bslib::layout_columns(
-              col_widths = c(8, 4),
+              col_widths = 12,
               class = "add-left-right-margins",
-
               tags$div(
                 style = "position: relative;",
-                echarts4r::echarts4rOutput("plot_int_earnings_decile_dist", height = "48rem") |> custom_spinner(),
-
                 tags$div(
-                  style = "position: absolute; left: 0; top: 0; z-index: 20;",
-                  uiOutput("ui_earnings_sources")
-                )
-              ),
-
-
-
-              bslib::layout_columns(
-                col_widths = c(12, 12, 12),
+                  style = "position: absolute; top: 0; left: 0; margin-top: 20px;",
+                  tags$h2("Full Distribution", class = "display-6")
+                ),
+                # Static legend, so that a user cannot toggle series
                 tags$div(
-                  class = "h-100 d-flex align-items-center flex-wrap",
-                  tags$h2("Interpolated Earnings", class = "display-6")
+                  style = "position: absolute; top: 0; left 0; margin-top: 10%; right: 80%;",
+
+                  tags$div(
+                    class = "legend-container",
+                    tags$div(
+                      class = "legend-item",
+                      tags$span(
+                        tags$span(class = "circle legend-published"),
+                        tags$span("Published", style = "font-size: 12px;")
+                      )
+                    ),
+                    tags$div(
+                      class = "legend-item",
+                      tags$span(
+                        tags$span(class = "circle legend-interpolated"),
+                        tags$span("Interpolated", style = "font-size: 12px")
+                      )
+                    )
+                  )
                 ),
-
-                bslib::layout_columns(
-                  col_widths = c(6, 6),
-                  class = "h-100 p-4 d-flex align-items-center custom-card",
-
-                  shinyWidgets::radioGroupButtons(
-                    inputId    = "select_calc_period",
-                    label      = "Show earnings by...",
-                    choices    = c("Year" = "year", "Month" = "month", "Week" = "week"),
-                    selected   = "year",
-                    individual = TRUE,
-                    size       = "sm",
-                    justified  = TRUE
-                  ),
-                  uiOutput("ui_provide_annual_earnings")
-                ),
-
-                echarts4r::echarts4rOutput("plot_radar_perc", height = "30rem")
+                echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
               )
             )
           )
+
+          # tags$div(
+          #   class = "slide",
+          #   "METHODOLOGY"
+          # )
+
         ),
 
         # Last page ----
