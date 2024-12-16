@@ -176,13 +176,10 @@ app_ui <- function(request) {
                 tags$h2("Earnings & Deductions", class = "display-6"),
                 br(),
                 uiOutput("ui_earnings_cards"),
+                br(),
                 bslib::navset_tab(
                   bslib::nav_panel(
-                    title = "Deductions",
-                    echarts4r::echarts4rOutput("plot_radar_perc", height = "26rem") |> custom_spinner()
-                  ),
-                  bslib::nav_panel(
-                    title = "Components",
+                    title = "Deduction Component",
                     br(),
                     tags$div(
                       style = "position: relative;",

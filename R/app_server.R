@@ -202,7 +202,7 @@ app_server <- function(input, output, session) {
 
 
   # Page 2 ----
-  ## Slide 1 NEW ----
+  ## Slide 1 ----
   ### Base/Target cards ----
   observeEvent(c(
     selected_percentile(),
@@ -234,6 +234,8 @@ app_server <- function(input, output, session) {
 
   ### Deduction components table ----
   df_categories <- eventReactive(input$commit_input_data, {
+    req(input$commit_input_data)
+
     get_df_earnings_dist(
       settings_from = settings_from(),
       settings_to   = settings_to()
