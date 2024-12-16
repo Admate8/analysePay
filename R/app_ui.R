@@ -195,7 +195,7 @@ app_ui <- function(request) {
                     )
                   )
                 )
-              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+              ) |> tags$div(class = "h-100 d-flex align-items-center")
               #echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
             )
           ),
@@ -206,7 +206,36 @@ app_ui <- function(request) {
             bslib::layout_columns(
               col_widths = 12,
               class = "add-left-right-margins",
-              echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
+              tags$div(
+                style = "position: relative;",
+                tags$div(
+                  style = "position: absolute; top: 0; left: 0; margin-top: 20px;",
+                  tags$h2("Full Distribution", class = "display-6")
+                ),
+                # Static legend, so that the user cannot toggle series
+                tags$div(
+                  style = "position: absolute; top: 0; left 0; margin-top: 10%; right: 80%;",
+
+                  tags$div(
+                    class = "legend-container",
+                    tags$div(
+                      class = "legend-item",
+                      tags$span(
+                        tags$span(class = "circle legend-published"),
+                        tags$span("Published", style = "font-size: 12px;")
+                      )
+                    ),
+                    tags$div(
+                      class = "legend-item",
+                      tags$span(
+                        tags$span(class = "circle legend-interpolated"),
+                        tags$span("Interpolated", style = "font-size: 12px")
+                      )
+                    )
+                  )
+                ),
+                echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
+              )
             )
           ),
 

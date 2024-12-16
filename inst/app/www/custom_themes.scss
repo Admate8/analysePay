@@ -520,3 +520,30 @@ $lighter-accordions: (
   }
 }
 
+
+/* Create custom static legend styles */
+.legend-container {
+  display: inline-block;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: -5px;
+}
+.circle {
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.legend-published {
+  width: 8px;
+  height: 8px;
+  background-color: $body-color;
+}
+.legend-interpolated {
+  width: 5px;
+  height: 5px;
+  background-color: $body-color;
+  margin-right: 8px;
+}
+

@@ -44,6 +44,7 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       color       = palette_global$categories$earnings_color,
       stack       = stack,
       symbol_size = 5,
+      zlevel      = 1,
       y_index     = y_index,
       x_index     = x_index,
       itemStyle   = list(opacity = 1),
@@ -117,6 +118,24 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
   ) |>
     draw_echart_scatter_series(serie = "earnings_from", name = "Earnings", x_index = 1, y_index = 2, country = country_from) |>
     draw_echart_scatter_series(serie = "earnings_to",   name = "Earnings", x_index = 0, y_index = 3, country = country_to) |>
+    echarts4r::e_scatter(
+      serie       = actual_earnings_from,
+      legend      = list(show = FALSE),
+      tooltip     = list(show = FALSE),
+      x_index     = 1, y_index = 2, zlevel = 1,
+      symbol_size = 8,
+      itemStyle   = list(opacity = 1),
+      color       = palette_global$categories$earnings_color
+    ) |>
+    echarts4r::e_scatter(
+      serie       = actual_earnings_to,
+      legend      = list(show = FALSE),
+      tooltip     = list(show = FALSE),
+      x_index     = 0, y_index = 3, zlevel = 1,
+      symbol_size = 8,
+      itemStyle   = list(opacity = 1),
+      color       = palette_global$categories$earnings_color
+    ) |>
     echarts4r::e_grid(top = "23%", right = "5%", left = "3%", height = "35%") |>
     echarts4r::e_grid(top = "62%", right = "5%", left = "3%", height = "35%") |>
     echarts4r::e_y_axis(
@@ -280,7 +299,7 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
     echarts4r::e_axis_pointer(link = list(xAxisIndex = c(1, 0))) |>
     echarts4r::e_legend(
       top               = "top",
-      left              = "center",
+      right             = "10%",
       height            = "70px",
       orient            = "vertical",
       padding           = 15,
