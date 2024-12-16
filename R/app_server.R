@@ -218,7 +218,10 @@ app_server <- function(input, output, session) {
       htmltools::tagList(
         tags$p(HTML(paste0(
           "Approximately ", tags$strong(paste0(selected_percentile(), "%")), " of the working population in ",
-          tags$strong(settings_from()$global$full_name), " earns ",
+          tags$strong(
+            style = paste0("color: ", palette_global$categories$base_color, ";"),
+            settings_from()$global$full_name
+          ), " earns ",
           tags$strong(
             df_main() |>
               dplyr::filter(percentile == selected_percentile()) |>
@@ -227,6 +230,7 @@ app_server <- function(input, output, session) {
           ),
           " annually. Based on your settings selection, that translates to..."
         ))),
+        br(),
         earningsCardUI("1")
       )
     })
@@ -240,9 +244,8 @@ app_server <- function(input, output, session) {
       settings_from = settings_from(),
       settings_to   = settings_to()
     )$df_cat_table |>
-      # Join in the colours from the global options
+      # Join in the colours from the global options - currently not in use
       cbind(col = c(
-        palette_global$categories$net_color,
         palette_global$categories$pension_color,
         palette_global$categories$pension_color_vol,
         palette_global$categories$insurance_color,
@@ -268,13 +271,15 @@ app_server <- function(input, output, session) {
         columns       = list(
           split = reactable::colDef(
             name  = "",
-            cell  = reactablefmtr::pill_buttons(
-              data = df_categories(),
-              color_ref           = "col",
-              bold_text           = TRUE,
-              brighten_text_color = palette_global$body_color,
-              text_color          = palette_global$body_bg
-            ),
+            style = list(fontWeight = "bold", fontSize = "0.75rem"),
+            # Pills distort the page balance... but leave if I change my mind
+            # cell  = reactablefmtr::pill_buttons(
+            #   data = df_categories(),
+            #   color_ref           = "col",
+            #   bold_text           = TRUE,
+            #   brighten_text_color = palette_global$body_color,
+            #   text_color          = palette_global$body_bg
+            # ),
             width = 220
           ),
           col = reactable::colDef(show = FALSE)
@@ -289,11 +294,11 @@ app_server <- function(input, output, session) {
     req(selected_percentile())
     req(input$select_calc_period)
 
-    ### Deduction radar ----
-    output$plot_radar_perc <- echarts4r::renderEcharts4r({plot_radar_perc(selected_percentile(), df_main())})
-
     ### Earnings by percentiles plot ----
     output$plot_earnings_by_percentiles <- echarts4r::renderEcharts4r({plot_earnings_by_percentiles(selected_percentile(), df_main(), input$select_calc_period)})
+
+    ### Deductions breakdown ----
+    output$plot_deductions_breakdown <- echarts4r::renderEcharts4r({plot_deductions_breakdown(selected_percentile(), df_main())})
   })
 
 

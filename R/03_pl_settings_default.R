@@ -208,7 +208,6 @@ calc_pl_deductions <- function(
     # We only need this for a legend-table, so everything should be display-ready
     df_deductions_split <- tibble::tribble(
       ~split,                  ~categories,
-      "Net Income",            "Net Income",
       "Pension - Mandatory",   "State Pension*",
       "Pension - Voluntary",   "PPK Pension",
       "Insurance - Mandatory", "State Insurance*<br>Health Insurance",
@@ -249,7 +248,6 @@ calc_pl_deductions <- function(
     # We only need this for a legend-table, so everything should be display-ready
     df_deductions_split <- tibble::tribble(
       ~split,                  ~categories,
-      "Net Income",            "Net Income",
       "Pension - Mandatory",   "State Pension*",
       "Pension - Voluntary",   "",
       "Insurance - Mandatory", "State Insurance*<br>Health Insurance*<br>Accident Insurance*<br>FP, FS and FG\U015AP*",

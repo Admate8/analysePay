@@ -177,10 +177,15 @@ app_ui <- function(request) {
                 br(),
                 uiOutput("ui_earnings_cards"),
                 br(),
-                bslib::navset_tab(
-                  bslib::nav_panel(
-                    title = "Deduction Component",
-                    br(),
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Deduction Components\U2800" |> div_with_icon(
+                      link = NULL, tt_text = "Countries and their tax systems consist
+                      of various components, carefully grouped to allow for meaningful
+                      comparisons. Explore the elements included in each category here."
+                    ),
+                    value = "deduction_components",
                     tags$div(
                       style = "position: relative;",
                       tags$div(
@@ -188,12 +193,12 @@ app_ui <- function(request) {
                         shiny::icon("asterisk", style = "font-size: 1rem;") |>
                           bslib::tooltip("Deducted before the Income Tax")
                       ),
-                      reactable::reactableOutput("table_components") |> custom_spinner()
+                      reactable::reactableOutput("table_components")
                     )
                   )
                 )
-              ) |> tags$div(class = "h-100 d-flex align-items-center")
-              #echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
+              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+              echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "40rem") |> custom_spinner()
             )
           ),
 
@@ -234,12 +239,12 @@ app_ui <- function(request) {
                 echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
               )
             )
-          ),
-
-          tags$div(
-            class = "slide",
-            "METHODOLOGY"
           )
+
+          # tags$div(
+          #   class = "slide",
+          #   "METHODOLOGY"
+          # )
 
         ),
 

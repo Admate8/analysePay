@@ -81,13 +81,13 @@ div_with_icon <- function(..., link, icon_size = "1rem", tt_text = "Find out mor
 custom_reactable_theme <- function() {
   reactable::reactableTheme(
     color           = palette_global$body_color,
-    backgroundColor = palette_global$body_bg,
-    borderColor     = palette_global$body_bg,
+    backgroundColor = palette_global$body_tertiary_bg,
+    borderColor     = palette_global$body_tertiary_bg,
     rowStyle = list(
-      borderBottom = paste0("0.5px solid ", palette_global$body_tertiary_bg)
+      borderBottom = paste0("0.5px solid ", palette_global$body_bg)
     ),
     headerStyle = list(
-      borderBottom = paste0("2px solid ", palette_global$body_tertiary_bg),
+      borderBottom = paste0("2px solid ", palette_global$body_bg),
       textAlign = "center"
     )
   )
