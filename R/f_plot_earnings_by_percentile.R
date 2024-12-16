@@ -136,6 +136,14 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       itemStyle   = list(opacity = 1),
       color       = palette_global$categories$earnings_color
     ) |>
+    echarts4r::e_mark_line(
+      data = list(
+        list(xAxis = paste0(selected_decile, "th"), yAxis = 0, symbol = "none"),
+        list(xAxis = paste0(selected_decile, "th"), yAxis = 100, symbol = "none")
+      ),
+      emphasis  = list(disabled = TRUE),
+      lineStyle = list(color = palette_global$categories$base_color)
+    ) |>
     echarts4r::e_grid(top = "23%", right = "5%", left = "3%", height = "35%") |>
     echarts4r::e_grid(top = "62%", right = "5%", left = "3%", height = "35%") |>
     echarts4r::e_y_axis(

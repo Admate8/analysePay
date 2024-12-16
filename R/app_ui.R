@@ -113,7 +113,7 @@ app_ui <- function(request) {
                       condition = "input.select_percentile_or_earnings == 1",
                       shinyWidgets::autonumericInput(
                         inputId                 = "provide_percentile",
-                        label                   = "Base earning percentile\U2800" |>
+                        label                   = "Earning percentile\U2800" |>
                           div_with_icon(link = NULL, tt_text = "If your earnings are in the nth percentile,
                                         n% of the working population earns less than or the same amount as you."),
                         value                   = 50,
@@ -212,7 +212,7 @@ app_ui <- function(request) {
                   style = "position: absolute; top: 0; left: 0; margin-top: 20px;",
                   tags$h2("Full Distribution", class = "display-6")
                 ),
-                # Static legend, so that the user cannot toggle series
+                # Static legend, so that a user cannot toggle series
                 tags$div(
                   style = "position: absolute; top: 0; left 0; margin-top: 10%; right: 80%;",
 
