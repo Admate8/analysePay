@@ -196,6 +196,16 @@ app_ui <- function(request) {
                   )
                 )
               ) |> tags$div(class = "h-100 d-flex align-items-center"),
+              #echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
+            )
+          ),
+
+          ## Slide 2 ----
+          tags$div(
+            class = "slide",
+            bslib::layout_columns(
+              col_widths = 12,
+              class = "add-left-right-margins",
               echarts4r::echarts4rOutput("plot_earnings_by_percentiles", height = "49rem") |> custom_spinner()
             )
           ),

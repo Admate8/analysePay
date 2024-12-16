@@ -19,7 +19,7 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
   # Draw Custom Bar Series ----
   draw_echart_bar_series <- function(e_chart_object, serie, name, color, stack, index, country = "uk") {
     e_chart_object |>
-      echarts4r::e_bar_(
+      echarts4r::e_line_(
         serie     = serie,
         name      = name,
         color     = palette_global$categories[[color]],
@@ -27,7 +27,12 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
         y_index   = index,
         x_index   = index,
         itemStyle = list(color = get_gradient(color, 0.3)),
-        emphasis  = list(itemStyle = list(color = get_gradient(color, 0.3, TRUE)))
+        emphasis  = list(
+          itemStyle = list(color = get_gradient(color, 0.3, TRUE)),
+          areaStyle = list(color = get_gradient(color, 0.3, TRUE))
+        ),
+        symbol    = "none",
+        areaStyle = list(color = get_gradient(color, 0.3))
       )
   }
 
@@ -43,6 +48,7 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       x_index     = x_index,
       itemStyle   = list(opacity = 1),
       emphasis    = list(focus = "series"),
+      legend      = list(show = FALSE),
       ...
     )
   }
@@ -111,8 +117,8 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
   ) |>
     draw_echart_scatter_series(serie = "earnings_from", name = "Earnings", x_index = 1, y_index = 2, country = country_from) |>
     draw_echart_scatter_series(serie = "earnings_to",   name = "Earnings", x_index = 0, y_index = 3, country = country_to) |>
-    echarts4r::e_grid(top = "25%", right = "8%", left = "5.5%", height = "35%") |>
-    echarts4r::e_grid(top = "62%", right = "8%", left = "5.5%", height = "35%") |>
+    echarts4r::e_grid(top = "23%", right = "5%", left = "3%", height = "35%") |>
+    echarts4r::e_grid(top = "62%", right = "5%", left = "3%", height = "35%") |>
     echarts4r::e_y_axis(
       gridIndex  = 1,
       index      = 0,
@@ -156,12 +162,15 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       index         = 0,
       nameLocation  = "middle",
       nameTextStyle = list(fontWeight = "bold", padding = 15),
+      axisTick      = list(alignWithLabel = TRUE),
       axisLabel     = list(interval = 10 - 1)
     ) |>
     echarts4r::e_x_axis(
       gridIndex   = 0,
       index       = 1,
-      axisLabel   = list(show = FALSE, interval = 100 - 1)
+      axisLabel   = list(show = FALSE),
+      axisTick    = list(alignWithLabel = TRUE),
+      axisLabel   = list(interval = 10 - 1, show = FALSE)
     ) |>
     echarts4r::e_tooltip(
       trigger         = "axis",
@@ -193,34 +202,56 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       formatter = htmlwidgets::JS(sprintf(
         "function(params) {
         let isTopGrid = params[0].axisIndex === 1;
-        let tooltip = '<table>';
         let valueFrom, valueTo;
 
-        tooltip += '<tr><th colspan=\"4\" style=\"text-align: center;\">' + params[0].axisValueLabel + '</th></tr>';
-        tooltip += '<tr><td colspan=\"4\"><hr></td></tr>';
+        // Initiate the tooltip
+        let tooltip = '<table>';
+        tooltip += '<tr><th colspan=\"4\" style=\"text-align: center; font-size: 1.5em; font-weight: bold;\">' + params[0].axisValueLabel + '</th></tr>';
+        tooltip += '<tr><td colspan=\"4\" style=\"padding: 15px 0;\"></td></tr>';
+
+        // Table headers
+        tooltip += '<tr>';
+        tooltip += '<td></td>';
+        tooltip += '<td style=\"padding-right: 10px; text-align: center; color: #FFD166;\"><b>Base</b></td>';
+        tooltip += '<td></td>';
+        tooltip += '<td style=\"padding-right: 10px; text-align: center; color: #468189;\"><b>Target</b></td>';
+        tooltip += '</tr>';
+        tooltip += '<tr><td colspan=\"4\" style=\"padding: 5px 0;\"><hr style=\"margin: 2px 0; border: none; border-top: 1px solid #ccc;\"></td></tr>';
 
         // Check if the last available series has the name 'Earnings'
+        // When this series is not available in the legend, this condition is always true
+
         let hasEarnings = params[params.length - 1].seriesName === 'Earnings';
+        let earningsIndex = params.length / 2 - 1;
 
-        for (let i = 0; i < params.length / 2; i++) {
-          if (hasEarnings && i === params.length / 2 - 1) {
+        // Format as currency
+        earningsValueFrom = new Intl.NumberFormat('%s', {
+          style: 'currency',
+          currency: '%s',
+          maximumFractionDigits: 2
+        }).format(params[isTopGrid ? earningsIndex : earningsIndex + params.length / 2].value[1]);
 
-            // Format as currency for the last row if 'Earnings' is present
-            valueFrom = new Intl.NumberFormat('%s', {
-              style: 'currency',
-              currency: '%s',
-              maximumFractionDigits: 2
-            }).format(params[isTopGrid ? i : i + params.length / 2].value[1]);
+        earningsValueTo = new Intl.NumberFormat('%s', {
+          style: 'currency',
+          currency: '%s',
+          maximumFractionDigits: 2
+        }).format(params[isTopGrid ? earningsIndex + params.length / 2 : earningsIndex].value[1]);
 
-            valueTo = new Intl.NumberFormat('%s', {
-              style: 'currency',
-              currency: '%s',
-              maximumFractionDigits: 2
-            }).format(params[isTopGrid ? i + params.length / 2 : i].value[1]);
+        // Table part 1: over the horizontal line
+        tooltip += '<tr>';
+        tooltip += '<td style=\"padding-right: 20px;\">' + params[isTopGrid ? earningsIndex : earningsIndex + params.length / 2].marker + ' <b>' + params[isTopGrid ? earningsIndex : earningsIndex + params.length / 2].seriesName + '</b></td>';
+        tooltip += '<td style=\"padding-right: 10px;\"><b>' + earningsValueFrom + '</b></td>';
+        tooltip += '<td style=\"padding-right: 10px;\"><b>➡</b></td>';
+        tooltip += '<td><b>' + earningsValueTo + '</b></td>';
+        tooltip += '</tr>';
 
-          } else {
+        // Add horizontal line
+        tooltip += '<tr><td colspan=\"4\" style=\"padding: 5px 0;\"><hr style=\"margin: 2px 0; border: none; border-top: 1px solid #ccc;\"></td></tr>';
 
-            // Format as percentages for all other rows
+        // Loop over the remaining series
+        for (let i = 0; i < params.length / 2 - 1; i++) {
+
+            // Format as percentages
             valueFrom = new Intl.NumberFormat(undefined, {
               style: 'percent',
               maximumFractionDigits: 2
@@ -230,8 +261,8 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
               style: 'percent',
               maximumFractionDigits: 2
             }).format(params[isTopGrid ? i + params.length / 2 : i].value[1] / 100);
-          }
 
+           // Table part 2: under the horizontal line
           tooltip += '<tr>';
           tooltip += '<td style=\"padding-right: 20px;\">' + params[isTopGrid ? i : i + params.length / 2].marker + ' ' + params[isTopGrid ? i : i + params.length / 2].seriesName + '</td>';
           tooltip += '<td style=\"padding-right: 10px;\">' + valueFrom + '</td>';
@@ -241,13 +272,14 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
         }
         tooltip += '</table>';
 
-        return tooltip; }"
-        , locale_from, currency_from, locale_to, currency_to
+        return tooltip; }",
+        locale_from, currency_from, locale_to, currency_to
       ))
+
     ) |>
     echarts4r::e_axis_pointer(link = list(xAxisIndex = c(1, 0))) |>
     echarts4r::e_legend(
-      top               = "25px",
+      top               = "top",
       left              = "center",
       height            = "70px",
       orient            = "vertical",
@@ -272,6 +304,3 @@ plot_earnings_by_percentiles <- function(selected_decile, df, period) {
       )
     )
 }
-
-
-
