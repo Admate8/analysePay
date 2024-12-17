@@ -31,9 +31,8 @@ plot_all_deductions <- function(selected_percentile, df) {
     ) |>
     dplyr::rename(base = from, target = to)
 
-  if (df$base == df$target) get_max <- df$base + 10
-  else if (df$base < df$target) get_max <- 2 * df$target - df$base
-  else get_max <- 2 * df$base - df$target
+  get_min <- 0
+  get_max <- df$base + df$target
 
   df |>
     echarts4r::e_chart(x = dummy_val) |>
@@ -103,7 +102,7 @@ plot_all_deductions <- function(selected_percentile, df) {
         )
       )
     ) |>
-    echarts4r::e_y_axis(show = FALSE, max = get_max) |>
+    echarts4r::e_y_axis(show = FALSE, max = get_max, min = get_min) |>
     echarts4r::e_x_axis(show = FALSE) |>
     echarts4r::e_grid(left = "15%", right = "5%") |>
     echarts4r::e_flip_coords() |>
