@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fullpage_api.moveTo(1);
   });
 
+
   // Render a hint when the accordion-sl is open for the first time
   var accordionSlOpenedFirst = false;
   // Get the value of the currently open panel
@@ -76,6 +77,14 @@ document.addEventListener('DOMContentLoaded', function() {
         Shiny.setInputValue('sl_accordion_opened', true);
     }
   });
+
+
+  // Remove the number if clicked on the input box
+   $(document).on('shiny:connected', function(event) {
+
+    const inputIds = [ 'expend_num_input_food', 'expend_num_input_drinks', 'expend_num_input_clothing', 'expend_num_input_housing', 'expend_num_input_household', 'expend_num_input_health', 'expend_num_input_transport', 'expend_num_input_comms', 'expend_num_input_recreation', 'expend_num_input_education', 'expend_num_input_restaurants', 'expend_num_input_misc', 'expend_num_input_other' ];
+    inputIds.forEach(id => { document.querySelector(`#${id}`).addEventListener("focus", function (e) { e.target.value = ''; }); });
+   });
 
 });
 

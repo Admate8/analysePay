@@ -302,6 +302,28 @@ app_server <- function(input, output, session) {
     output$plot_deductions_breakdown <- echarts4r::renderEcharts4r({plot_deductions_breakdown(selected_percentile(), df_main())})
   })
 
+
+  # Page 3 ----
+  ## Slide 1 ----
+  ### Restore defaults expend num inputs ----
+  observeEvent(input$restore_expend_inputs, {
+    shinyWidgets::updateAutonumericInput("expend_num_input_food", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_drinks", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_clothing", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_housing", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_household", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_health", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_transport", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_comms", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_recreation", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_education", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_restaurants", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_misc", value = 0, session = session)
+    shinyWidgets::updateAutonumericInput("expend_num_input_other", value = 0, session = session)
+  })
+
+  output$test <- echarts4r::renderEcharts4r({test()})
+
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 }

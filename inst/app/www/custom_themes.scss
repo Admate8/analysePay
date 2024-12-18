@@ -362,20 +362,23 @@ $lighter-accordions: (
 /* Customise restore settings buttons */
 [id$="restore_defaults_uk"],
 [id$="restore_defaults_pl"],
-[id="restore_defaults_earnings"] {
+[id="restore_defaults_earnings"],
+[id="restore_expend_inputs"] {
   padding: 0;
   border-color: transparent !important;
   color: $body-color-secondary;
 }
 [id$="restore_defaults_uk"]:hover,
 [id$="restore_defaults_pl"]:hover,
-[id="restore_defaults_earnings"]:hover {
+[id="restore_defaults_earnings"]:hover,
+[id="restore_expend_inputs"]:hover {
   background-color: transparent;
   border-color: transparent;
 }
 [id$="restore_defaults_uk"]:active,
 [id$="restore_defaults_pl"]:active,
-[id="restore_defaults_earnings"]:active {
+[id="restore_defaults_earnings"]:active,
+[id="restore_expend_inputs"]:active {
   background-color: transparent !important;
   border-color: transparent !important;
 }
