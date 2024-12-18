@@ -110,7 +110,7 @@ app_server <- function(input, output, session) {
     shinyWidgets::updateAutonumericInput(
       session = session,
       inputId = "provide_annual_earnings",
-      value   = settings_from()$earning_deciles$`50th`,
+      value   = with(settings_from()$earning_deciles, value[decile == 50]),
       options = list(
         currencySymbol          = settings_from()$global$currencySymbol,
         currencySymbolPlacement = settings_from()$global$currencySymbolPlacement,
@@ -124,8 +124,8 @@ app_server <- function(input, output, session) {
       "provide_annual_earnings",
       function(value) {
         if (is.null(value)) "Supply annual earnings..."
-        else if (value > settings_from()$earning_deciles$`95th`) "Try a smaller value..."
-        else if (value < settings_from()$earning_deciles$`10th`) "Try a bigger value..."
+        else if (value > with(settings_from()$earning_deciles, value[decile == 95])) "Try a smaller value..."
+        else if (value < with(settings_from()$earning_deciles, value[decile == 10])) "Try a bigger value..."
       }
     )
     iv_provide_annual_earnings$enable()
@@ -147,7 +147,7 @@ app_server <- function(input, output, session) {
     shinyWidgets::updateAutonumericInput(
       session = session,
       inputId = "provide_annual_earnings",
-      value   = settings_from()$earning_deciles$`50th`,
+      value   = with(settings_from()$earning_deciles, value[decile == 50]),
       options = list(
         currencySymbol          = settings_from()$global$currencySymbol,
         currencySymbolPlacement = settings_from()$global$currencySymbolPlacement,

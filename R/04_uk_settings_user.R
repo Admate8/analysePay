@@ -430,19 +430,20 @@ ukSettingsUserServer <- function(id) {
           "decimalCharacter"        = uk_settings$global$decimalCharacter,
           "digitGroupSeparator"     = uk_settings$global$digitGroupSeparator
         ),
-        "earning_deciles" = list(
-          "10th"   = uk_settings$earning_deciles$`10th`,
-          "20th"   = uk_settings$earning_deciles$`20th`,
-          "25th"   = uk_settings$earning_deciles$`25th`,
-          "30th"   = uk_settings$earning_deciles$`30th`,
-          "40th"   = uk_settings$earning_deciles$`40th`,
-          "50th"   = uk_settings$earning_deciles$`50th`,
-          "60th"   = uk_settings$earning_deciles$`60th`,
-          "70th"   = uk_settings$earning_deciles$`70th`,
-          "75th"   = uk_settings$earning_deciles$`75th`,
-          "80th"   = uk_settings$earning_deciles$`80th`,
-          "90th"   = uk_settings$earning_deciles$`90th`,
-          "95th"   = uk_settings$earning_deciles$`95th`
+        "earning_deciles" = tibble::tribble(
+          ~decile, ~value,
+          10, with(uk_settings$earning_deciles, value[decile == 10]),
+          20, with(uk_settings$earning_deciles, value[decile == 20]),
+          25, with(uk_settings$earning_deciles, value[decile == 25]),
+          30, with(uk_settings$earning_deciles, value[decile == 30]),
+          40, with(uk_settings$earning_deciles, value[decile == 40]),
+          50, with(uk_settings$earning_deciles, value[decile == 50]),
+          60, with(uk_settings$earning_deciles, value[decile == 60]),
+          70, with(uk_settings$earning_deciles, value[decile == 70]),
+          75, with(uk_settings$earning_deciles, value[decile == 75]),
+          80, with(uk_settings$earning_deciles, value[decile == 80]),
+          90, with(uk_settings$earning_deciles, value[decile == 90]),
+          95, with(uk_settings$earning_deciles, value[decile == 95])
         )
       )})
     )

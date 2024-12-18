@@ -491,17 +491,18 @@ plSettingsUserServer <- function(id) {
           "decimalCharacter"        = pl_settings$global$decimalCharacter,
           "digitGroupSeparator"     = pl_settings$global$digitGroupSeparator
         ),
-        "earning_deciles" = list(
-          "10th"   = pl_settings$earning_deciles$`10th`,
-          "20th"   = pl_settings$earning_deciles$`20th`,
-          "30th"   = pl_settings$earning_deciles$`30th`,
-          "40th"   = pl_settings$earning_deciles$`40th`,
-          "50th"   = pl_settings$earning_deciles$`50th`,
-          "60th"   = pl_settings$earning_deciles$`60th`,
-          "70th"   = pl_settings$earning_deciles$`70th`,
-          "80th"   = pl_settings$earning_deciles$`80th`,
-          "90th"   = pl_settings$earning_deciles$`90th`,
-          "95th"   = pl_settings$earning_deciles$`95th`
+        "earning_deciles" = tibble::tribble(
+          ~decile, ~value,
+          10, with(pl_settings$earning_deciles, value[decile == 10]),
+          20, with(pl_settings$earning_deciles, value[decile == 20]),
+          30, with(pl_settings$earning_deciles, value[decile == 30]),
+          40, with(pl_settings$earning_deciles, value[decile == 40]),
+          50, with(pl_settings$earning_deciles, value[decile == 50]),
+          60, with(pl_settings$earning_deciles, value[decile == 60]),
+          70, with(pl_settings$earning_deciles, value[decile == 70]),
+          80, with(pl_settings$earning_deciles, value[decile == 80]),
+          90, with(pl_settings$earning_deciles, value[decile == 90]),
+          95, with(pl_settings$earning_deciles, value[decile == 95])
         )
       )})
     )

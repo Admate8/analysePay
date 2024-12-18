@@ -1,56 +1,3 @@
-#' Fit a Spline to Available Deciles to Find In-between Values
-#'
-#' @param available_deciles Named vector/list with deciles. The names should be
-#' of the form *decile*th, e.g., *10th*, *20th*, etc. See examples.
-#'
-#' @return Tibble with actual deciles and interpolated values.
-#' @examples
-#' \dontrun{
-#' decile_vector <- c("10th" = 200, "20th" = 400, "50th" = 800)
-#' fit_earnings_dist(decile_vector)
-#' }
-fit_earnings_dist <- function(available_deciles) {
-  stopifnot(
-    "Check the names of the supplied vector" = all(grepl("^([0-9]{1,2}|100)th$", names(available_deciles))),
-    "Deciles must be numerics" = all(is.numeric(as.numeric(gsub("th", "", names(available_deciles))))),
-    "Deciles must be positive" = all(as.numeric(gsub("th", "", names(available_deciles))) > 0),
-    "Deciles must be smaller than 100" = all(as.numeric(gsub("th", "", names(available_deciles))) < 100),
-    "Values must be numeric" = all(is.numeric(available_deciles)),
-    "Values must be positive" = available_deciles > 0
-  )
-
-  earning_deciles        <- unlist(available_deciles)
-  names(earning_deciles) <- as.numeric(gsub("th", "", names(earning_deciles)))
-  percentiles            <- seq(
-    as.numeric(min(names(earning_deciles))),
-    as.numeric(max(names(earning_deciles))),
-    by = 1
-  )
-
-  # Create a vector of interpolated values using spline method
-  spline_values <- stats::spline(
-    x = names(earning_deciles),
-    y = earning_deciles,
-    xout = percentiles
-  )
-
-  # Create a vector of actual deciles with interpolated values equal to NA
-  actual_values <- rep(NA, length(percentiles))
-  for (i in seq_along(earning_deciles)) {
-    match_index <- which(percentiles == names(earning_deciles)[i])
-    if (length(match_index) > 0) {
-      actual_values[match_index] <- earning_deciles[i]
-    }
-  }
-
-  # Return clean data
-  data.frame(
-    percentile          = spline_values$x,
-    actual_values       = actual_values,
-    interpolated_values = spline_values$y
-  )
-}
-
 
 #' Generate Join Earnings Distribution & Deductions Data
 #'
@@ -74,12 +21,12 @@ get_df_earnings_dist <- function(
   country_to   <- settings_to$global$short_cut
 
   # Get defaults
-  deciles_from <- unlist(settings_from$earning_deciles)
-  deciles_to   <- unlist(settings_to$earning_deciles)
+  deciles_from <- settings_from$earning_deciles
+  deciles_to   <- settings_to$earning_deciles
 
   # Generate distribution from available earning deciles
-  earnings_dist_from <- fit_earnings_dist(deciles_from)
-  earnings_dist_to   <- fit_earnings_dist(deciles_to)
+  earnings_dist_from <- fit_percentile_distribution(deciles_from)
+  earnings_dist_to   <- fit_percentile_distribution(deciles_to)
 
   # Combine the data into a single tibble
   df_earnings_dist <- dplyr::left_join(

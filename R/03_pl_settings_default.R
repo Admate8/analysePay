@@ -83,20 +83,20 @@ pl_settings <- list(
     "value"  = round(12600 / 0.190581, 2)
   ),
 
-  # The range must be 10 - 95! and names must be of the form 'percentile'th
-  # to stay consistent in the code. Note that id the percentiles change, so must the
+  # The range must be 10 - 95! Note that if the percentiles change, so must the
   # reference in the server in `04_pl_settings_user.R`!
-  "earning_deciles" = list(
-    "10th"   = 12 * 4242,
-    "20th"   = 12 * 4536.2,
-    "30th"   = 12 * 5138.72,
-    "40th"   = 12 * 5775.76,
-    "50th"   = 12 * 6500,
-    "60th"   = 12 * 7393.75,
-    "70th"   = 12 * 8415.2,
-    "80th"   = 12 * 9929.3,
-    "90th"   = 12 * 13012.14,
-    "95th"   = 12 * 17500 # Estimated (not in the source)
+  "earning_deciles" = tibble::tribble(
+    ~decile, ~value,
+    10,      12 * 4242,
+    20,      12 * 4536.2,
+    30,      12 * 5138.72,
+    40,      12 * 5775.76,
+    50,      12 * 6500,
+    60,      12 * 7393.75,
+    70,      12 * 8415.2,
+    80,      12 * 9929.3,
+    90,      12 * 13012.14,
+    95,      12 * 17500 # Estimated (not in the source)
   ),
   "decile_source" = "https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-przecietnego-wynagrodzenia-w-drugim-kwartale-2024-roku,271,45.html"
 )

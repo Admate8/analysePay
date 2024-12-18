@@ -1,3 +1,53 @@
+#' Fit a Spline to Available Deciles to Find In-between Values
+#'
+#' @param df Tibble with two columns:
+#' \itemize{
+#'    \item{decile}{Integer. Decile (or percentile); must be between 0 and 100.}
+#'    \item{value}{Numeric. Value corresponding to the decile; must be non-negative.}
+#' }
+#'
+#' @return Tibble with actual deciles and interpolated values.
+#' @noRd
+fit_percentile_distribution <- function(df) {
+  stopifnot(
+    "'df' must be a data.frame or a tibble" = (is.data.frame(df) | tibble::is_tibble(df)),
+    "'decile' column must contain valid values" = all(is.numeric(df$decile), min(df$decile) > 0, max(df$decile) < 100),
+    "'value' column must contain valid values" = all(is.numeric(df$value), min(df$value) >= 0)
+  )
+
+  deciles     <- df$decile
+  values      <- df$value
+  percentiles <- seq(
+    as.numeric(min(df$decile)),
+    as.numeric(max(df$decile)),
+    by = 1
+  )
+
+  # Create a vector of interpolated values using spline method
+  spline_values <- stats::spline(
+    x = deciles,
+    y = values,
+    xout = percentiles
+  )
+
+  # Create a vector of actual deciles with interpolated values equal to NA
+  actual_values <- rep(NA, length(percentiles))
+  for (i in seq_along(deciles)) {
+    match_index <- which(percentiles == deciles[i])
+    if (length(match_index) > 0) {
+      actual_values[match_index] <- values[i]
+    }
+  }
+
+  # Return clean data
+  data.frame(
+    percentile          = spline_values$x,
+    actual_values       = actual_values,
+    interpolated_values = spline_values$y
+  )
+}
+
+
 #' Define Custom Spinner Animation
 #'
 #' @param ui_element UI to attache the spinner to.

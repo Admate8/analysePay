@@ -59,22 +59,22 @@ uk_settings <- list(
     "value"  = 21000
   ),
 
-  # The range must be 10 - 95! and names must be of the form 'percentile'th
-  # to stay consistent in the code. Note that id the percentile change, so must the
+  # The range must be 10 - 95! Note that if the percentile change, so must the
   # reference in the server in `04_uk_settings_user.R`!
-  "earning_deciles" = list(
-    "10th"   = 21000,
-    "20th"   = 24496,
-    "25th"   = 26485,
-    "30th"   = 27673,
-    "40th"   = 31069,
-    "50th"   = 34632,
-    "60th"   = 39519,
-    "70th"   = 44738,
-    "75th"   = 48000,
-    "80th"   = 52007,
-    "90th"   = 66669,
-    "95th"   = 80000
+  "earning_deciles" = tibble::tribble(
+    ~decile, ~value,
+    10,      21000,
+    20,      24496,
+    25,      26485,
+    30,      27673,
+    40,      31069,
+    50,      34632,
+    60,      39519,
+    70,      44738,
+    75,      48000,
+    80,      52007,
+    90,      66669,
+    95,      80000
   ),
   "decile_source" = "https://www.statista.com/statistics/416102/average-annual-gross-pay-percentiles-united-kingdom/"
 )
