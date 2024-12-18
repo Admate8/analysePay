@@ -249,16 +249,13 @@ app_ui <- function(request) {
               )
             )
           )
-
-          # tags$div(
-          #   class = "slide",
-          #   "METHODOLOGY"
-          # )
-
         ),
 
+        # Page 3 ----
         tags$div(
           class = "section",
+
+          ## Slide 1 ----
           tags$div(
             class = "slide",
             bslib::layout_columns(
@@ -292,7 +289,7 @@ app_ui <- function(request) {
                   get_expend_num_input("expend_num_input_misc"),
                   get_expend_num_input("expend_num_input_other")
                 ),
-                echarts4r::echarts4rOutput("test", height = "790px")
+                echarts4r::echarts4rOutput("plot_expend_breakdown", height = "770px")
               )
             )
           )

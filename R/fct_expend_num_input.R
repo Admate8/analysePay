@@ -16,8 +16,8 @@ get_expend_num_input <- function(id_val) {
     style = glue::glue(
       "font-size: 0.75rem;
        border-radius: 25px;
-       padding-top: 8.25%;
-       padding-bottom: 8.25%;
+       padding-top: 8.75%;
+       padding-bottom: 8.75%;
        color: {palette_global$body_color_secondary};
        border-color: transparent;
        background-color: {palette_global$body_tertiary_bg};

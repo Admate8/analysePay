@@ -53,7 +53,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  ## User inputs ----
+  ## Utils: User inputs ----
   ### Preserve vars
   settings_from <- NULL
   settings_to   <- NULL
@@ -100,7 +100,7 @@ app_server <- function(input, output, session) {
     iv_to   <<- base::get(server_settings_to_name)(ns_to())$iv
   })
 
-  ## Validate remaining inputs ----
+  ## Utils: Validate remaining inputs ----
   iv_provide_annual_earnings <- shinyvalidate::InputValidator$new()
   iv_provide_percentile      <- shinyvalidate::InputValidator$new()
   observeEvent(settings_from(), {
@@ -142,7 +142,7 @@ app_server <- function(input, output, session) {
     iv_provide_percentile$enable()
   })
 
-  ## Restore default settings ----
+  ## Button: Restore default settings ----
   observeEvent(input$restore_defaults_earnings, {
     shinyWidgets::updateAutonumericInput(
       session = session,
@@ -160,7 +160,7 @@ app_server <- function(input, output, session) {
     shinyWidgets::updateSwitchInput(inputId = "select_percentile_or_earnings", value = TRUE)
   })
 
-  ## Update percentile suffix ----
+  ## Utils: Update percentile suffix ----
   observeEvent(input$provide_percentile, {
     shinyWidgets::updateAutonumericInput(
       inputId = "provide_percentile",
@@ -169,7 +169,7 @@ app_server <- function(input, output, session) {
   })
 
 
-  ## Commit settings button ----
+  ## Button: Commit settings ----
   observe({
     if (all(iv_from$is_valid(), iv_to$is_valid(), iv_provide_annual_earnings$is_valid(), iv_provide_percentile$is_valid())) {
       shinyjs::enable("commit_input_data")
@@ -180,7 +180,7 @@ app_server <- function(input, output, session) {
     }
   })
 
-  ## Set up the main data ----
+  ## Data: df_main() ----
   # Observe the "Analyse!" button - this is the main data in the app
   df_main <- eventReactive(input$commit_input_data, {
     get_df_earnings_dist(
@@ -189,7 +189,7 @@ app_server <- function(input, output, session) {
     )$df_main
   })
 
-  ## Unify earnings/percentile selection ----
+  ## Utils: Unify earnings/percentile selection ----
   selected_percentile <- reactiveVal(50)
   observeEvent(c(
     input$select_percentile_or_earnings,
@@ -203,7 +203,7 @@ app_server <- function(input, output, session) {
 
   # Page 2 ----
   ## Slide 1 ----
-  ### Base/Target cards ----
+  ### Card: Base/Target cards ----
   observeEvent(c(
     selected_percentile(),
     input$select_calc_period,
@@ -236,7 +236,7 @@ app_server <- function(input, output, session) {
     })
   })
 
-  ### Deduction components table ----
+  ### Table: Deduction components ----
   df_categories <- eventReactive(input$commit_input_data, {
     req(input$commit_input_data)
 
@@ -294,10 +294,10 @@ app_server <- function(input, output, session) {
     req(selected_percentile())
     req(input$select_calc_period)
 
-    ### Earnings by percentiles plot ----
+    ### Plot: Earnings by percentiles ----
     output$plot_earnings_by_percentiles <- echarts4r::renderEcharts4r({plot_earnings_by_percentiles(selected_percentile(), df_main(), input$select_calc_period)})
 
-    ### Deduction plots ----
+    ### Plot: Deductions ----
     output$plot_all_deductions       <- echarts4r::renderEcharts4r({plot_all_deductions(selected_percentile(), df_main())})
     output$plot_deductions_breakdown <- echarts4r::renderEcharts4r({plot_deductions_breakdown(selected_percentile(), df_main())})
   })
@@ -305,7 +305,14 @@ app_server <- function(input, output, session) {
 
   # Page 3 ----
   ## Slide 1 ----
-  ### Restore defaults expend num inputs ----
+
+  ### Data: Expend data ----
+  df_expend <- reactive({
+    req(df_main())
+    get_df_expend(df_main())
+  })
+
+  ### Button: Restore defaults expend num inputs ----
   observeEvent(input$restore_expend_inputs, {
     shinyWidgets::updateAutonumericInput("expend_num_input_food", value = 0, session = session)
     shinyWidgets::updateAutonumericInput("expend_num_input_drinks", value = 0, session = session)
@@ -322,7 +329,11 @@ app_server <- function(input, output, session) {
     shinyWidgets::updateAutonumericInput("expend_num_input_other", value = 0, session = session)
   })
 
-  output$test <- echarts4r::renderEcharts4r({test()})
+  ### Plot: Expenditure plots
+  observeEvent(c(df_expend(), selected_percentile()), {
+
+    output$plot_expend_breakdown <- echarts4r::renderEcharts4r({plot_expend_breakdown(selected_percentile(), df_expend())})
+  })
 
   # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
   # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})

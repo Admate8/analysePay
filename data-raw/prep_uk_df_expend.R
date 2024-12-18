@@ -23,10 +23,22 @@
 ## scaling expenditure
 
 
+# Getting values for each expenditure category per adult per percentile:
+
+# 1. Calculate the weighted average number of adults per household: #adults / #households
+# 2. Compute the average expenditure per person per year:
+# [52.1429 (average #weeks in a year) * value per week] / result from 1.
+# 3. Interpolate decile values per expenditure to get values for missing percentiles.
+# 4. Find the percentile scaling factor for each expenditure:
+# scaling factor for percentile "n" in "x" category =
+## (total avg spend on x) / (interpolated value of n in x)
+## The scaling factor will be used to scale the values for which percentiles are
+## missing in other countries, unless they also publish breakdown by deciles
+## (not just the average, which is presumably most common).
 
 uk_df_expend_raw <- openxlsx::read.xlsx(here::here("./data-raw/uk_df_expend_raw.xlsx"), sheet = "A4")
 
-# Select the weighted average number of Persons Per Deciles (PPD)
+# 1. Select the weighted average number of Persons Per Deciles (PPD)
 uk_ppd <- uk_df_expend_raw |>
   dplyr::slice(3, 8, 10) |>
   janitor::remove_empty(c("rows", "cols")) |>
@@ -36,16 +48,16 @@ uk_ppd <- uk_df_expend_raw |>
   dplyr::slice(-1) |>
   dplyr::mutate(
     weighted_val = as.numeric(x3) / as.numeric(x2),
-    deciles      = c(seq(10, 100, 10), "average")
+    decile       = c(seq(10, 100, 10), "average")
   ) |>
-  dplyr::select(link = x1, deciles, weighted_val)
+  dplyr::select(link = x1, decile, weighted_val)
 
 # Clean the data
-uk_df_expend <- uk_df_expend_raw |>
+uk_df_expend_prep <- uk_df_expend_raw |>
   dplyr::slice(3, 13:24, 26) |>
   dplyr::select(-1)
-uk_df_expend[1, 1] <- "expenditure"
-uk_df_expend <- uk_df_expend |>
+uk_df_expend_prep[1, 1] <- "expenditure"
+uk_df_expend_prep <- uk_df_expend_prep |>
   janitor::row_to_names(1) |>
   dplyr::mutate(
     expenditure = iconv(expenditure, from = 'UTF-8', to = 'ASCII//TRANSLIT'),
@@ -57,25 +69,56 @@ uk_df_expend <- uk_df_expend |>
   dplyr::group_by(expenditure) |>
   dplyr::mutate(value = ifelse(is.na(value), value[link == "All"], value))
 
-# Compute the average expenditure per person per year
-uk_df_expend <- uk_df_expend |>
+# 2. Compute the average expenditure per person per year
+uk_df_expend_prep <- uk_df_expend_prep |>
   dplyr::left_join(uk_ppd, by = "link") |>
-  dplyr::mutate(value = 52.1429 * value / weighted_val) |>
+  dplyr::mutate(value  = 52.1429 * value / weighted_val) |>
   dplyr::select(-link, -weighted_val)
 
-# Compute the change in expenditure in respect to the total average
+# 3. Interpolate decile values per expenditures to get values for percentiles
+uk_df_expend_interpolated <- uk_df_expend_prep |>
+  dplyr::filter(decile != "average") |>
+  dplyr::mutate(decile = as.numeric(decile)) |>
+  dplyr::group_by(expenditure) |>
+  dplyr::group_split() |>
+  purrr::map( ~ {
+    expenditure       <- unique(.x$expenditure)
+    df_to_interpolate <- .x |> dplyr::select(-expenditure)
+    interpolated_vals <- fit_percentile_distribution(df_to_interpolate)
+    interpolated_vals |> dplyr::mutate(expenditure = expenditure)
+  }) |>
+  dplyr::bind_rows() |>
+  dplyr::relocate(expenditure, .before = percentile)
+
+# 4. Find the percentile scaling factor for each expenditure
 uk_df_expend <- dplyr::left_join(
-  uk_df_expend |> dplyr::filter(deciles != "average"),
-  uk_df_expend |> dplyr::filter(deciles == "average") |> dplyr::select(-deciles),
-  by     = "expenditure",
-  suffix = c("", "_avg")
+  uk_df_expend_interpolated,
+  uk_df_expend_prep |>
+    dplyr::filter(decile == "average") |>
+    dplyr::select(-decile) |>
+    dplyr::rename(avg = value),
+  by     = "expenditure"
 ) |>
-  dplyr::mutate(perc_of_avg = value / value_avg) |>
-  dplyr::group_by(deciles) |>
-  dplyr::mutate(decile_perc = value / sum(value)) |>
-  dplyr::ungroup() |>
-  dplyr::mutate(deciles = as.integer(deciles)) |>
-  dplyr::select(deciles, expenditure, value, value_avg, decile_perc, perc_of_avg)
+  dplyr::mutate(
+    scaling_factor = avg / interpolated_values,
+    # Impose order
+    expenditure = factor(expenditure, levels = c(
+      "Food & non-alcoholic drinks",
+      "Alcoholic drinks, tobacco & narcotics",
+      "Clothing & footwear",
+      "Housing (net), fuel & power",
+      "Household goods & services",
+      "Health",
+      "Transport",
+      "Communication",
+      "Recreation & culture",
+      "Education",
+      "Restaurants & hotels",
+      "Miscellaneous goods & services",
+      "Other expenditure items"
+    ))
+  ) |>
+  dplyr::arrange(expenditure)
 
 
 # Save the data

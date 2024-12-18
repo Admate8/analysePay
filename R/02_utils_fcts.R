@@ -11,7 +11,7 @@
 fit_percentile_distribution <- function(df) {
   stopifnot(
     "'df' must be a data.frame or a tibble" = (is.data.frame(df) | tibble::is_tibble(df)),
-    "'decile' column must contain valid values" = all(is.numeric(df$decile), min(df$decile) > 0, max(df$decile) < 100),
+    "'decile' column must contain valid values" = all(is.numeric(df$decile), min(df$decile) > 0, max(df$decile) <= 100),
     "'value' column must contain valid values" = all(is.numeric(df$value), min(df$value) >= 0)
   )
 

@@ -23,6 +23,7 @@
 
 pl_df_expend_raw <- openxlsx::read.xlsx(here::here("./data-raw/pl_df_expend_raw.xlsx"), sheet = "T.3")
 
+# Get total expenditure per person
 pl_expend_total <- 12 * as.numeric(pl_df_expend_raw[7, 2])
 # Check that the order hasn't changed !!!
 pl_df_expend_perc <- pl_df_expend_raw |>
@@ -32,27 +33,28 @@ pl_df_expend_perc <- pl_df_expend_raw |>
   dplyr::slice(3:6, 8:9, 13:17, 19, 21) |>
   dplyr::select(2) |>
   dplyr::mutate(perc = as.numeric(X2) / 100, .keep = "none") |>
-  # The numbers don't add to 1 - lump the remaining values to the "Other expenditure items"
+  # The numbers don't add up to 1 - lump the remaining values to the "Other expenditure items"
   dplyr::slice(-13) |>
   dplyr::pull(perc)
 other_perc <- 1 - sum(pl_df_expend_perc)
 
 # Compile the data
 # uk_df_expend comes from `prep_uk_df_expend.R`
+# We use it for expend categories and scaling factors
 pl_df_expend <- uk_df_expend |>
-  dplyr::select(deciles, expenditure, perc_of_avg) |>
+  dplyr::select(percentile, expenditure, scaling_factor) |>
   dplyr::left_join(
-    tibble::tibble(
+    data.frame(
       expenditure = unique(uk_df_expend$expenditure),
-      value_avg   = c(pl_df_expend_perc, other_perc) * pl_expend_total
+      avg = c(pl_df_expend_perc, other_perc) * pl_expend_total
     ),
     by = "expenditure"
   ) |>
-  dplyr::mutate(value = perc_of_avg * value_avg) |>
-  dplyr::group_by(deciles) |>
-  dplyr::mutate(decile_perc = value / sum(value)) |>
-  dplyr::ungroup() |>
-  dplyr::select(deciles, expenditure, value, value_avg, decile_perc, perc_of_avg)
+  dplyr::mutate(interpolated_values = avg / scaling_factor) |>
+  dplyr::select(-scaling_factor) |>
+  # Add remaining (empty) columns to keep consistent data structure
+  dplyr::mutate(actual_values = NA) |>
+  dplyr::select(expenditure, percentile, actual_values, interpolated_values, avg)
 
 
 # Save the data

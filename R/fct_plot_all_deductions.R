@@ -144,7 +144,7 @@ plot_all_deductions <- function(selected_percentile, df) {
     echarts4r::e_legend(show = FALSE) |>
     echarts4r::e_title(
       text = "Combined Deductions",
-      left = "5%",
+      left = 0,
       textStyle = list(
         color      = palette_global$body_color,
         fontWeight = "lighter",
