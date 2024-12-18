@@ -335,6 +335,4 @@ app_server <- function(input, output, session) {
     output$plot_expend_breakdown <- echarts4r::renderEcharts4r({plot_expend_breakdown(selected_percentile(), df_expend())})
   })
 
-  # output$test_output1 <- renderText({paste0(unlist(settings_from(), recursive = TRUE), collapse = ", ")})
-  # output$test_output2 <- renderText({paste0(unlist(settings_to(), recursive = TRUE), collapse = ", ")})
 }

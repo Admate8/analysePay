@@ -358,6 +358,16 @@ $lighter-accordions: (
   }
 }
 
+.custom-accordion-2 {
+  background-color: $body-secondary-bg;
+  border-color: $body-secondary-bg;
+  border-radius: 25px;
+
+  .accordion-item {
+    background-color: $body-secondary-bg;
+    border-color: $body-secondary-bg;
+  }
+}
 
 /* Customise restore settings buttons */
 [id$="restore_defaults_uk"],

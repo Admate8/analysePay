@@ -74,7 +74,13 @@ plot_all_deductions <- function(selected_percentile, df) {
           }).format(params.value[0] / 100);
         }"
         )
-      )
+      ),
+      emphasis = list(label = list(
+        backgroundColor = palette_global$body_tertiary_bg,
+        borderColor     = palette_global$body_tertiary_bg,
+        borderRadius    = 25,
+        padding         = 20
+      ))
     ) |>
     echarts4r::e_scatter(
       serie       = target,
@@ -100,11 +106,17 @@ plot_all_deductions <- function(selected_percentile, df) {
           }).format(params.value[0] / 100);
         }"
         )
-      )
+      ),
+      emphasis = list(label = list(
+        backgroundColor = palette_global$body_tertiary_bg,
+        borderColor     = palette_global$body_tertiary_bg,
+        borderRadius    = 25,
+        padding         = 20
+      ))
     ) |>
     echarts4r::e_y_axis(show = FALSE, max = get_max, min = get_min) |>
     echarts4r::e_x_axis(show = FALSE) |>
-    echarts4r::e_grid(left = "15%", right = "5%") |>
+    echarts4r::e_grid(left = "5%", right = "5%") |>
     echarts4r::e_flip_coords() |>
     echarts4r::e_tooltip(
       backgroundColor = palette_global$body_tertiary_bg,
@@ -143,7 +155,12 @@ plot_all_deductions <- function(selected_percentile, df) {
     ) |>
     echarts4r::e_legend(show = FALSE) |>
     echarts4r::e_title(
-      text = "Combined Deductions",
+      text = paste0(
+        "Deductions for the ",
+        selected_percentile,
+        update_percentile_suffix(selected_percentile),
+        " Percentile"
+      ),
       left = 0,
       textStyle = list(
         color      = palette_global$body_color,

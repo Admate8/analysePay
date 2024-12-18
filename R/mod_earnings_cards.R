@@ -35,25 +35,33 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
 
               shiny::HTML(paste0(
                 tags$span(
-                  tags$strong(df |>
-                    dplyr::filter(percentile == selected_percentile) |>
-                    dplyr::pull(earnings_from) |>
-                    prep_display_currency(country_from, period)),
+                  tags$strong(
+                    df |>
+                      dplyr::filter(percentile == selected_percentile) |>
+                      dplyr::pull(earnings_from) |>
+                      prep_display_currency(country_from, period)
+                  ),
                   " gross per ", period
                 ),
 
                 tags$span("of which", class = "small"),
 
-                tags$span(paste0(
-                  df |>
-                    dplyr::filter(percentile == selected_percentile) |>
-                    dplyr::pull(net_income_from) |>
-                    prep_display_currency(country_from, period),
-                  " net (",
-                  round(100 * df |>
-                          dplyr::filter(percentile == selected_percentile) |>
-                          dplyr::pull(net_income_perc_from), 2), "%)"
-                ), class = "small")
+                tags$span(tags$span(
+                  tags$strong(
+                    df |>
+                      dplyr::filter(percentile == selected_percentile) |>
+                      dplyr::pull(net_income_from) |>
+                      prep_display_currency(country_from, period)
+                  ),
+                  " net", paste0(
+                    "(",
+                    round(
+                      100 * df |>
+                        dplyr::filter(percentile == selected_percentile) |>
+                        dplyr::pull(net_income_perc_from), 2
+                    ), "%)"
+                  )
+                ))
               ))
             )
           ),
@@ -92,16 +100,22 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
 
                 tags$span("of which", class = "small"),
 
-                tags$span(paste0(
-                  df |>
-                    dplyr::filter(percentile == selected_percentile) |>
-                    dplyr::pull(net_income_to) |>
-                    prep_display_currency(country_to, period),
-                  " net (",
-                  round(100 * df |>
-                          dplyr::filter(percentile == selected_percentile) |>
-                          dplyr::pull(net_income_perc_to), 2), "%)"
-                ), class = "small")
+                tags$span(tags$span(
+                  tags$strong(
+                    df |>
+                      dplyr::filter(percentile == selected_percentile) |>
+                      dplyr::pull(net_income_to) |>
+                      prep_display_currency(country_to, period)
+                  ),
+                  " net", paste0(
+                    "(",
+                    round(
+                      100 * df |>
+                        dplyr::filter(percentile == selected_percentile) |>
+                        dplyr::pull(net_income_perc_to), 2
+                    ), "%)"
+                  )
+                ))
               ))
             )
           )

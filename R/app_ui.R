@@ -28,7 +28,7 @@ app_ui <- function(request) {
               h1("analysePay", class = "display-1"),
               # Make some room after the title
               tags$div(style = "margin-top: 80px;"),
-              tags$h1("Picture this:"),
+              tags$h1("Picture this"),
               tags$ul(
                 tags$li(class = "text-justify", style = "margin-bottom: 10px;", "The National Insurance rates are tweaked again, and headlines scream about how the \"average worker\" will save \U00A3xxx. But wait... you don't earn the median salary. So, what does it actually mean for your pocket?"),
                 tags$li(class = "text-justify", style = "margin-bottom: 10px;", "The student loan repayment threshold stays frozen for another year. How much more will you be shelling out so the Treasury can balance its books? (Hint: probably more than you'd like!)"),
@@ -177,34 +177,36 @@ app_ui <- function(request) {
                 br(),
                 uiOutput("ui_earnings_cards"),
                 br(),
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "Deduction Components\U2800" |> div_with_icon(
-                      link = NULL, tt_text = "Countries and their tax systems consist
-                      of various components, carefully grouped to allow for meaningful
-                      comparisons. Explore the elements included in each category here."
-                    ),
-                    value = "deduction_components",
-                    tags$div(
-                      style = "position: relative;",
-                      tags$div(
-                        style = "position: absolute; left: 0; top: 0; z-index: 20;",
-                        shiny::icon("asterisk", style = "font-size: 1rem;") |>
-                          bslib::tooltip("Deducted before the Income Tax")
-                      ),
-                      reactable::reactableOutput("table_components")
-                    )
-                  )
-                )
+                echarts4r::echarts4rOutput("plot_all_deductions", height = "10rem") |> custom_spinner()
               ) |> tags$div(class = "h-100 d-flex align-items-center"),
 
               bslib::layout_columns(
                 col_widths = 12,
                 class = "h-100 w-100 d-flex align-items-center",
                 tags$div(
-                  echarts4r::echarts4rOutput("plot_all_deductions", height = "10rem") |> custom_spinner(),
-                  echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "35rem") |> custom_spinner()
+                  echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "30rem") |> custom_spinner(),
+                  bslib::accordion(
+                    open = FALSE,
+                    class = "custom-accordion-2",
+                    bslib::accordion_panel(
+                      title = "Deduction Components\U2800" |> div_with_icon(
+                        link = NULL, tt_text = "Countries and their tax systems consist
+                      of various components, carefully grouped to allow for meaningful
+                      comparisons. Explore the elements included in each category here."
+                      ),
+                      value = "deduction_components",
+
+                      tags$div(
+                        style = "position: relative;",
+                        tags$div(
+                          style = paste0("position: absolute; left: 0; top: 0; z-index: 20; margin-left: 1%; color: ", palette_global$body_color_secondary),
+                          shiny::icon("asterisk", style = "font-size: 1rem;") |>
+                            bslib::tooltip("Deducted before the Income Tax")
+                        ),
+                        reactable::reactableOutput("table_components")
+                      )
+                    )
+                  )
                 )
 
               )
@@ -221,7 +223,7 @@ app_ui <- function(request) {
                 style = "position: relative;",
                 tags$div(
                   style = "position: absolute; top: 0; left: 0; margin-top: 20px;",
-                  tags$h2("Full Distribution", class = "display-6")
+                  tags$h2("Full Distribution - Deductions", class = "display-6")
                 ),
                 # Static legend, so that a user cannot toggle series
                 tags$div(
