@@ -213,7 +213,7 @@ app_server <- function(input, output, session) {
     req(input$select_calc_period)
     req(df_main())
 
-    earningsCardServer("1", selected_percentile(), input$select_calc_period, df_main(), "gross")
+    cardsServer("1", selected_percentile(), input$select_calc_period, df_main(), "gross")
     output$ui_earnings_cards <- renderUI({
       htmltools::tagList(
         tags$p(HTML(paste0(
@@ -231,7 +231,7 @@ app_server <- function(input, output, session) {
           " annually. Based on your settings selection, that translates to..."
         ))),
         br(),
-        earningsCardUI("1")
+        cardsUI("1")
       )
     })
   })

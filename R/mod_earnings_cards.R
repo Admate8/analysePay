@@ -1,4 +1,4 @@
-earningsCardUI <- function(id) {
+cardsUI <- function(id) {
   uiOutput(shiny::NS(id, "card"), inline = TRUE)
 }
 
@@ -10,7 +10,7 @@ earningsCardUI <- function(id) {
 #' @param df df_main() - reactive.
 #' @param mode In the interest of re-usability. Either "gross" or "net".
 #' @noRd
-earningsCardServer <- function(id, selected_percentile, period, df, mode) {
+cardsServer <- function(id, selected_percentile, period, df, mode) {
   moduleServer(
     id,
     function(input, output, session) {
