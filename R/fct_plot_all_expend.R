@@ -1,10 +1,10 @@
-#' Plot Deductions Breakdown
+#' Plot Total Expenditure
 #'
 #' @param selected_percentile selected_percentile() reactive.
-#' @param df df_main() reactive.
+#' @param df df_expend_total() reactive.
 #'
 #' @noRd
-plot_all_deductions <- function(selected_percentile, df) {
+plot_all_expend <- function(selected_percentile, df) {
 
   country_from <- purrr::discard(unique(df$country_from), is.na)
   country_to   <- purrr::discard(unique(df$country_to), is.na)
@@ -15,9 +15,12 @@ plot_all_deductions <- function(selected_percentile, df) {
   df <- df |>
     dplyr::filter(percentile == selected_percentile) |>
     dplyr::select(dplyr::contains("perc")) |>
-    dplyr::select(-percentile, -net_income_perc_from, -net_income_perc_to) |>
+    dplyr::select(-percentile) |>
     tidyr::pivot_longer(dplyr::everything()) |>
-    dplyr::mutate(destination = sub(".*_", "", name)) |>
+    dplyr::mutate(
+      name        = sub("_perc_tot", "", name),
+      destination = sub(".*_", "", name)
+    ) |>
     dplyr::group_by(destination) |>
     dplyr::summarise(
       value_sum = 100 * sum(value, na.rm = TRUE),
@@ -124,7 +127,7 @@ plot_all_deductions <- function(selected_percentile, df) {
           tooltip += '%s<b>' + params.seriesName + '</b></span>';
         }
 
-        tooltip += ' deductions constitute<br><b>'
+        tooltip += ' expenditure constitute<br><b>'
 
         tooltip += Intl.NumberFormat(undefined, {
           style: 'percent',
@@ -138,7 +141,7 @@ plot_all_deductions <- function(selected_percentile, df) {
           tooltip += '%s<b>' + params.seriesName + '</b></span>';
         }
 
-        tooltip += ' gross income'
+        tooltip += ' net income'
         return tooltip;
       }
       ", base_style, target_style, base_style, target_style))
@@ -146,7 +149,7 @@ plot_all_deductions <- function(selected_percentile, df) {
     echarts4r::e_legend(show = FALSE) |>
     echarts4r::e_title(
       text = paste0(
-        "Deductions for the ",
+        "Expenditure for the ",
         selected_percentile,
         update_percentile_suffix(selected_percentile),
         " Percentile"

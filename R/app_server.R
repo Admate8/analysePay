@@ -312,10 +312,66 @@ app_server <- function(input, output, session) {
     get_df_expend(df_main())
   })
 
-  # Modularise this to remove a huge chunk of code from the main server
-  observeEvent(c(selected_percentile(), df_expend()), {
+  observeEvent(c(selected_percentile(), df_expend(), input$select_calc_period), {
+    req(df_expend())
+    req(selected_percentile())
+    req(input$select_calc_period)
+
     df_expend_update <- updateDfExpendServer("1", df_expend())
     output$plot_expend_breakdown <- echarts4r::renderEcharts4r({plot_expend_breakdown(selected_percentile(), df_expend_update())})
+
+    ### Data: Collapse into total expend ----
+    df_expend_total <- reactive({
+      df_expend_update() |>
+        dplyr::group_by(percentile) |>
+        dplyr::mutate(dplyr::across(c(
+          "interpolated_values_from_perc",
+          "avg_from_perc",
+          "interpolated_values_to_perc",
+          "avg_to_perc"
+        ),
+        ~ sum(.x, na.rm = TRUE),
+        .names = "{.col}_tot")) |>
+        dplyr::ungroup() |>
+        dplyr::select(
+          percentile, net_income_from, net_income_to,
+          country_from, country_to,
+          interpolated_values_from_perc_tot, interpolated_values_to_perc_tot
+        ) |>
+        unique()
+    })
+    output$plot_all_expend <- echarts4r::renderEcharts4r({plot_all_expend(selected_percentile(), df_expend_total())})
+
+    observeEvent(df_expend_total(), {
+      cardsServer("2", selected_percentile(), input$select_calc_period, df_expend_total(), "net")
+
+      # Update the all expend plot by proxy to avoid re-rendering the whole plot
+      echarts4r::echarts4rProxy("plot_all_expend", data = df_expend_total()) |> echarts4r::e_execute()
+    })
+
+    output$ui_expend_cards <- renderUI({
+      htmltools::tagList(
+        tags$p(HTML(paste0(
+          "Paying all deductions leaves you with ",
+          tags$strong(
+            df_expend() |>
+              dplyr::filter(percentile == selected_percentile()) |>
+              dplyr::pull(net_income_from) |>
+              unique() |>
+              prep_display_currency(settings_from()$global$short_cut, "year")
+          ), " annually in ",
+          tags$strong(
+            style = paste0("color: ", palette_global$categories$base_color, ";"),
+            settings_from()$global$full_name
+          ), " in the ",
+          tags$strong(paste0(selected_percentile(), update_percentile_suffix(selected_percentile()))),
+          " earnings percentile. This page lets you compare the approximate living costs in your chosen countries.
+          Change the percentage spent on expenditure breakdowns to see the impact on your cash."
+        ))),
+        br(),
+        cardsUI("2")
+      )
+    })
   })
 
 }

@@ -24,45 +24,38 @@ cardsServer <- function(id, selected_percentile, period, df, mode) {
         country_from_name <- base::get(paste0(country_from, "_settings"))$global$full_name
         country_to_name   <- base::get(paste0(country_to, "_settings"))$global$full_name
 
+        df <- df |> dplyr::filter(percentile == selected_percentile)
+
         if (mode == "gross") {
-          base_val_top_bold   <- df |>
-            dplyr::filter(percentile == selected_percentile) |>
-            dplyr::pull(earnings_from) |>
-            prep_display_currency(country_from, period)
 
-          base_val_bottom_bold <- df |>
-            dplyr::filter(percentile == selected_percentile) |>
-            dplyr::pull(net_income_from) |>
-            prep_display_currency(country_from, period)
+          base_val_top_bold    <- df |> dplyr::pull(earnings_from) |> prep_display_currency(country_from, period)
+          base_val_bottom_bold <- df |> dplyr::pull(net_income_from) |> prep_display_currency(country_from, period)
+          base_text_top        <- "gross"
+          base_text_bottom     <- "net"
+          base_perc            <- round(100 * df |> dplyr::pull(net_income_perc_from), 2)
 
-          base_text_top    <- "gross"
-          base_text_bottom <- "net"
+          target_val_top_bold    <- df |> dplyr::pull(earnings_to) |> prep_display_currency(country_to, period)
+          target_val_bottom_bold <- df |> dplyr::pull(net_income_to) |> prep_display_currency(country_to, period)
+          target_text_top        <- "gross"
+          target_text_bottom     <- "net"
+          target_perc            <- round(100 * df |> dplyr::pull(net_income_perc_to), 2)
 
-          base_perc <- round(
-            100 * df |>
-              dplyr::filter(percentile == selected_percentile) |>
-              dplyr::pull(net_income_perc_from), 2
-          )
+        }
+        else if (mode == "net") {
 
+          base_val_net         <- df |> dplyr::pull(net_income_from)
+          base_val_top_bold    <- prep_display_currency(base_val_net, country_from, period)
+          base_val_bottom_bold <- (base_val_net * (1 - df |> dplyr::pull(interpolated_values_from_perc_tot))) |> prep_display_currency(country_from, period)
+          base_text_top        <- "net"
+          base_text_bottom     <- "after spent"
+          base_perc            <- round(100 * (1 - df |> dplyr::pull(interpolated_values_from_perc_tot)), 2)
 
-          target_val_top_bold    <- df |>
-            dplyr::filter(percentile == selected_percentile) |>
-            dplyr::pull(earnings_to) |>
-            prep_display_currency(country_to, period)
-
-          target_val_bottom_bold <- df |>
-            dplyr::filter(percentile == selected_percentile) |>
-            dplyr::pull(net_income_to) |>
-            prep_display_currency(country_to, period)
-
-          target_text_top    <- "gross"
-          target_text_bottom <- "net"
-
-          target_perc <- round(
-            100 * df |>
-              dplyr::filter(percentile == selected_percentile) |>
-              dplyr::pull(net_income_perc_to), 2
-          )
+          target_val_net         <- df |> dplyr::pull(net_income_to)
+          target_val_top_bold    <- prep_display_currency(target_val_net, country_to, period)
+          target_val_bottom_bold <- (target_val_net * (1 - df |> dplyr::pull(interpolated_values_to_perc_tot))) |> prep_display_currency(country_to, period)
+          target_text_top        <- "net"
+          target_text_bottom     <- "after spent"
+          target_perc            <- round(100 * (1 - df |> dplyr::pull(interpolated_values_to_perc_tot)), 2)
         }
 
         bslib::layout_columns(
@@ -74,7 +67,7 @@ cardsServer <- function(id, selected_percentile, period, df, mode) {
             bslib::card_body(
               class   = "text-center small",
               gap     = "0.3rem",
-              padding = "5px",
+              padding = "10px",
 
               shiny::HTML(paste0(
                 tags$span(tags$strong(base_val_top_bold), base_text_top, "per", period),
@@ -95,7 +88,7 @@ cardsServer <- function(id, selected_percentile, period, df, mode) {
             bslib::card_body(
               class   = "text-center small",
               gap     = "0.3rem",
-              padding = "5px",
+              padding = "10px",
 
               shiny::HTML(paste0(
                 tags$span(tags$strong(target_val_top_bold), target_text_top, "per", period),

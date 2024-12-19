@@ -178,11 +178,11 @@ app_ui <- function(request) {
                 uiOutput("ui_earnings_cards"),
                 br(),
                 echarts4r::echarts4rOutput("plot_all_deductions", height = "15rem") |> custom_spinner()
-              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+              ) |> tags$div(class = "h-100 flex-column align-items-center"),
 
               bslib::layout_columns(
                 col_widths = 12,
-                class = "h-100 w-100 d-flex align-items-center",
+                class = "h-100 flex-column align-items-center",
                 tags$div(
                   echarts4r::echarts4rOutput("plot_deductions_breakdown", height = "30rem") |> custom_spinner(),
                   bslib::accordion(
@@ -264,11 +264,12 @@ app_ui <- function(request) {
               col_widths = c(5, 7),
               class = "add-left-right-margins",
               tags$div(
-                tags$h2("Expenditure", class = "display-6"),
+                tags$h2("Cost of Living", class = "display-6"),
                 br(),
-                #uiOutput("ui_earnings_cards"),
-                br()
-              ) |> tags$div(class = "h-100 d-flex align-items-center"),
+                uiOutput("ui_expend_cards") |> custom_spinner(),
+                br(),
+                echarts4r::echarts4rOutput("plot_all_expend", height = "15rem") |> custom_spinner()
+              ) |> tags$div(class = "h-100 d-flex align-items-center", style = "max-height: 770px;"),
               bslib::layout_columns(
                 col_widths = c(2, 10),
                 gap = 0,

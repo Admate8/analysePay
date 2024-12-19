@@ -139,6 +139,8 @@ updateDfExpendServer <- function(id, df_expend) {
         df_expend_update$data <- df_updated
       })
 
+      # Add the total columns for convenience
+
       return(reactive({df_expend_update$data}))
     }
   )
