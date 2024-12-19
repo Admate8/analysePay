@@ -39,14 +39,14 @@ plot_all_deductions <- function(selected_percentile, df) {
     echarts4r::e_bar(
       serie    = fake_bar_2,
       stack    = "bar",
-      barWidth = "20%",
+      barWidth = "10%",
       color    = "transparent",
       tooltip  = list(show = FALSE)
     ) |>
     echarts4r::e_bar(
       serie    = fake_bar_1,
       stack    = "bar",
-      barWidth = "20%",
+      barWidth = "10%",
       color    = palette_global$categories$earnings_color,
       tooltip  = list(show = FALSE)
     ) |>
@@ -93,7 +93,7 @@ plot_all_deductions <- function(selected_percentile, df) {
       ),
       label = list(
         show       = TRUE,
-        position   = "bottom",
+        position   = "top",
         distance   = 15,
         fontSize   = "0.9rem",
         color      = palette_global$categories$target_color,

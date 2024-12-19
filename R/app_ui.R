@@ -177,7 +177,7 @@ app_ui <- function(request) {
                 br(),
                 uiOutput("ui_earnings_cards"),
                 br(),
-                echarts4r::echarts4rOutput("plot_all_deductions", height = "10rem") |> custom_spinner()
+                echarts4r::echarts4rOutput("plot_all_deductions", height = "15rem") |> custom_spinner()
               ) |> tags$div(class = "h-100 d-flex align-items-center"),
 
               bslib::layout_columns(
