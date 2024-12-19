@@ -263,7 +263,12 @@ app_ui <- function(request) {
             bslib::layout_columns(
               col_widths = c(5, 7),
               class = "add-left-right-margins",
-              tags$div(),
+              tags$div(
+                tags$h2("Expenditure", class = "display-6"),
+                br(),
+                #uiOutput("ui_earnings_cards"),
+                br()
+              ) |> tags$div(class = "h-100 d-flex align-items-center"),
               bslib::layout_columns(
                 col_widths = c(2, 10),
                 gap = 0,

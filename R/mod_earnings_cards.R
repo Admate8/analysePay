@@ -8,12 +8,14 @@ earningsCardUI <- function(id) {
 #' @param selected_percentile selected_percentile() reactive.
 #' @param period Either "year", "month" or "week".
 #' @param df df_main() - reactive.
+#' @param mode In the interest of re-usability. Either "gross" or "net".
 #' @noRd
-earningsCardServer <- function(id, selected_percentile, period, df) {
+earningsCardServer <- function(id, selected_percentile, period, df, mode) {
   moduleServer(
     id,
     function(input, output, session) {
 
+      stopifnot(mode %in% c("gross", "net"))
       output$card <- renderUI({
 
         country_from <- purrr::discard(unique(df$country_from), is.na)
@@ -21,6 +23,47 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
 
         country_from_name <- base::get(paste0(country_from, "_settings"))$global$full_name
         country_to_name   <- base::get(paste0(country_to, "_settings"))$global$full_name
+
+        if (mode == "gross") {
+          base_val_top_bold   <- df |>
+            dplyr::filter(percentile == selected_percentile) |>
+            dplyr::pull(earnings_from) |>
+            prep_display_currency(country_from, period)
+
+          base_val_bottom_bold <- df |>
+            dplyr::filter(percentile == selected_percentile) |>
+            dplyr::pull(net_income_from) |>
+            prep_display_currency(country_from, period)
+
+          base_text_top    <- "gross"
+          base_text_bottom <- "net"
+
+          base_perc <- round(
+            100 * df |>
+              dplyr::filter(percentile == selected_percentile) |>
+              dplyr::pull(net_income_perc_from), 2
+          )
+
+
+          target_val_top_bold    <- df |>
+            dplyr::filter(percentile == selected_percentile) |>
+            dplyr::pull(earnings_to) |>
+            prep_display_currency(country_to, period)
+
+          target_val_bottom_bold <- df |>
+            dplyr::filter(percentile == selected_percentile) |>
+            dplyr::pull(net_income_to) |>
+            prep_display_currency(country_to, period)
+
+          target_text_top    <- "gross"
+          target_text_bottom <- "net"
+
+          target_perc <- round(
+            100 * df |>
+              dplyr::filter(percentile == selected_percentile) |>
+              dplyr::pull(net_income_perc_to), 2
+          )
+        }
 
         bslib::layout_columns(
           col_widths = c(5, 2, 5),
@@ -34,34 +77,9 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
               padding = "5px",
 
               shiny::HTML(paste0(
-                tags$span(
-                  tags$strong(
-                    df |>
-                      dplyr::filter(percentile == selected_percentile) |>
-                      dplyr::pull(earnings_from) |>
-                      prep_display_currency(country_from, period)
-                  ),
-                  " gross per ", period
-                ),
-
+                tags$span(tags$strong(base_val_top_bold), base_text_top, "per", period),
                 tags$span("of which", class = "small"),
-
-                tags$span(tags$span(
-                  tags$strong(
-                    df |>
-                      dplyr::filter(percentile == selected_percentile) |>
-                      dplyr::pull(net_income_from) |>
-                      prep_display_currency(country_from, period)
-                  ),
-                  " net", paste0(
-                    "(",
-                    round(
-                      100 * df |>
-                        dplyr::filter(percentile == selected_percentile) |>
-                        dplyr::pull(net_income_perc_from), 2
-                    ), "%)"
-                  )
-                ))
+                tags$span(tags$span(tags$strong(base_val_bottom_bold), base_text_bottom, paste0("(", base_perc, "%)")))
               ))
             )
           ),
@@ -80,32 +98,9 @@ earningsCardServer <- function(id, selected_percentile, period, df) {
               padding = "5px",
 
               shiny::HTML(paste0(
-                tags$span(
-                  tags$strong(df |>
-                    dplyr::filter(percentile == selected_percentile) |>
-                    dplyr::pull(earnings_to) |>
-                    prep_display_currency(country_to, period)),
-                  " gross per ", period, br()
-                ),
-
+                tags$span(tags$strong(target_val_top_bold), target_text_top, "per", period),
                 tags$span("of which", class = "small"),
-
-                tags$span(tags$span(
-                  tags$strong(
-                    df |>
-                      dplyr::filter(percentile == selected_percentile) |>
-                      dplyr::pull(net_income_to) |>
-                      prep_display_currency(country_to, period)
-                  ),
-                  " net", paste0(
-                    "(",
-                    round(
-                      100 * df |>
-                        dplyr::filter(percentile == selected_percentile) |>
-                        dplyr::pull(net_income_perc_to), 2
-                    ), "%)"
-                  )
-                ))
+                tags$span(tags$span(tags$strong(target_val_bottom_bold), target_text_bottom, paste0("(", target_perc, "%)")))
               ))
             )
           )
