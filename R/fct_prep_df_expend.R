@@ -50,8 +50,10 @@ get_df_expend <- function(df_main) {
     dplyr::mutate(
       actual_values_from_perc       = actual_values_from / net_income_from,
       interpolated_values_from_perc = interpolated_values_from / net_income_from,
+      avg_from_perc                 = avg_from / net_income_from,
       actual_values_to_perc         = actual_values_to / net_income_to,
-      interpolated_values_to_perc   = interpolated_values_to / net_income_to
+      interpolated_values_to_perc   = interpolated_values_to / net_income_to,
+      avg_to_perc                   = avg_to / net_income_to
     ) |>
     dplyr::select(-interpolated_values_from, -interpolated_values_to)
 }

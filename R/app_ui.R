@@ -263,36 +263,14 @@ app_ui <- function(request) {
             bslib::layout_columns(
               col_widths = c(5, 7),
               class = "add-left-right-margins",
-              tags$div(
-              ),
+              tags$div(),
               bslib::layout_columns(
                 col_widths = c(2, 10),
                 gap = 0,
-                tags$div(
-                  class = "d-flex flex-column align-items-center",
-                  style = "margin-top: 27%;",
-                  actionButton(
-                    inputId = "restore_expend_inputs",
-                    label   = NULL,
-                    icon    = shiny::icon("rotate-right", style = "font-size: 1.2rem; margin-bottom: 10%;"),
-                    width   = "100%"
-                  ),
-                  get_expend_num_input("expend_num_input_food"),
-                  get_expend_num_input("expend_num_input_drinks"),
-                  get_expend_num_input("expend_num_input_clothing"),
-                  get_expend_num_input("expend_num_input_housing"),
-                  get_expend_num_input("expend_num_input_household"),
-                  get_expend_num_input("expend_num_input_health"),
-                  get_expend_num_input("expend_num_input_transport"),
-                  get_expend_num_input("expend_num_input_comms"),
-                  get_expend_num_input("expend_num_input_recreation"),
-                  get_expend_num_input("expend_num_input_education"),
-                  get_expend_num_input("expend_num_input_restaurants"),
-                  get_expend_num_input("expend_num_input_misc"),
-                  get_expend_num_input("expend_num_input_other")
-                ),
+                updateDfExpendUI("1"),
                 echarts4r::echarts4rOutput("plot_expend_breakdown", height = "770px")
               )
+
             )
           )
         ),

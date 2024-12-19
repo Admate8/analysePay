@@ -312,27 +312,10 @@ app_server <- function(input, output, session) {
     get_df_expend(df_main())
   })
 
-  ### Button: Restore defaults expend num inputs ----
-  observeEvent(input$restore_expend_inputs, {
-    shinyWidgets::updateAutonumericInput("expend_num_input_food", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_drinks", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_clothing", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_housing", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_household", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_health", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_transport", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_comms", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_recreation", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_education", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_restaurants", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_misc", value = 0, session = session)
-    shinyWidgets::updateAutonumericInput("expend_num_input_other", value = 0, session = session)
-  })
-
-  ### Plot: Expenditure plots
-  observeEvent(c(df_expend(), selected_percentile()), {
-
-    output$plot_expend_breakdown <- echarts4r::renderEcharts4r({plot_expend_breakdown(selected_percentile(), df_expend())})
+  # Modularise this to remove a huge chunk of code from the main server
+  observeEvent(c(selected_percentile(), df_expend()), {
+    df_expend_update <- updateDfExpendServer("1", df_expend())
+    output$plot_expend_breakdown <- echarts4r::renderEcharts4r({plot_expend_breakdown(selected_percentile(), df_expend_update())})
   })
 
 }
